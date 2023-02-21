@@ -6,7 +6,7 @@ function Login() {
     const navigate = useNavigate();
 
     function samplenav(){
-        navigate('/header');
+        navigate('/home');
     }
 
 
@@ -20,13 +20,14 @@ function Login() {
                     <div style={{ marginTop: '7em' }}>
                         <h2 style={{textAlign:'center'}}>👋 Welcome Back</h2>
                         <p style={{textAlign:'center'}}>Sign in to your account to continue</p>
-                        <div className='logform'>
-                            <h2><h2 style={{borderBottom:'2px solid rgb(100, 81, 223)',display:'inline', fontSize:'23px',paddingBottom:'4px'}}>Sig</h2>n In</h2>
+                        <div className='logform'><br />
+                            <h2 style={{fontSize:'23px'}}><h2 className='hedundr'>Sig</h2>n In</h2>
+
                             <br /><br />
                             <form>
-                                Email<br />
-                                <input type='text' className='loginpt' required /><br/>
-                                Password<br />
+                                Email
+                                <input type='text' className='loginpt' required autoFocus='ture' />
+                                Password
                                 <input type='password' className='loginpt' required /><br />
                                 <button className='logsbmt' type='submit' onClick={samplenav}>Sign In</button>
                                 <button className='logfrgt'>Forget Password?</button>

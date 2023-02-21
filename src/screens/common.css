@@ -1,0 +1,40 @@
+*{
+    box-sizing: border-box;
+}.comhed{
+    background-color: rgb(15, 11, 42);
+    color: white;
+    padding: 1em;
+}
+.comadbtn{
+    float: right;
+    border: none;
+    background-color: rgb(66, 34, 225);
+    color: white;
+    padding: 0.5em 1.9em;
+}
+
+.mainbdy{
+    margin: 1.5em;
+    background-color: red;
+}
+
+.erptbl{
+    width: 100%;
+    border: none;
+    border-radius: 8px;
+}
+.erptbl th{
+    background-color: rgb(15, 11, 42);
+    padding: 0.5em;
+    color: white;
+    font-size: 18px;
+}
+.erptbl tr{
+    border-bottom: 1px solid black;
+}
+.erptbl td{
+    padding: 0.5em;
+    background-color: white;
+    font-size: 18px;
+
+}
