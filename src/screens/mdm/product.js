@@ -1,9 +1,8 @@
 import React from "react";
 import '../common.css'
-
 function Product() {
     return (
-        <div >
+        <div>
             <div className="comhed">
             <button className="comadbtn">Add</button>
                 <h5>Products</h5>
@@ -35,7 +34,25 @@ function Product() {
                         <td>INR</td>
                         <td>TRUE</td>
                         <td>Lid</td>
-                        <td>null</td>
+                        <td>
+                            <button className="icbtn"><i class="bi bi-pencil-square"></i></button>
+                            <button className="icbtn icbtnred"><i class="bi bi-trash-fill"></i></button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>1</td>
+                        <td>Cooker</td>
+                        <td>Finished</td>
+                        <td>100</td>
+                        <td>3000</td>
+                        <td>1000</td>
+                        <td>INR</td>
+                        <td>TRUE</td>
+                        <td>Lid</td>
+                        <td>
+                            <button className="icbtn"><i class="bi bi-pencil-square"></i></button>
+                            <button className="icbtn icbtnred"><i class="bi bi-trash-fill"></i></button>
+                        </td>
                     </tr>
                 </table>
             </div>

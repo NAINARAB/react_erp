@@ -17,7 +17,7 @@ function Login() {
         <div>
             <div className='main'>
                 <div className='cntr'>
-                    <div style={{ marginTop: '7em' }}>
+                    <div style={{ marginTop: '5%' }}>
                         <h2 style={{textAlign:'center'}}>👋 Welcome Back</h2>
                         <p style={{textAlign:'center'}}>Sign in to your account to continue</p>
                         <div className='logform'><br />

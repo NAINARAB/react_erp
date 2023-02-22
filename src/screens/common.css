@@ -1,11 +1,14 @@
-*{
+* {
     box-sizing: border-box;
-}.comhed{
+}
+
+.comhed {
     background-color: rgb(15, 11, 42);
     color: white;
     padding: 1em;
 }
-.comadbtn{
+
+.comadbtn {
     float: right;
     border: none;
     background-color: rgb(66, 34, 225);
@@ -13,28 +16,75 @@
     padding: 0.5em 1.9em;
 }
 
-.mainbdy{
+.mainbdy {
     margin: 1.5em;
-    background-color: red;
 }
 
-.erptbl{
-    width: 100%;
+.erptbl {
     border: none;
     border-radius: 8px;
+    width: 100%;
 }
-.erptbl th{
+
+.erptbl th {
     background-color: rgb(15, 11, 42);
     padding: 0.5em;
     color: white;
-    font-size: 18px;
+    font-size: 1em;
+    font-weight: 300;
 }
-.erptbl tr{
-    border-bottom: 1px solid black;
-}
-.erptbl td{
-    padding: 0.5em;
-    background-color: white;
-    font-size: 18px;
 
+.erptbl tr {
+    border-bottom: 0.1px solid rgba(135, 134, 134, 0.488);
+}
+
+.erptbl td {
+    padding: 0.7em;
+    background-color: white;
+    font-size: 1em;
+
+}
+
+
+.icbtn{
+    border: none;
+    border-radius: 50%;
+    margin-right: 0.4em;
+    padding: 0.2em 0.3em 0.1em 0.3em;
+    box-shadow: 0.5px 0.5px 2px black;
+    transition: all 0.3s;
+    font-weight: 300;
+}
+.icbtn:active{
+    box-shadow: none;
+    transform: translateY(2px);
+}
+.icbtnred{
+    color:rgba(255, 0, 0, 0.815);
+}
+
+table tr th {
+    background: white;
+    text-align: left;
+    box-sizing: border-box;
+}
+
+/* top-left border-radius */
+table tr:first-child th:first-child {
+    border-top-left-radius: 6px;
+}
+
+/* top-right border-radius */
+table tr:first-child th:last-child {
+    border-top-right-radius: 6px;
+}
+
+/* bottom-left border-radius */
+table tr:last-child td:first-child {
+    border-bottom-left-radius: 6px;
+}
+
+/* bottom-right border-radius */
+table tr:last-child td:last-child {
+    border-bottom-right-radius: 6px;
 }

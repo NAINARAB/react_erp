@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { useNavigate } from "react-router-dom";
+import Product from '../../screens/mdm/product';
 import './sidenav.css'
 
 
@@ -8,8 +9,8 @@ function Sidenav() {
         <div>
             <div>
                 <section class="section-content">
-                    <div class="row">
-                        <aside class="col-lg-2">
+                    <div>
+                        <aside>
 
                             <nav class="sidebar cuscard py-2 mb-4">
 
@@ -17,7 +18,7 @@ function Sidenav() {
 
                                     <div className='usrinfo' style={{ display: 'flex' }}>
                                         <i class="bi bi-person-circle" ></i>
-                                        <div style={{ display: 'inline' }}>
+                                        <div>
                                             <h5>Nainar AB</h5>
                                             <p>Admin</p>
                                         </div>
@@ -133,7 +134,6 @@ function Sidenav() {
                             </nav>
 
                         </aside>
-
                     </div>
                 </section>
 
