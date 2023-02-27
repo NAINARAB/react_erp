@@ -53,6 +53,7 @@
     border: none;
     border-radius: 10px;
     box-sizing: border-box;
+    font-size: 1rem !important;
 }
 .butful:focus{
     background-color: #a5a1a115;
@@ -60,6 +61,8 @@
 .butful:focus .itmeright{
     transform: rotate(90deg);
 }
+
+
 
 
 .usrinfo{
