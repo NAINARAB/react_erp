@@ -16,6 +16,19 @@
     padding: 0.5em 1.9em;
 }
 
+.cancelbtn{
+    background-color: transparent;
+    float: right;
+    border: none;
+    padding: 0.5em 1.9em;
+    cursor: pointer;
+    color:rgb(66, 34, 225);
+    margin-right: 0.5em;
+}
+.cancelbtn:hover{
+    background-color: #d9d7d7;
+}
+
 .mainbdy {
     margin: 1.5em;
 }
@@ -79,6 +92,38 @@
     padding: 0.5em 1em;
     outline: none;
 }
+
+.micardbdy select{
+    background-color: transparent;
+}
+.micardgrpinpt{
+    width: 25%;
+    box-sizing: border-box;
+    border: 1px solid #d9d7d7;
+    border-top-left-radius: 6px; border-bottom-left-radius: 6px;
+    padding: 0.58em 0.4em;
+    outline: none;
+}
+.micardgrpinpt1{
+    width: 75%;
+    box-sizing: border-box;
+    border: 1px solid #d9d7d7;
+    border-top-right-radius: 6px; border-bottom-right-radius: 6px;
+    padding: 0.5em 1em;
+    outline: none;
+}
+.micardboxinpt{
+    border: 1px solid #d9d7d7;
+    border-radius: 6px;
+    padding: 0.5em 1em;
+}
+
+
+
+
+
+
+
 .micard .col-lg-4{
     margin: 0 auto !important;
     padding: 0 1.5em !important;
