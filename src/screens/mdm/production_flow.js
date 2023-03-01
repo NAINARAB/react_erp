@@ -5,11 +5,17 @@ import { TableContainer, Table, TableBody, TableCell, TableHead, TableRow, Paper
 import '../common.css';
 
 
+let PF = () => {
+    return(
+        <>
+        funcn
+        </>
+    );
+}
 
 
 
 function Productionflow() {
-
 
     
     return (
@@ -23,9 +29,12 @@ function Productionflow() {
                 </div>
                 <div className="col-lg-10">
                     <div className="comhed">
-                        <button className="comadbtn" id='adbtn'>Add</button>
+                        <button className="comadbtn">Add</button>
                         <h5>Production Flow</h5>
                         <h6>Master Data Management / Production Flow</h6>
+                    </div>
+                    <div className="tablepadding">
+                        <PF /> 
                     </div>
                 </div>
             </div>

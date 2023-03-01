@@ -1,21 +1,161 @@
-import React, { useState } from "react";
+import * as React from 'react';
 import Header from "../../comp/header/header";
 import Sidenav from "../../comp/sidenav/sidenav";
-import { TableContainer, Table, TableBody, TableCell, TableHead, TableRow, Paper } from "@mui/material";
-import '../common.css';
-import Colbtble from "./checkinertable";
+import { IconButton, Box, Collapse, TableContainer, Table, TableBody, TableCell, TableHead, TableRow, Paper } from "@mui/material";
+import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
+import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
+import AddIcon from '@mui/icons-material/Add';
+import EditIcon from '@mui/icons-material/Edit';
+import DeleteIcon from '@mui/icons-material/Delete';
+import AddBom from './comp_addbom';
+
+
 
 function Billsofmaterials() {
 
-    function opnnav(){
-        var presnav = document.getElementById('#menu_item4');
-        presnav.click();
+
+    function createData(sno, product_code, product_name, product_type, action) {
+        return {
+            sno, product_code, product_name, product_type, action,
+            history: [
+                {
+                    date: '2020-01-05', customerId: '11091700', amount: 3,
+                },
+                {
+                    date: '2020-01-02',
+                    customerId: 'Anonymous',
+                    amount: 1,
+                },
+            ],
+        };
     }
 
-    return (
 
+
+    function Row(props) {
+        const { row } = props;
+        const [open, setOpen] = React.useState(false);
+
+        return (
+            <React.Fragment>
+                <TableRow sx={{ '& > *': { borderBottom: 'unset' } }}>
+                    <TableCell component="th" scope="row">
+                        {row.sno}
+                    </TableCell>
+                    <TableCell>{row.product_code}</TableCell>
+                    <TableCell>{row.product_name}</TableCell>
+                    <TableCell>{row.product_type}</TableCell>
+                    <TableCell align='center'>
+                        <IconButton
+                            aria-label="expand row"
+                            size="small"
+                            onClick={() => setOpen(!open)}
+                        >
+                            {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
+                        </IconButton>
+                    </TableCell>
+                </TableRow>
+
+
+                <TableRow>
+                    <TableCell style={{ paddingBottom: 0, paddingTop: 0, backgroundColor: '#f2f2f2' }} colSpan={5}>
+                        <Collapse in={open} timeout="auto" unmountOnExit>
+                            <Box sx={{ margin: '7em 5em' }}>
+                                <div>
+                                    <h5>{row.product_name} ( Product-Code : {row.product_code})</h5>
+                                </div>
+                                <TableContainer component={Paper}>
+                                    <Table size="small" aria-label="purchases">
+                                        <TableHead>
+                                            <TableRow>
+                                                <TableCell align='center' sx={{ backgroundColor: 'rgb(15, 11, 42)', color: 'white' }}>Part Name</TableCell>
+                                                <TableCell align='center' sx={{ backgroundColor: 'rgb(15, 11, 42)', color: 'white' }}>SFG/RM Code</TableCell>
+                                                <TableCell align='center' sx={{ backgroundColor: 'rgb(15, 11, 42)', color: 'white' }}>SFG/RM Name</TableCell>
+                                                <TableCell align='center' sx={{ backgroundColor: 'rgb(15, 11, 42)', color: 'white' }}>Measurement Unit</TableCell>
+                                                <TableCell align='center' sx={{ backgroundColor: 'rgb(15, 11, 42)', color: 'white' }}>Quantity Required</TableCell>
+                                                <TableCell align='center' sx={{ backgroundColor: 'rgb(15, 11, 42)', color: 'white' }}>Production Phase</TableCell>
+                                                <TableCell align='center' sx={{ backgroundColor: 'rgb(15, 11, 42)', color: 'white' }}>Action</TableCell>
+                                            </TableRow>
+                                        </TableHead>
+
+
+                                        <TableBody>
+                                            {row.history.map((historyRow) => (
+                                                <TableRow>
+                                                    <TableCell align='center' component="th" scope="row">{historyRow.date}</TableCell>
+                                                    <TableCell align='center'>{historyRow.customerId}</TableCell>
+                                                    <TableCell align='center'>{historyRow.amount}</TableCell>
+                                                    <TableCell align='center'>{historyRow.amount}</TableCell>
+                                                    <TableCell align='center'>{historyRow.amount}</TableCell>
+                                                    <TableCell align='center'>{historyRow.amount}</TableCell>
+                                                    <TableCell align='center'><Butns /></TableCell>
+                                                </TableRow>
+                                            ))}
+                                        </TableBody>
+                                    </Table>
+                                </TableContainer><IconButton onClick={() => { setdispbom(<AddBom />) }} aria-label="expand row" size="small" sx={{ float: 'right', backgroundColor: 'white', margin: '0.5em', color: 'rgb(66, 34, 225)' }}>{<AddIcon />}</IconButton>
+                            </Box>
+                        </Collapse>
+                    </TableCell>
+                </TableRow>
+            </React.Fragment>
+        );
+    }
+
+
+    let Butns = () => {
+        return (
+            <>
+                <IconButton aria-label="expand row" size="small" sx={{ color: 'rgba(255, 0, 0, 0.755)', backgroundColor: '#f2f2f2' }}><DeleteIcon /></IconButton>
+                <IconButton aria-label="expand row" size="small" sx={{ backgroundColor: '#f2f2f2', marginLeft: '1em' }}><EditIcon /></IconButton>
+            </>
+        );
+    }
+
+    const rows = [
+        createData(1, 112233, 'Cooker', 'Semi-Finished', <Butns />),
+        createData(2, 112233, 'Makkar', 'Semi-Finished', <Butns />),
+        createData(3, 112233, 'Cooker', 'Semi-Finished', <Butns />),
+        createData(4, 112233, 'Cooker', 'Semi-Finished', <Butns />),
+        createData(5, 112233, 'Cooker', 'Semi-Finished', <Butns />),
+    ];
+
+    let Disptbl = () => {
+        return (
+            <>
+                <TableContainer component={Paper}>
+                    <Table aria-label="collapsible table">
+                        <TableHead>
+                            <TableRow>
+                                <TableCell sx={{ backgroundColor: 'rgb(15, 11, 42)', color: 'white' }}>S.No</TableCell>
+                                <TableCell sx={{ backgroundColor: 'rgb(15, 11, 42)', color: 'white' }}>Product Code</TableCell>
+                                <TableCell sx={{ backgroundColor: 'rgb(15, 11, 42)', color: 'white' }}>Product Name</TableCell>
+                                <TableCell sx={{ backgroundColor: 'rgb(15, 11, 42)', color: 'white' }}>Product Type</TableCell>
+                                <TableCell sx={{ backgroundColor: 'rgb(15, 11, 42)', color: 'white' }} align='center'>Action</TableCell>
+                            </TableRow>
+                        </TableHead>
+                        <TableBody>
+                            {rows.map((row) => (
+                                <Row key={row.sno} row={row} />
+                            ))}
+                        </TableBody>
+                    </Table>
+                </TableContainer>
+            </>
+        );
+    }
+
+    const [dispbom, setdispbom] = React.useState(<Disptbl />)
+
+
+
+
+
+
+
+    return (
         <>
-            <div className="row" onLoad={opnnav}>
+            <div className="row">
                 <div className="col-lg-12">
                     <Header />
                 </div>
@@ -25,21 +165,16 @@ function Billsofmaterials() {
                 <div className="col-lg-10">
                     <div>
                         <div className="comhed">
-                            <h5>Bills of Materials</h5>
+                            <h5>Products</h5>
                             <h6>Master Data Management / Bills of Materials</h6>
                         </div>
-
-                        <div className="tablepadding">
-                            <Colbtble />
+                        <div className='tablepadding'>
+                            {dispbom}
                         </div>
                     </div>
                 </div>
             </div>
         </>
-
-
-
-
     );
 }
 

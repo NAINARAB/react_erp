@@ -48,7 +48,7 @@ function Sidenav() {
                                         <button className="nav-link sbutton butful" data-bs-toggle="collapse" data-bs-target="#menu_item1">
                                             <i className="bi bi-person-circle itme"></i>&ensp;
                                             Admin&ensp; <i class="bi bi-chevron-right itmeright"></i> </button>
-                                        <ul id="menu_item1" className="submenu collapse" data-bs-parent="#nav_accordion">
+                                        <ul id="menu_item1" className="submenu collapse" style={{paddingLeft:'0',paddingRight:'0'}} data-bs-parent="#nav_accordion">
 
 
                                             <li>
