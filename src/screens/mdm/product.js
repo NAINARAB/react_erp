@@ -33,7 +33,7 @@ function Product() {
         return (
             <div className="tablepadding">
                 <TableContainer component={Paper}>
-                    <Table sx={{ minWidth: 650 }} aria-label="simple table">
+                    <Table stickyHeader sx={{ minWidth: 650 }} aria-label="simple table">
                         <TableHead >
                             <TableRow>
                                 <TableCell variant="head" sx={{ backgroundColor: 'rgb(15, 11, 42)', color: 'white' }} >S.No</TableCell>
@@ -129,7 +129,7 @@ function Product() {
                         </div>
                     </div><br />
                     <button className="comadbtn">Add</button>
-                    <button className="cancelbtn" onClick={opnProdt} >Cancel</button>
+                    <button className="cancelbtn" onClick={opnProdt} >Back</button>
                 </div>
             </>
         );

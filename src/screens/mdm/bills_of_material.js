@@ -1,7 +1,7 @@
 import * as React from 'react';
 import Header from "../../comp/header/header";
 import Sidenav from "../../comp/sidenav/sidenav";
-import { IconButton, Box, Collapse, TableContainer, Table, TableBody, TableCell, TableHead, TableRow, Paper } from "@mui/material";
+import { IconButton, Button, Box, Collapse, TableContainer, Table, TableBody, TableCell, TableHead, TableRow, Paper } from "@mui/material";
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import AddIcon from '@mui/icons-material/Add';
@@ -10,8 +10,19 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import AddBom from './comp_addbom';
 
 
+import { Dialog, DialogContent, DialogTitle, Slide, DialogActions } from '@mui/material/';
+
+
+const Transition = React.forwardRef(function Transition(props, ref) {
+    return <Slide direction="up" ref={ref} {...props} />;
+});
+
+
 
 function Billsofmaterials() {
+
+
+
 
 
     function createData(sno, product_code, product_name, product_type, action) {
@@ -65,7 +76,7 @@ function Billsofmaterials() {
                                     <h5>{row.product_name} ( Product-Code : {row.product_code})</h5>
                                 </div>
                                 <TableContainer component={Paper}>
-                                    <Table size="small" aria-label="purchases">
+                                    <Table stickyHeader size="small" aria-label="purchases">
                                         <TableHead>
                                             <TableRow>
                                                 <TableCell align='center' sx={{ backgroundColor: 'rgb(15, 11, 42)', color: 'white' }}>Part Name</TableCell>
@@ -93,7 +104,7 @@ function Billsofmaterials() {
                                             ))}
                                         </TableBody>
                                     </Table>
-                                </TableContainer><IconButton onClick={() => { setdispbom(<AddBom />) }} aria-label="expand row" size="small" sx={{ float: 'right', backgroundColor: 'white', margin: '0.5em', color: 'rgb(66, 34, 225)' }}>{<AddIcon />}</IconButton>
+                                </TableContainer><IconButton aria-label="expand row" onClick={openDialogue} size="small" sx={{ float: 'right', backgroundColor: 'white', margin: '0.5em', color: 'rgb(66, 34, 225)' }}>{<AddIcon />}</IconButton>
                             </Box>
                         </Collapse>
                     </TableCell>
@@ -145,10 +156,17 @@ function Billsofmaterials() {
         );
     }
 
-    const [dispbom, setdispbom] = React.useState(<Disptbl />)
+
+    const [dispDilog, setDispDilog] = React.useState(false);
 
 
+    const openDialogue = () => {
+        setDispDilog(true);
+    };
 
+    const handleClose = () => {
+        setDispDilog(false);
+    };
 
 
 
@@ -165,11 +183,45 @@ function Billsofmaterials() {
                 <div className="col-lg-10">
                     <div>
                         <div className="comhed">
-                            <h5>Products</h5>
+                            <h5>Bills of Materials</h5>
                             <h6>Master Data Management / Bills of Materials</h6>
                         </div>
                         <div className='tablepadding'>
-                            {dispbom}
+                            <Disptbl />
+
+
+                            <div>
+                                <Dialog
+                                    open={dispDilog}
+                                    TransitionComponent={Transition}
+                                    keepMounted
+                                    onClose={handleClose}
+                                    aria-describedby="alert-dialog-slide-description"
+                                >
+                                    <DialogTitle>{"Add Bills of Materials"}</DialogTitle>
+
+                                    <DialogContent>
+                                        <label className="micardlble">Part Name</label><br />
+                                        <input className="micardinpt" onChange={(e) => { }} required />
+                                        <label className="micardlble">SFG/RM Code</label><br />
+                                        <input className="micardinpt" onChange={(e) => { }} required />
+                                        <label className="micardlble">SFG/RM Name</label><br />
+                                        <input className="micardinpt" onChange={(e) => { }} required />
+                                        <label className="micardlble">Measurement Unit</label><br />
+                                        <input className="micardinpt" onChange={(e) => { }} required />
+                                        <label className="micardlble">Quantity Required</label><br />
+                                        <input type='number' className="micardinpt" onChange={(e) => { }} required />
+                                        <label className="micardlble">Production Phase</label><br />
+                                        <input className="micardinpt" onChange={(e) => { }} required />
+                                    </DialogContent>
+
+                                    <DialogActions>
+                                        <Button onClick={handleClose}>Cancel</Button>
+                                        <Button onClick={handleClose}>Add</Button>
+                                    </DialogActions>
+
+                                </Dialog>
+                            </div>
                         </div>
                     </div>
                 </div>
