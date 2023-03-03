@@ -85,6 +85,8 @@
 
 .micardlble {
     margin-top: 1.5em;
+    margin-bottom: 0.5em;
+    margin-left: 0.3em;
     font-weight: 400;
     color: black;
 }
@@ -170,6 +172,8 @@
 ::-webkit-scrollbar-thumb:hover {
     background-color: #a8bbbf;
 }
+
+
 
 /* .erptbl {
     border: none;

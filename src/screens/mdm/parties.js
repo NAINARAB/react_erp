@@ -33,7 +33,7 @@ function Row(props) {
 
     return (
         <React.Fragment>
-            <TableRow sx={{ '& > *': { borderBottom: 'unset' } }} hover='true'>
+            <TableRow sx={{ '& > *': { borderBottom: 'unset' } }} hover='true' onClick={() => setOpen(!open)}>
                 <TableCell align="center" component="th" scope="row">
                     {row.sno}
                 </TableCell>
@@ -44,7 +44,7 @@ function Row(props) {
                 <TableCell align="center">{row.email}</TableCell>
                 <TableCell align="center">{row.gstin}</TableCell>
                 <TableCell align="center">{row.products}</TableCell>
-                <TableCell align="center">{row.action}
+                <TableCell width={300} align="center">{row.action}
                     <IconButton
                         aria-label="expand row"
                         size="small"
@@ -207,7 +207,7 @@ function Parties() {
         );
     }
 
-    const [dispparties, setdispparties] = React.useState(<Prty />);
+    const [dispparties, setdispparties] = useState(<Prty />);
 
     return (
         <>

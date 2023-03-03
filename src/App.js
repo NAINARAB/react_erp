@@ -12,7 +12,8 @@ import Parties from './screens/mdm/parties';
 import Phases from './screens/mdm/phases';
 import Partytype from './screens/mdm/party_type';
 import Country from './screens/mdm/country';
-
+import Branches from './screens/manage_user/branches';
+import Department from './screens/manage_user/department';
 
 
 
@@ -43,6 +44,8 @@ function App() {
           <Route path="/admin/mdm/phases" element={<Phases />} />
           <Route path="/admin/mdm/partytype" element={<Partytype />} />
           <Route path="/admin/mdm/country" element={<Country />} />
+          <Route path='/admin/manageusers/branches' element={<Branches />} />
+          <Route path='/admin/manageusers/department' element={<Department />} />
         </Routes>
       </BrowserRouter>
     </div>

@@ -24,6 +24,7 @@
     background-color: transparent;
     border: none;
 }
+
 .cuscard{
     background-color: white;
 }
@@ -56,6 +57,9 @@
     font-size: 1rem !important;
 }
 .butful:focus{
+    background-color: #a5a1a115;
+}
+.butful:hover{
     background-color: #a5a1a115;
 }
 .butful:focus .itmeright{

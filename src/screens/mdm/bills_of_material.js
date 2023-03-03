@@ -7,21 +7,30 @@ import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import AddIcon from '@mui/icons-material/Add';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
-import AddBom from './comp_addbom';
+import Draggable from 'react-draggable';
 
 
 import { Dialog, DialogContent, DialogTitle, Slide, DialogActions } from '@mui/material/';
 
 
 const Transition = React.forwardRef(function Transition(props, ref) {
-    return <Slide direction="up" ref={ref} {...props} />;
+    return <Slide direction="left" ref={ref} {...props} />;
 });
+
+function PaperComponent(props) {
+    return (
+      <Draggable
+        handle="#draggable-dialog-title"
+        cancel={'[class*="MuiDialogContent-root"]'}
+      >
+        <Paper {...props} />
+      </Draggable>
+    );
+  }
 
 
 
 function Billsofmaterials() {
-
-
 
 
 
@@ -49,7 +58,7 @@ function Billsofmaterials() {
 
         return (
             <React.Fragment>
-                <TableRow sx={{ '& > *': { borderBottom: 'unset' } }}>
+                <TableRow sx={{ '& > *': { borderBottom: 'unset' } }} hover='true' onClick={() => setOpen(!open)}>
                     <TableCell component="th" scope="row">
                         {row.sno}
                     </TableCell>
@@ -134,15 +143,15 @@ function Billsofmaterials() {
     let Disptbl = () => {
         return (
             <>
-                <TableContainer component={Paper}>
-                    <Table aria-label="collapsible table">
+                <TableContainer component={Paper} sx={{ maxHeight: 740 }}>
+                    <Table aria-label="collapsible table" stickyHeader>
                         <TableHead>
                             <TableRow>
-                                <TableCell sx={{ backgroundColor: 'rgb(15, 11, 42)', color: 'white' }}>S.No</TableCell>
-                                <TableCell sx={{ backgroundColor: 'rgb(15, 11, 42)', color: 'white' }}>Product Code</TableCell>
-                                <TableCell sx={{ backgroundColor: 'rgb(15, 11, 42)', color: 'white' }}>Product Name</TableCell>
+                                <TableCell width={100} sx={{ backgroundColor: 'rgb(15, 11, 42)', color: 'white' }}>S.No</TableCell>
+                                <TableCell width={200} sx={{ backgroundColor: 'rgb(15, 11, 42)', color: 'white' }}>Product Code</TableCell>
+                                <TableCell width={350} sx={{ backgroundColor: 'rgb(15, 11, 42)', color: 'white' }}>Product Name</TableCell>
                                 <TableCell sx={{ backgroundColor: 'rgb(15, 11, 42)', color: 'white' }}>Product Type</TableCell>
-                                <TableCell sx={{ backgroundColor: 'rgb(15, 11, 42)', color: 'white' }} align='center'>Action</TableCell>
+                                <TableCell sx={{ backgroundColor: 'rgb(15, 11, 42)', color: 'white' }} align='center'></TableCell>
                             </TableRow>
                         </TableHead>
                         <TableBody>
@@ -196,6 +205,8 @@ function Billsofmaterials() {
                                     TransitionComponent={Transition}
                                     keepMounted
                                     onClose={handleClose}
+                                    PaperComponent={PaperComponent}
+                                    aria-labelledby="draggable-dialog-title"
                                     aria-describedby="alert-dialog-slide-description"
                                 >
                                     <DialogTitle>{"Add Bills of Materials"}</DialogTitle>
@@ -208,7 +219,7 @@ function Billsofmaterials() {
                                         <label className="micardlble">SFG/RM Name</label><br />
                                         <input className="micardinpt" onChange={(e) => { }} required />
                                         <label className="micardlble">Measurement Unit</label><br />
-                                        <input className="micardinpt" onChange={(e) => { }} required />
+                                        <input type='number' className="micardinpt" onChange={(e) => { }} required />
                                         <label className="micardlble">Quantity Required</label><br />
                                         <input type='number' className="micardinpt" onChange={(e) => { }} required />
                                         <label className="micardlble">Production Phase</label><br />

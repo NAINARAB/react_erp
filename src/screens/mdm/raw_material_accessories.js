@@ -1,8 +1,10 @@
 import React from "react";
 import Header from "../../comp/header/header";
 import Sidenav from "../../comp/sidenav/sidenav";
-import { TableContainer, Table, TableBody, TableCell, TableHead, TableRow, Paper } from "@mui/material";
+import { TableContainer, Table, TableBody, TableCell, TableHead, TableRow, Paper,IconButton } from "@mui/material";
 import '../common.css';
+import EditIcon from '@mui/icons-material/Edit';
+import DeleteIcon from '@mui/icons-material/Delete';
 import { useState } from "react";
 
 
@@ -20,8 +22,8 @@ function Rawmaterialsaccessories() {
     let Butns = () => {
         return (
             <>
-                <button className="icbtn"><i class="bi bi-pencil-square"></i></button>
-                <button className="icbtn icbtnred"><i class="bi bi-trash-fill"></i></button>
+                <IconButton aria-label="expand row" size="small" sx={{ color: 'rgba(255, 0, 0, 0.755)', backgroundColor: '#f2f2f2' }}><DeleteIcon /></IconButton>
+                <IconButton aria-label="expand row" size="small" sx={{ backgroundColor: '#f2f2f2', marginLeft: '1em' }}><EditIcon /></IconButton>
             </>
         );
     }
@@ -36,8 +38,8 @@ function Rawmaterialsaccessories() {
         return (
             <>
                 <div className="tablepadding">
-                    <TableContainer component={Paper}>
-                        <Table sx={{ minWidth: 650 }} >
+                    <TableContainer component={Paper} sx={{ maxHeight: 650 }}>
+                        <Table stickyHeader sx={{ minWidth: 650 }} >
                             <TableHead >
                                 <TableRow sx={{ backgroundColor: 'rgb(15, 11, 42)' }}>
                                     <TableCell variant="head" sx={{ backgroundColor: 'rgb(15, 11, 42)', color: 'white' }} >S.No</TableCell>
@@ -55,6 +57,7 @@ function Rawmaterialsaccessories() {
                                     <TableRow
                                         key={row.sno}
                                         sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                                        hover='true'
                                     >
                                         <TableCell component="th" scope="row">
                                             {row.sno}
@@ -125,7 +128,7 @@ function Rawmaterialsaccessories() {
                         </div>
                     </div><br />
                     <button className="comadbtn">Add</button>
-                    <button className="cancelbtn" onClick={opnRMA} >Cancel</button>
+                    <button className="cancelbtn" onClick={opnRMA} >Back</button>
                 </div>
             </>
         );

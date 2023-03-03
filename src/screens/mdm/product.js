@@ -1,8 +1,10 @@
 import React, { useState } from "react";
 import Header from "../../comp/header/header";
 import Sidenav from "../../comp/sidenav/sidenav";
-import { TableContainer, Table, TableBody, TableCell, TableHead, TableRow, Paper } from "@mui/material";
-import '../common.css'
+import { TableContainer, Table, TableBody, TableCell, TableHead, TableRow, Paper,IconButton } from "@mui/material";
+import '../common.css';
+import EditIcon from '@mui/icons-material/Edit';
+import DeleteIcon from '@mui/icons-material/Delete';
 
 
 function Product() {
@@ -14,8 +16,8 @@ function Product() {
     let Butns = () => {
         return (
             <>
-                <button className="icbtn"><i className="bi bi-pencil-square"></i></button>
-                <button className="icbtn icbtnred"><i className="bi bi-trash-fill"></i></button>
+                <IconButton aria-label="expand row" size="small" sx={{ color: 'rgba(255, 0, 0, 0.755)', backgroundColor: '#f2f2f2' }}><DeleteIcon /></IconButton>
+                <IconButton aria-label="expand row" size="small" sx={{ backgroundColor: '#f2f2f2', marginLeft: '1em' }}><EditIcon /></IconButton>
             </>
         );
     }
@@ -32,8 +34,8 @@ function Product() {
     let Prodt = () => {
         return (
             <div className="tablepadding">
-                <TableContainer component={Paper}>
-                    <Table stickyHeader sx={{ minWidth: 650 }} aria-label="simple table">
+                <TableContainer component={Paper} sx={{ maxHeight:650}}>
+                    <Table stickyHeader aria-label="simple table">
                         <TableHead >
                             <TableRow>
                                 <TableCell variant="head" sx={{ backgroundColor: 'rgb(15, 11, 42)', color: 'white' }} >S.No</TableCell>
@@ -50,7 +52,7 @@ function Product() {
                         </TableHead>
                         <TableBody>
                             {rows.map((row) => (
-                                <TableRow sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
+                                <TableRow sx={{ '&:last-child td, &:last-child th': { border: 0 } }} hover='true'>
                                     <TableCell component="th" scope="row">
                                         {row.sno}
                                     </TableCell>
@@ -81,8 +83,8 @@ function Product() {
                         <h5 className="micardhdr">Add Product</h5>
                         <div className="micardbdy row">
                             <div className="col-lg-4">
-                                <label className="micardlble" onChange={(e) => {setproductname(e.target.value);}}>Product Name</label><br />
-                                <input className="micardinpt" required/>
+                                <label className="micardlble" >Product Name</label><br />
+                                <input className="micardinpt" onChange={(e) => {setproductname(e.target.value);}} required/>
                             </div>
 
                             <div className="col-lg-4">
@@ -156,6 +158,8 @@ function Product() {
     const [maxpricecurrency, setmaxpricecurrency] =useState('');
     const [maxprice, setmaxprice] = useState();
     const [multipleparts, setmultipleparts] = useState(false);
+
+    
 
     return (
 
