@@ -13,11 +13,11 @@ function createDepartmentData(sno, departmentname, role, action) {
     return { sno, departmentname, role, action }
 }
 
-let Butns = () => {
+function Butns() {
     return (
         <>
-            <IconButton aria-label="expand row" size="small" sx={{ color: 'rgba(255, 0, 0, 0.755)', backgroundColor: '#f2f2f2' }}><DeleteIcon /></IconButton>
-            <IconButton aria-label="expand row" size="small" sx={{ backgroundColor: '#f2f2f2', marginLeft: '1em' }}><EditIcon /></IconButton>
+            <IconButton aria-label="expand row" size="small" sx={{ marginLeft: '0.5em' }}><EditIcon /></IconButton>
+            <IconButton aria-label="expand row" size="small" sx={{ color: 'rgba(255, 0, 0, 0.755)', marginRight: '1em' }}><DeleteIcon /></IconButton>
         </>
     );
 }
@@ -45,10 +45,10 @@ let DepartmentComp = () => {
                 <Table stickyHeader aria-label="simple table">
                     <TableHead >
                         <TableRow>
-                            <TableCell width={100} variant="head" sx={{ backgroundColor: 'rgb(15, 11, 42)', color: 'white' }}>S.No</TableCell>
-                            <TableCell width={250} variant="head" sx={{ backgroundColor: 'rgb(15, 11, 42)', color: 'white' }}>Department Name</TableCell>
-                            <TableCell variant="head" sx={{ backgroundColor: 'rgb(15, 11, 42)', color: 'white' }}>Role</TableCell>
-                            <TableCell width={200} variant="head" sx={{ backgroundColor: 'rgb(15, 11, 42)', color: 'white' }}>Action</TableCell>
+                            <TableCell width={100} variant="head" sx={{ backgroundColor: 'rgb(15, 11, 42)', color: 'white',fontWeight:'bold' }}>S.No</TableCell>
+                            <TableCell width={250} variant="head" sx={{ backgroundColor: 'rgb(15, 11, 42)', color: 'white',fontWeight:'bold' }}>Department Name</TableCell>
+                            <TableCell variant="head" sx={{ backgroundColor: 'rgb(15, 11, 42)', color: 'white',fontWeight:'bold' }}>Role</TableCell>
+                            <TableCell width={200} variant="head" sx={{ backgroundColor: 'rgb(15, 11, 42)', color: 'white',fontWeight:'bold' }}>Action</TableCell>
                         </TableRow>
                     </TableHead>
 

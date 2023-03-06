@@ -1,10 +1,12 @@
 import React, { useState } from "react";
 import Header from "../../comp/header/header";
 import Sidenav from "../../comp/sidenav/sidenav";
-import { TableContainer, Table, TableBody, TableCell, TableHead, TableRow, Paper,IconButton } from "@mui/material";
+import { TableContainer, Table, TableBody, TableCell, TableHead, TableRow, Paper, IconButton } from "@mui/material";
 import '../common.css';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
+
+
 
 
 function Product() {
@@ -13,20 +15,39 @@ function Product() {
         return { sno, prname, prtype, mins, minpr, maxpr, curncy, multi, parts, action };
     }
 
-    let Butns = () => {
+    function Butns() {
         return (
             <>
-                <IconButton aria-label="expand row" size="small" sx={{ color: 'rgba(255, 0, 0, 0.755)', backgroundColor: '#f2f2f2' }}><DeleteIcon /></IconButton>
-                <IconButton aria-label="expand row" size="small" sx={{ backgroundColor: '#f2f2f2', marginLeft: '1em' }}><EditIcon /></IconButton>
+                <IconButton aria-label="expand row" size="small" sx={{ marginLeft: '0.5em' }}><EditIcon /></IconButton>
+                <IconButton aria-label="expand row" size="small" sx={{ color: 'rgba(255, 0, 0, 0.755)', marginRight: '1em' }}><DeleteIcon /></IconButton>
             </>
         );
     }
 
-
     const rows = [
-        createData(1, 'Cooker', 'Finished', 100, 3000, 1000, 'INR', 'True', 'Lid', <Butns />),
-        createData(2, 'Cookerr', 'Finished', 100, 3000, 1000, 'INR', 'True', 'Lid', <Butns />),
+        createData(1, 'product','finished', 200, 200, 200, 'INR', 1,1, <Butns />),
+        createData(1, 'product','finished', 200, 200, 200, 'INR', 1,1, <Butns />),
+        createData(1, 'product','finished', 200, 200, 200, 'INR', 1,1, <Butns />),
+        createData(1, 'product','finished', 200, 200, 200, 'INR', 1,1, <Butns />),
     ];
+
+    let producturl = 'https://erp-dwe8a.ondigitalocean.app/api/get?model=product'
+
+    let getdata = {
+        method: "GET",
+        headers: {
+            "Content-Type": "application/json",
+        }
+    }
+    fetch(producturl, getdata)
+        .then((data) => { return data.json(); })
+        .then((newdata) => {
+            newdata.data.map((obj) => { rows.push(createData(1,obj.product_name,obj.product_type,obj.min_stock,
+                obj.minimum_price,obj.maximum_price,obj.currency,obj.multiple_parts,"Bottom",<Butns />)) })
+        })
+
+
+
 
 
 
@@ -34,7 +55,7 @@ function Product() {
     let Prodt = () => {
         return (
             <div className="tablepadding">
-                <TableContainer component={Paper} sx={{ maxHeight:650}}>
+                <TableContainer component={Paper} sx={{ maxHeight: 650 }}>
                     <Table stickyHeader aria-label="simple table">
                         <TableHead >
                             <TableRow>
@@ -84,12 +105,12 @@ function Product() {
                         <div className="micardbdy row">
                             <div className="col-lg-4">
                                 <label className="micardlble" >Product Name</label><br />
-                                <input className="micardinpt" onChange={(e) => {setproductname(e.target.value);}} required/>
+                                <input className="micardinpt" onChange={(e) => { setproductname(e.target.value); }} required />
                             </div>
 
                             <div className="col-lg-4">
                                 <label className="micardlble">Product Type</label><br />
-                                <select className="micardinpt" onChange={(e) => {setproductype(e.target.value);}}>
+                                <select className="micardinpt" onChange={(e) => { setproductype(e.target.value); }}>
                                     <option selected='true' disabled='true' value={''} required>Select Type</option>
                                     <option>Finished</option>
                                     <option>Semi-Finished</option>
@@ -98,7 +119,7 @@ function Product() {
 
                             <div className="col-lg-4">
                                 <label className="micardlble">Currency</label><br />
-                                <select className="micardinpt" onChange={(e) => {setcurrency(e.target.value);}}>
+                                <select className="micardinpt" onChange={(e) => { setcurrency(e.target.value); }}>
                                     <option selected='true' disabled='true' value={''} required>Select Currency</option>
                                 </select>
                             </div>
@@ -106,25 +127,25 @@ function Product() {
 
                             <div className="col-lg-4">
                                 <label className="micardlble">Min Price</label><br />
-                                <select className="micardgrpinpt" onChange={(e) => {setminpricecurrency(e.target.value)}} >
+                                <select className="micardgrpinpt" onChange={(e) => { setminpricecurrency(e.target.value) }} >
                                     <option selected='true'>INR</option>
                                 </select>
-                                <input type='number' onChange={(e) => {setminprice(e.target.value);}} className="micardgrpinpt1" />
+                                <input type='number' onChange={(e) => { setminprice(e.target.value); }} className="micardgrpinpt1" />
                             </div>
 
 
                             <div className="col-lg-4">
                                 <label className="micardlble">Max Price</label><br />
-                                <select className="micardgrpinpt" onChange={(e) => {setmaxpricecurrency(e.target.value);}}>
+                                <select className="micardgrpinpt" onChange={(e) => { setmaxpricecurrency(e.target.value); }}>
                                     <option selected='true'>INR</option>
                                 </select>
-                                <input type='number' onChange={(e) => {setmaxprice(e.target.value);}} className="micardgrpinpt1" />
+                                <input type='number' onChange={(e) => { setmaxprice(e.target.value); }} className="micardgrpinpt1" />
                             </div>
 
                             <div className="col-lg-4">
                                 <label className="micardlble">Multiple Parts</label><br />
                                 <div className="micardboxinpt">
-                                    <input type='checkbox' onChange={(e) => {setmultipleparts(e.target.value);}} style={{height:'1em', width:'1em'}} /> &emsp;Add Multiple Parts
+                                    <input type='checkbox' onChange={(e) => { setmultipleparts(e.target.value); }} style={{ height: '1em', width: '1em' }} /> &emsp;Add Multiple Parts
                                 </div>
                             </div>
 
@@ -139,27 +160,27 @@ function Product() {
 
     const [dispproduct, setproduct] = useState(<Prodt />)
 
-    function opnAdd(){
+    function opnAdd() {
         let x = document.getElementById('adbtn');
         setproduct(<Addproduct />);
-        x.style.display ='none';
+        x.style.display = 'none';
     }
-    function opnProdt(){
+    function opnProdt() {
         let x = document.getElementById('adbtn');
         setproduct(<Prodt />);
-        x.style.display ='block';
+        x.style.display = 'block';
     }
 
     const [productname, setproductname] = useState('');
     const [producttype, setproductype] = useState('');
     const [currency, setcurrency] = useState('');
-    const [minpricecurrency, setminpricecurrency] =useState('');
-    const [minprice, setminprice] =useState();
-    const [maxpricecurrency, setmaxpricecurrency] =useState('');
+    const [minpricecurrency, setminpricecurrency] = useState('');
+    const [minprice, setminprice] = useState();
+    const [maxpricecurrency, setmaxpricecurrency] = useState('');
     const [maxprice, setmaxprice] = useState();
     const [multipleparts, setmultipleparts] = useState(false);
 
-    
+
 
     return (
 

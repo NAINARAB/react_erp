@@ -5,7 +5,7 @@ import axios from 'axios';
 import './login.css';
 function Login() {
     const navigate = useNavigate();
-    const [name, setname] = useState('');
+    const [employee_id, setEmployeeid] = useState('');
     const [password, setpassword] = useState('');
 
 
@@ -14,9 +14,9 @@ function Login() {
       });
 
 
-      const  getLogin = (name,password) => {
+      const  getLogin = (employee_id,password) => {
         client1.post('', {
-            name:name,
+            employee_id:employee_id,
             password:password,
            })
            .then((res) => {
@@ -41,7 +41,7 @@ function Login() {
 
       const dologin=(e)=>{
         e.preventDefault();
-        getLogin(name,password);
+        getLogin(employee_id,password);
      }
 
 
@@ -61,10 +61,10 @@ function Login() {
                             <br /><br />
                             <form>
                                 Email
-                                <input type='text' className='loginpt' onChange={(e) => {setname(e.target.value)}} required autoFocus='ture' />
+                                <input type='text' className='loginpt' onChange={(e) => {setEmployeeid(e.target.value)}} required autoFocus='ture' />
                                 Password
                                 <input type='password' className='loginpt' onChange={(e) => {setpassword(e.target.value)}} required /><br />
-                                <button className='logsbmt' type='submit' onClick={() => {navigate('/admin/mdm/product')}}>Sign In</button>
+                                <button className='logsbmt' type='submit' onClick={dologin}>Sign In</button>
                                 <button className='logfrgt'>Forget Password?</button>
                             </form><br />
                             <p className='para'>By Signing in you agree to the Terms of Service and Privacy Policy</p>

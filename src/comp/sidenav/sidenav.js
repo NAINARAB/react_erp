@@ -72,13 +72,13 @@ function Sidenav() {
                                             <li>
                                                 <button className="nav-link sbutton butful" data-bs-toggle="collapse" data-bs-target="#menu_item3">
                                                     <i className="bi bi-people-fill itme"></i>&ensp;
-                                                    Users &ensp;<i className="bi bi-chevron-right itmeright"></i></button>
+                                                    Manage Users &ensp;<i className="bi bi-chevron-right itmeright"></i></button>
                                                 <ul id="menu_item3" class="submenu collapse">
                                                     <li><button className="nav-link sbutton" onClick={() => { navigate ('/admin/manageusers/branches')}}><i className="bi bi-dot"></i>Branches</button></li>
                                                     <li><button className="nav-link sbutton" onClick={() => { navigate ('/admin/manageusers/department')}}><i className="bi bi-dot"></i>Department</button></li>
-                                                    <li><button className="nav-link sbutton" onClick={() => { navigate ('/admin/manageusers/')}}><i className="bi bi-dot"></i>Devision</button></li>
-                                                    <li><button className="nav-link sbutton" onClick={() => { navigate ('/admin/manageusers/')}}><i className="bi bi-dot"></i>User</button></li>
-                                                    <li><button className="nav-link sbutton" onClick={() => { navigate ('/admin/manageusers/')}}><i className="bi bi-dot"></i>User Role</button></li>
+                                                    <li><button className="nav-link sbutton" onClick={() => { navigate ('/admin/manageusers/devision')}}><i className="bi bi-dot"></i>Devision</button></li>
+                                                    <li><button className="nav-link sbutton" onClick={() => { navigate ('/admin/manageusers/users')}}><i className="bi bi-dot"></i>User</button></li>
+                                                    <li><button className="nav-link sbutton" onClick={() => { navigate ('/admin/manageusers/userrole')}}><i className="bi bi-dot"></i>User Role</button></li>
                                                 </ul>
                                             </li>
 
