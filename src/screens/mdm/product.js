@@ -11,6 +11,8 @@ import DeleteIcon from '@mui/icons-material/Delete';
 
 function Product() {
 
+    const [productData, setProdata] = useState([])
+
     function createData(sno, prname, prtype, mins, minpr, maxpr, curncy, multi, parts, action) {
         return { sno, prname, prtype, mins, minpr, maxpr, curncy, multi, parts, action };
     }
@@ -24,35 +26,61 @@ function Product() {
         );
     }
 
-    const rows = [
-        createData(1, 'product','finished', 200, 200, 200, 'INR', 1,1, <Butns />),
-        createData(1, 'product','finished', 200, 200, 200, 'INR', 1,1, <Butns />),
-        createData(1, 'product','finished', 200, 200, 200, 'INR', 1,1, <Butns />),
-        createData(1, 'product','finished', 200, 200, 200, 'INR', 1,1, <Butns />),
-    ];
+    let rows = [];
+    
 
-    let producturl = 'https://erp-dwe8a.ondigitalocean.app/api/get?model=product'
-
-    let getdata = {
-        method: "GET",
-        headers: {
-            "Content-Type": "application/json",
-        }
-    }
-    fetch(producturl, getdata)
-        .then((data) => { return data.json(); })
-        .then((newdata) => {
-            newdata.data.map((obj) => { rows.push(createData(1,obj.product_name,obj.product_type,obj.min_stock,
-                obj.minimum_price,obj.maximum_price,obj.currency,obj.multiple_parts,"Bottom",<Butns />)) })
+    fetch('https://erp-dwe8a.ondigitalocean.app/api/get?model=product')
+        .then((res) => { return res.json(); })
+        .then((dataobj) => {
+            let objvar = []; objvar = dataobj.data;
+            rows.push(objvar)
+            console.log(rows)
+            console.log(rows[0].map((rowobj) => (rowobj.product_name)))
+            let duprows = rows[0];
+            console.log("duprows",duprows)
         })
 
 
+    // rows[i].map((rowobj) => (rowobj.product_name))
+    // let objvar = JSON.parse(dataobj.data.product_name);
+    // setProdata(objvar);
+    // setProdata(fchdata);
+    // console.log(productData)
+    // let count = 0;
+    //         const fchdata = {
+    //             sno: count + 1,
+    // prname: dov.product_name,
+    // prtype: dov.product_type,
+    // mins: dov.min_stock,
+    // minpr: dov.minimum_price,
+    // maxpr: dov.maximum_price,
+    // curncy: dov.currency,
+    // multi: dov.multiple_parts,
+    // parts: "text",
+    // action: "simp"
+    //         }
+
+    // dataobj.data.map((newobj) => (setPro(newobj.product_name)))
+
+    // rows.push(createData(1, newobj.product_name, newobj.product_type, newobj.min_stock,
+    //     newobj.minimum_price, newobj.maximum_price, newobj.currency, newobj.multiple_parts,
+    //     "hi", <Butns />))
+
+    // .map((obj) => (console.log(obj.product_code)))
+    // (newobj) => ( rows.push(
+    // createData(1, newobj.product_name, newobj.product_type, newobj.min_stock,
+    //     newobj.minimum_price, newobj.maximum_price, newobj.currency, newobj.multiple_parts,
+    //     "hi", <Butns />)
+    // ))
 
 
 
 
 
-    let Prodt = () => {
+
+
+    let Prodt =  () => {
+
         return (
             <div className="tablepadding">
                 <TableContainer component={Paper} sx={{ maxHeight: 650 }}>
@@ -72,22 +100,23 @@ function Product() {
                             </TableRow>
                         </TableHead>
                         <TableBody>
-                            {rows.map((row) => (
+                            {rows.map((rowobj) => (
                                 <TableRow sx={{ '&:last-child td, &:last-child th': { border: 0 } }} hover='true'>
                                     <TableCell component="th" scope="row">
-                                        {row.sno}
+                                        {1}
                                     </TableCell>
-                                    <TableCell>{row.prname}</TableCell>
-                                    <TableCell>{row.prtype}</TableCell>
-                                    <TableCell>{row.mins}</TableCell>
-                                    <TableCell>{row.minpr}</TableCell>
-                                    <TableCell>{row.maxpr}</TableCell>
-                                    <TableCell>{row.curncy}</TableCell>
-                                    <TableCell>{row.multi}</TableCell>
-                                    <TableCell>{row.parts}</TableCell>
-                                    <TableCell>{row.action}</TableCell>
+                                    <TableCell>{rowobj.product_name}</TableCell>
+                                    <TableCell>{rowobj.product_type}</TableCell>
+                                    <TableCell>{rowobj.min_stock}</TableCell>
+                                    <TableCell>{rowobj.minimum_price}</TableCell>
+                                    <TableCell>{rowobj.maximum_price}</TableCell>
+                                    <TableCell>{rowobj.currency}</TableCell>
+                                    <TableCell>{rowobj.multiple_parts}</TableCell>
+                                    <TableCell>{rowobj.parts}</TableCell>
+                                    <TableCell>{<Butns />}</TableCell>
                                 </TableRow>
-                            ))}
+                            ))
+                            }
                         </TableBody>
                     </Table>
                 </TableContainer>
