@@ -9,61 +9,63 @@ function Login() {
     const [password, setpassword] = useState('');
 
 
-      const client1 = axios.create({
-        baseURL: "https://erp-dwe8a.ondigitalocean.app/api/login/" 
-      });
+    const client1 = axios.create({
+        baseURL: "https://erp-dwe8a.ondigitalocean.app/api/login/"
+    });
 
 
-      const  getLogin = (employee_id,password) => {
+    const getLogin = (employee_id, password) => {
         client1.post('', {
-            employee_id:employee_id,
-            password:password,
-           })
-           .then((res) => {
-              console.log("after then",res)
-              if(res.data.code = 200){
-                let id = JSON.parse(res.data.data.id)
-                console.log("before navigate",id)
-                sessionStorage.setItem("id",id)
-                console.log(id);
-                navigate('/admin/mdm/product');
-              }
-              
-              else if(res.data.status === 'failure'){
-                  alert('Invalid User Id Or Password');
-            }  
-              
-           }).catch((err)=>{
-            console.log(err);
-           })
-      };
+            employee_id: employee_id,
+            password: password,
+        })
+            .then((res) => {
+                console.log("after then", res)
+                if (res.data.code = 200) {
+                    let id = JSON.parse(res.data.data.id)
+                    console.log("before navigate", id)
+                    sessionStorage.setItem("id", id)
+                    console.log(id);
+                    navigate('/admin/mdm/product');
+                }
+
+                else {
+                    if (res.data.status === 'failure') {
+                        alert('Invalid User Id Or Password');
+                    }
+                }
+
+            }).catch((err) => {
+                console.log(err);
+            })
+    };
 
 
-      const dologin=(e)=>{
+    const dologin = (e) => {
         e.preventDefault();
-        getLogin(employee_id,password);
-     }
+        getLogin(employee_id, password);
+    }
 
 
 
 
-  
+
     return (
         <div>
             <div className='main'>
                 <div className='cntr'>
                     <div style={{ marginTop: '5%' }}>
-                        <h2 style={{textAlign:'center'}}>👋 Welcome Back</h2>
-                        <p style={{textAlign:'center'}}>Sign in to your account to continue</p>
+                        <h2 style={{ textAlign: 'center' }}>👋 Welcome Back</h2>
+                        <p style={{ textAlign: 'center' }}>Sign in to your account to continue</p>
                         <div className='logform'><br />
-                            <div style={{fontSize:'23px'}}><h2 className='hedundr'>Sig</h2>n In</div>
+                            <div style={{ fontSize: '23px' }}><h2 className='hedundr'>Sig</h2>n In</div>
 
                             <br /><br />
                             <form>
                                 Email
-                                <input type='text' className='loginpt' onChange={(e) => {setEmployeeid(e.target.value)}} required autoFocus='ture' />
+                                <input type='text' className='loginpt' onChange={(e) => { setEmployeeid(e.target.value) }} required autoFocus='ture' />
                                 Password
-                                <input type='password' className='loginpt' onChange={(e) => {setpassword(e.target.value)}} required /><br />
+                                <input type='password' className='loginpt' onChange={(e) => { setpassword(e.target.value) }} required /><br />
                                 <button className='logsbmt' type='submit' onClick={dologin}>Sign In</button>
                                 <button className='logfrgt'>Forget Password?</button>
                             </form><br />

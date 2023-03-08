@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Header from "../../comp/header/header";
 import Sidenav from "../../comp/sidenav/sidenav";
 import { TableContainer, Table, TableBody, TableCell, TableHead, TableRow, Paper, IconButton } from "@mui/material";
@@ -10,12 +10,17 @@ import DeleteIcon from '@mui/icons-material/Delete';
 
 
 function Product() {
-
-    const [productData, setProdata] = useState([])
-
-    function createData(sno, prname, prtype, mins, minpr, maxpr, curncy, multi, parts, action) {
-        return { sno, prname, prtype, mins, minpr, maxpr, curncy, multi, parts, action };
-    }
+    let [rows, setrows] = useState([]);
+    const [productname, setproductname] = useState('');
+    const [producttype, setproductype] = useState('');
+    const [currency, setcurrency] = useState('');
+    const [minpricecurrency, setminpricecurrency] = useState('');
+    const [minprice, setminprice] = useState();
+    const [maxpricecurrency, setmaxpricecurrency] = useState('');
+    const [maxprice, setmaxprice] = useState();
+    const [multipleparts, setmultipleparts] = useState(false);
+    const [dispaddpro, setaddpro] = useState(false);
+    let count = 1;
 
     function Butns() {
         return (
@@ -26,193 +31,98 @@ function Product() {
         );
     }
 
-    let rows = [];
-    
 
-    fetch('https://erp-dwe8a.ondigitalocean.app/api/get?model=product')
-        .then((res) => { return res.json(); })
-        .then((dataobj) => {
-            let objvar = []; objvar = dataobj.data;
-            rows.push(objvar)
-            console.log(rows)
-            console.log(rows[0].map((rowobj) => (rowobj.product_name)))
-            let duprows = rows[0];
-            console.log("duprows",duprows)
-        })
+    useEffect(() => {
 
+        fetch('https://erp-dwe8a.ondigitalocean.app/api/get?model=product')
+            .then((res) => { return res.json(); })
+            .then((data) => {
+                setrows(data.data)
+                console.log(data.data)
+            })
 
-    // rows[i].map((rowobj) => (rowobj.product_name))
-    // let objvar = JSON.parse(dataobj.data.product_name);
-    // setProdata(objvar);
-    // setProdata(fchdata);
-    // console.log(productData)
-    // let count = 0;
-    //         const fchdata = {
-    //             sno: count + 1,
-    // prname: dov.product_name,
-    // prtype: dov.product_type,
-    // mins: dov.min_stock,
-    // minpr: dov.minimum_price,
-    // maxpr: dov.maximum_price,
-    // curncy: dov.currency,
-    // multi: dov.multiple_parts,
-    // parts: "text",
-    // action: "simp"
-    //         }
+    }, [])
 
-    // dataobj.data.map((newobj) => (setPro(newobj.product_name)))
-
-    // rows.push(createData(1, newobj.product_name, newobj.product_type, newobj.min_stock,
-    //     newobj.minimum_price, newobj.maximum_price, newobj.currency, newobj.multiple_parts,
-    //     "hi", <Butns />))
-
-    // .map((obj) => (console.log(obj.product_code)))
-    // (newobj) => ( rows.push(
-    // createData(1, newobj.product_name, newobj.product_type, newobj.min_stock,
-    //     newobj.minimum_price, newobj.maximum_price, newobj.currency, newobj.multiple_parts,
-    //     "hi", <Butns />)
-    // ))
-
-
-
-
-
-
-
-    let Prodt =  () => {
-
-        return (
-            <div className="tablepadding">
-                <TableContainer component={Paper} sx={{ maxHeight: 650 }}>
-                    <Table stickyHeader aria-label="simple table">
-                        <TableHead >
-                            <TableRow>
-                                <TableCell variant="head" sx={{ backgroundColor: 'rgb(15, 11, 42)', color: 'white' }} >S.No</TableCell>
-                                <TableCell variant="head" sx={{ backgroundColor: 'rgb(15, 11, 42)', color: 'white' }} >Product Name</TableCell>
-                                <TableCell variant="head" sx={{ backgroundColor: 'rgb(15, 11, 42)', color: 'white' }} >Product Type</TableCell>
-                                <TableCell variant="head" sx={{ backgroundColor: 'rgb(15, 11, 42)', color: 'white' }} >Min Stock</TableCell>
-                                <TableCell variant="head" sx={{ backgroundColor: 'rgb(15, 11, 42)', color: 'white' }} >Min Price</TableCell>
-                                <TableCell variant="head" sx={{ backgroundColor: 'rgb(15, 11, 42)', color: 'white' }} >Max Price</TableCell>
-                                <TableCell variant="head" sx={{ backgroundColor: 'rgb(15, 11, 42)', color: 'white' }} >Currency</TableCell>
-                                <TableCell variant="head" sx={{ backgroundColor: 'rgb(15, 11, 42)', color: 'white' }} >Multiple Parts</TableCell>
-                                <TableCell variant="head" sx={{ backgroundColor: 'rgb(15, 11, 42)', color: 'white' }} >Parts</TableCell>
-                                <TableCell variant="head" sx={{ backgroundColor: 'rgb(15, 11, 42)', color: 'white' }} >Action</TableCell>
-                            </TableRow>
-                        </TableHead>
-                        <TableBody>
-                            {rows.map((rowobj) => (
-                                <TableRow sx={{ '&:last-child td, &:last-child th': { border: 0 } }} hover='true'>
-                                    <TableCell component="th" scope="row">
-                                        {1}
-                                    </TableCell>
-                                    <TableCell>{rowobj.product_name}</TableCell>
-                                    <TableCell>{rowobj.product_type}</TableCell>
-                                    <TableCell>{rowobj.min_stock}</TableCell>
-                                    <TableCell>{rowobj.minimum_price}</TableCell>
-                                    <TableCell>{rowobj.maximum_price}</TableCell>
-                                    <TableCell>{rowobj.currency}</TableCell>
-                                    <TableCell>{rowobj.multiple_parts}</TableCell>
-                                    <TableCell>{rowobj.parts}</TableCell>
-                                    <TableCell>{<Butns />}</TableCell>
-                                </TableRow>
-                            ))
-                            }
-                        </TableBody>
-                    </Table>
-                </TableContainer>
-            </div>
-        );
-    }
 
 
     let Addproduct = () => {
         return (
             <>
-                <div className="tablepadding">
-                    <div className="micard">
-                        <h5 className="micardhdr">Add Product</h5>
-                        <div className="micardbdy row">
-                            <div className="col-lg-4">
-                                <label className="micardlble" >Product Name</label><br />
-                                <input className="micardinpt" onChange={(e) => { setproductname(e.target.value); }} required />
-                            </div>
-
-                            <div className="col-lg-4">
-                                <label className="micardlble">Product Type</label><br />
-                                <select className="micardinpt" onChange={(e) => { setproductype(e.target.value); }}>
-                                    <option selected='true' disabled='true' value={''} required>Select Type</option>
-                                    <option>Finished</option>
-                                    <option>Semi-Finished</option>
-                                </select>
-                            </div>
-
-                            <div className="col-lg-4">
-                                <label className="micardlble">Currency</label><br />
-                                <select className="micardinpt" onChange={(e) => { setcurrency(e.target.value); }}>
-                                    <option selected='true' disabled='true' value={''} required>Select Currency</option>
-                                </select>
-                            </div>
-
-
-                            <div className="col-lg-4">
-                                <label className="micardlble">Min Price</label><br />
-                                <select className="micardgrpinpt" onChange={(e) => { setminpricecurrency(e.target.value) }} >
-                                    <option selected='true'>INR</option>
-                                </select>
-                                <input type='number' onChange={(e) => { setminprice(e.target.value); }} className="micardgrpinpt1" />
-                            </div>
-
-
-                            <div className="col-lg-4">
-                                <label className="micardlble">Max Price</label><br />
-                                <select className="micardgrpinpt" onChange={(e) => { setmaxpricecurrency(e.target.value); }}>
-                                    <option selected='true'>INR</option>
-                                </select>
-                                <input type='number' onChange={(e) => { setmaxprice(e.target.value); }} className="micardgrpinpt1" />
-                            </div>
-
-                            <div className="col-lg-4">
-                                <label className="micardlble">Multiple Parts</label><br />
-                                <div className="micardboxinpt">
-                                    <input type='checkbox' onChange={(e) => { setmultipleparts(e.target.value); }} style={{ height: '1em', width: '1em' }} /> &emsp;Add Multiple Parts
-                                </div>
-                            </div>
-
+                <div className="micard">
+                    <h5 className="micardhdr">Add Product</h5>
+                    <div className="micardbdy row">
+                        <div className="col-lg-4">
+                            <label className="micardlble" >Product Name</label><br />
+                            <input className="micardinpt" onChange={(e) => { setproductname(e.target.value); }} required />
                         </div>
-                    </div><br />
-                    <button className="comadbtn">Add</button>
-                    <button className="cancelbtn" onClick={opnProdt} >Back</button>
-                </div>
+
+                        <div className="col-lg-4">
+                            <label className="micardlble">Product Type</label><br />
+                            <select className="micardinpt" onChange={(e) => { setproductype(e.target.value); }}>
+                                <option selected='true' disabled='true' value={''} required>Select Type</option>
+                                <option>Finished</option>
+                                <option>Semi-Finished</option>
+                            </select>
+                        </div>
+
+                        <div className="col-lg-4">
+                            <label className="micardlble">Currency</label><br />
+                            <select className="micardinpt" onChange={(e) => { setcurrency(e.target.value); }}>
+                                <option selected='true' disabled='true' value={''} required>Select Currency</option>
+                            </select>
+                        </div>
+
+
+                        <div className="col-lg-4">
+                            <label className="micardlble">Min Price</label><br />
+                            <select className="micardgrpinpt" onChange={(e) => { setminpricecurrency(e.target.value) }} >
+                                <option selected='true'>INR</option>
+                            </select>
+                            <input type='number' onChange={(e) => { setminprice(e.target.value); }} className="micardgrpinpt1" />
+                        </div>
+
+
+                        <div className="col-lg-4">
+                            <label className="micardlble">Max Price</label><br />
+                            <select className="micardgrpinpt" onChange={(e) => { setmaxpricecurrency(e.target.value); }}>
+                                <option selected='true'>INR</option>
+                            </select>
+                            <input type='number' onChange={(e) => { setmaxprice(e.target.value); }} className="micardgrpinpt1" />
+                        </div>
+
+                        <div className="col-lg-4">
+                            <label className="micardlble">Multiple Parts</label><br />
+                            <div className="micardboxinpt">
+                                <input type='checkbox' id="mult" style={{ height: '1em', width: '1em' }} /> &emsp;Add Multiple Parts
+                            </div>
+                        </div>
+                        <div className="col-lg-10">
+                            
+                        </div>
+
+                    </div>
+                </div><br />
+                <button className="comadbtn">Add</button>
+                <button className="cancelbtn" onClick={opnProdt} >Back</button>
             </>
         );
     }
 
-    const [dispproduct, setproduct] = useState(<Prodt />)
-
     function opnAdd() {
-        let x = document.getElementById('adbtn');
-        setproduct(<Addproduct />);
-        x.style.display = 'none';
+        document.getElementById('adbtn').style.display = 'none';
+        document.getElementById('dispproduct').style.display = 'none';
+        setaddpro(true)
+
     }
     function opnProdt() {
-        let x = document.getElementById('adbtn');
-        setproduct(<Prodt />);
-        x.style.display = 'block';
+        document.getElementById('adbtn').style.display = 'block';;
+        document.getElementById('dispproduct').style.display = 'block';
+        setaddpro(false)
     }
-
-    const [productname, setproductname] = useState('');
-    const [producttype, setproductype] = useState('');
-    const [currency, setcurrency] = useState('');
-    const [minpricecurrency, setminpricecurrency] = useState('');
-    const [minprice, setminprice] = useState();
-    const [maxpricecurrency, setmaxpricecurrency] = useState('');
-    const [maxprice, setmaxprice] = useState();
-    const [multipleparts, setmultipleparts] = useState(false);
 
 
 
     return (
-
         <>
             <div className="row">
                 <div className="col-lg-12">
@@ -228,15 +138,59 @@ function Product() {
                             <h5>Products</h5>
                             <h6>Master Data Management / Product</h6>
                         </div>
-                        {dispproduct}
+                        <div className="tablepadding">
+                            <div id="dispproduct">
+                                {rows.length != 0 ? <TableContainer component={Paper} sx={{ maxHeight: 650 }}>
+                                    <Table stickyHeader aria-label="simple table">
+                                        <TableHead >
+                                            <TableRow>
+                                                <TableCell variant="head" sx={{ backgroundColor: 'rgb(15, 11, 42)', color: 'white' }} >S.No</TableCell>
+                                                <TableCell variant="head" sx={{ backgroundColor: 'rgb(15, 11, 42)', color: 'white' }} >Product Name</TableCell>
+                                                <TableCell variant="head" sx={{ backgroundColor: 'rgb(15, 11, 42)', color: 'white' }} >Product Type</TableCell>
+                                                <TableCell variant="head" sx={{ backgroundColor: 'rgb(15, 11, 42)', color: 'white' }} >Min Stock</TableCell>
+                                                <TableCell variant="head" sx={{ backgroundColor: 'rgb(15, 11, 42)', color: 'white' }} >Min Price</TableCell>
+                                                <TableCell variant="head" sx={{ backgroundColor: 'rgb(15, 11, 42)', color: 'white' }} >Max Price</TableCell>
+                                                <TableCell variant="head" sx={{ backgroundColor: 'rgb(15, 11, 42)', color: 'white' }} >Currency</TableCell>
+                                                <TableCell variant="head" sx={{ backgroundColor: 'rgb(15, 11, 42)', color: 'white' }} >Multiple Parts</TableCell>
+                                                <TableCell variant="head" sx={{ backgroundColor: 'rgb(15, 11, 42)', color: 'white' }} >Parts</TableCell>
+                                                <TableCell variant="head" sx={{ backgroundColor: 'rgb(15, 11, 42)', color: 'white' }} >Action</TableCell>
+                                            </TableRow>
+                                        </TableHead>
+                                        <TableBody>
+                                            {rows.map((rowobj) => {
+
+                                                return (
+                                                    <>
+                                                        <TableRow sx={{ '&:last-child td, &:last-child th': { border: 0 } }} hover='true'>
+                                                            <TableCell component="th" scope="row">
+                                                                {count++}
+                                                            </TableCell>
+                                                            <TableCell>{rowobj.product_name == null ? "Null" : rowobj.product_name}</TableCell>
+                                                            <TableCell>{rowobj.product_type == null ? "Null" : rowobj.product_type}</TableCell>
+                                                            <TableCell>{rowobj.min_stock == null ? "Null" : rowobj.min_stock}</TableCell>
+                                                            <TableCell>{rowobj.minimum_price == null ? "Null" : rowobj.minimum_price}</TableCell>
+                                                            <TableCell>{rowobj.maximum_price == null ? "Null" : rowobj.maximum_price}</TableCell>
+                                                            <TableCell>{rowobj.currency_get == null ? "Null" : rowobj.currency_get}</TableCell>
+                                                            <TableCell>{rowobj.multiple_parts ? "True" : "False"}
+                                                                {rowobj.multiple_parts == null ? "Null" : ''}</TableCell>
+                                                            <TableCell>{rowobj.parts == null ? "Null" : rowobj.parts}</TableCell>
+                                                            <TableCell><Butns /></TableCell>
+                                                        </TableRow>
+                                                    </>
+                                                )
+                                            })}
+                                        </TableBody>
+                                    </Table>
+                                </TableContainer> : "No Data Or Looking for Response From the Server...."}
+
+
+                            </div>
+                            {dispaddpro == false ? '' : <Addproduct />}
+                        </div>
                     </div>
                 </div>
             </div>
         </>
-
-
-
-
     );
 }
 
