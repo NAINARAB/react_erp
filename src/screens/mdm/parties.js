@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Header from "../../comp/header/header";
 import Sidenav from "../../comp/sidenav/sidenav";
 import { IconButton, Box, Collapse, TableContainer, Table, TableBody, TableCell, TableHead, TableRow, Paper } from "@mui/material";
@@ -7,11 +7,6 @@ import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import '../common.css';
-
-
-function createData(sno, party_name, party_type, contact_no, contact_name, email, gstin, products, action, country, state, address, pincode) {
-    return { sno, party_name, party_type, contact_no, contact_name, email, gstin, products, action, country, state, address, pincode };
-}
 
 
 function Butns() {
@@ -23,114 +18,11 @@ function Butns() {
     );
 }
 
-
-function Row(props) {
-
-    const { row } = props;
-    const [open, setOpen] = React.useState(false);
-
-
-
-    return (
-        <React.Fragment>
-            <TableRow sx={{ '& > *': { borderBottom: 'unset' } }} hover='true' onClick={() => setOpen(!open)}>
-                <TableCell align="center" component="th" scope="row">
-                    {row.sno}
-                </TableCell>
-                <TableCell align="center">{row.party_name}</TableCell>
-                <TableCell align="center">{row.party_type}</TableCell>
-                <TableCell align="center">{row.contact_no}</TableCell>
-                <TableCell align="center">{row.contact_name}</TableCell>
-                <TableCell align="center">{row.email}</TableCell>
-                <TableCell align="center">{row.gstin}</TableCell>
-                <TableCell align="center">{row.products}</TableCell>
-                <TableCell width={300} align="center">{row.action}
-                    <IconButton
-                        aria-label="expand row"
-                        size="small"
-                        onClick={() => setOpen(!open)}
-                    >
-                        {open ? <KeyboardArrowUpIcon sx={{ fontSize: '2rem' }} /> : <KeyboardArrowDownIcon sx={{ fontSize: '2rem' }} />}
-                    </IconButton>
-                </TableCell>
-            </TableRow>
-
-            <TableRow>
-                <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={9}>
-                    <Collapse in={open} timeout="auto" unmountOnExit>
-                        <Box sx={{ margin: 3 }}>
-                            <TableContainer>
-                                <Table size="small" sx={{ width: '50%', background: 'transparant' }}>
-                                    <TableHead>
-                                        <TableRow>
-                                            <TableCell align="center" sx={{ padding: '1em', fontWeight: 'bold', fontSize: '0.9rem', borderBottom: '0px solid transparent' }}>Country</TableCell>
-                                            <TableCell align="center" sx={{ padding: '1em', fontWeight: 'bold', fontSize: '0.9rem', borderBottom: '0px solid transparent' }}>State</TableCell>
-                                            <TableCell align="center" sx={{ padding: '1em', fontWeight: 'bold', fontSize: '0.9rem', borderBottom: '0px solid transparent' }}>Address</TableCell>
-                                            <TableCell align="center" sx={{ padding: '1em', fontWeight: 'bold', fontSize: '0.9rem', borderBottom: '0px solid transparent' }}>Pin Code</TableCell>
-                                        </TableRow>
-                                    </TableHead>
-                                    <TableBody>
-                                        <TableRow>
-                                            <TableCell align="center" sx={{ borderBottom: '0px solid transparent' }}>{row.country}</TableCell>
-                                            <TableCell align="center" sx={{ borderBottom: '0px solid transparent' }}>{row.state}</TableCell>
-                                            <TableCell align="center" sx={{ borderBottom: '0px solid transparent' }}>{row.address}</TableCell>
-                                            <TableCell align="center" sx={{ borderBottom: '0px solid transparent' }}>{row.pincode}</TableCell>
-                                        </TableRow>
-                                    </TableBody>
-                                </Table>
-                            </TableContainer>
-                        </Box>
-                    </Collapse>
-                </TableCell>
-            </TableRow>
-        </React.Fragment>
-    );
-}
-
-
-
-const rows = [
-    createData(1, 'NainarAB', 'Admin', 8383472927, 'NainarAB', 'karthick@123', 112222, 'Cooker', <Butns />, 'India', 'TamilNadu', '26/A Murugan Kovil Street', 625532),
-    createData(1, 'NainarAB', 'Admin', 8383472927, 'NainarAB', 'karthick@123', 112222, 'Cooker', <Butns />, 'India', 'TamilNadu', '26/A Murugan Kovil Street', 625532),
-    createData(1, 'NainarAB', 'Admin', 8383472927, 'NainarAB', 'karthick@123', 112222, 'Cooker', <Butns />, 'India', 'TamilNadu', '26/A Murugan Kovil Street', 625532),
-    createData(1, 'NainarAB', 'Admin', 8383472927, 'NainarAB', 'karthick@123', 112222, 'Cooker', <Butns />, 'India', 'TamilNadu', '26/A Murugan Kovil Street', 625532),
-    createData(1, 'NainarAB', 'Admin', 8383472927, 'NainarAB', 'karthick@123', 112222, 'Cooker', <Butns />, 'India', 'TamilNadu', '26/A Murugan Kovil Street', 625532),
-];
-
-
-
-
 function Parties() {
-
-    let Prty = () => {
-        return (
-            <>
-                <TableContainer component={Paper} sx={{ maxHeight: 640 }}>
-                    <Table stickyHeader aria-label="collapsible table">
-                        <TableHead>
-                            <TableRow>
-                                <TableCell sx={{ backgroundColor: 'rgb(15, 11, 42)', fontWeight: 'bold', color: 'white' }} align="center">S.No</TableCell>
-                                <TableCell sx={{ backgroundColor: 'rgb(15, 11, 42)', fontWeight: 'bold', color: 'white' }} align="center">Party Name</TableCell>
-                                <TableCell sx={{ backgroundColor: 'rgb(15, 11, 42)', fontWeight: 'bold', color: 'white' }} align="center">Party Type</TableCell>
-                                <TableCell sx={{ backgroundColor: 'rgb(15, 11, 42)', fontWeight: 'bold', color: 'white' }} align="center">Contact No</TableCell>
-                                <TableCell sx={{ backgroundColor: 'rgb(15, 11, 42)', fontWeight: 'bold', color: 'white' }} align="center">Contact Name</TableCell>
-                                <TableCell sx={{ backgroundColor: 'rgb(15, 11, 42)', fontWeight: 'bold', color: 'white' }} align="center">Email</TableCell>
-                                <TableCell sx={{ backgroundColor: 'rgb(15, 11, 42)', fontWeight: 'bold', color: 'white' }} align="center">GSTIN</TableCell>
-                                <TableCell sx={{ backgroundColor: 'rgb(15, 11, 42)', fontWeight: 'bold', color: 'white' }} align="center">Products</TableCell>
-                                <TableCell sx={{ backgroundColor: 'rgb(15, 11, 42)', fontWeight: 'bold', color: 'white' }} align="center">Action</TableCell>
-                            </TableRow>
-                        </TableHead>
-                        <TableBody>
-                            {rows.map((row) => (
-                                <Row row={row} />
-                            ))}
-                        </TableBody>
-                    </Table>
-                </TableContainer>
-            </>
-        );
-    }
-
+    const [dispparties, setdispparties] = useState();
+    const [partydata, setpartydata] = useState('');
+    const [open, setOpen] = React.useState(false);
+    let count = 0;
 
     function AddParties() {
         return (
@@ -200,14 +92,83 @@ function Parties() {
                 </div><br />
                 <button className="comadbtn">Add</button>
                 <button className="cancelbtn" onClick={() => {
-                    setdispparties(<Prty />);
+                    setdispparties();
                     document.getElementById("prtyadbtn").style.display = 'block';
                 }}>Back</button>
             </>
         );
     }
 
-    const [dispparties, setdispparties] = useState(<Prty />);
+    let Rowcomp = () => {
+        return (
+            <>
+                {partydata.map((row) => (
+                    <React.Fragment>
+                        <TableRow sx={{ '& > *': { borderBottom: 'unset' } }} hover='true' onClick={() => setOpen(!open)}>
+                            <TableCell align="center" component="th" scope="row">
+                                {++count}
+                            </TableCell>
+                            <TableCell align="center">{row.party_name}</TableCell>
+                            <TableCell align="center">{row.party_type}</TableCell>
+                            <TableCell align="center">{row.party_contact_no}</TableCell>
+                            <TableCell align="center">{row.party_contact_name}</TableCell>
+                            <TableCell align="center">{row.party_email}</TableCell>
+                            <TableCell align="center">{row.party_gstin}</TableCell>
+                            <TableCell align="center">{row.party_products}</TableCell>
+                            <TableCell width={300} align="center">{row.action}
+                                <IconButton
+                                    aria-label="expand row"
+                                    size="small"
+                                    onClick={() => setOpen(!open)}
+                                >
+                                    {open ? <KeyboardArrowUpIcon sx={{ fontSize: '2rem' }} /> : <KeyboardArrowDownIcon sx={{ fontSize: '2rem' }} />}
+                                </IconButton>
+                            </TableCell>
+                        </TableRow>
+
+                        <TableRow>
+                            <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={9}>
+                                <Collapse in={open} timeout="auto" unmountOnExit>
+                                    <Box sx={{ margin: 3 }}>
+                                        <TableContainer>
+                                            <Table size="small" sx={{ width: '50%', background: 'transparant' }}>
+                                                <TableHead>
+                                                    <TableRow>
+                                                        <TableCell align="center" sx={{ padding: '1em', fontWeight: 'bold', fontSize: '0.9rem', borderBottom: '0px solid transparent' }}>Country</TableCell>
+                                                        <TableCell align="center" sx={{ padding: '1em', fontWeight: 'bold', fontSize: '0.9rem', borderBottom: '0px solid transparent' }}>State</TableCell>
+                                                        <TableCell align="center" sx={{ padding: '1em', fontWeight: 'bold', fontSize: '0.9rem', borderBottom: '0px solid transparent' }}>Address</TableCell>
+                                                        <TableCell align="center" sx={{ padding: '1em', fontWeight: 'bold', fontSize: '0.9rem', borderBottom: '0px solid transparent' }}>Pin Code</TableCell>
+                                                    </TableRow>
+                                                </TableHead>
+                                                <TableBody>
+                                                    <TableRow>
+                                                        <TableCell align="center" sx={{ borderBottom: '0px solid transparent' }}>{row.party_country_get}</TableCell>
+                                                        <TableCell align="center" sx={{ borderBottom: '0px solid transparent' }}>{row.party_state}</TableCell>
+                                                        <TableCell align="center" sx={{ borderBottom: '0px solid transparent' }}>{row.party_address}</TableCell>
+                                                        <TableCell align="center" sx={{ borderBottom: '0px solid transparent' }}>{row.party_pincode}</TableCell>
+                                                    </TableRow>
+                                                </TableBody>
+                                            </Table>
+                                        </TableContainer>
+                                    </Box>
+                                </Collapse>
+                            </TableCell>
+                        </TableRow>
+                    </React.Fragment>
+                ))}
+            </>
+        );
+    }
+
+    useEffect(() => {
+
+        fetch('https://erp-dwe8a.ondigitalocean.app/api/get?model=parties')
+            .then((res) => { return res.json(); })
+            .then((data) => {
+                setpartydata(data.data);
+            })
+
+    }, [])
 
     return (
         <>
@@ -227,9 +188,28 @@ function Parties() {
                         <h5>Parties</h5>
                         <h6>Master Data Management / Parties </h6>
                     </div>
-                    <div style={{padding:'0em 1em'}}>
+                    <div style={{ padding: '0em 1em' }}>
                         <br />
-                        {dispparties}
+                        <TableContainer component={Paper} sx={{ maxHeight: 640 }}>
+                            <Table stickyHeader aria-label="collapsible table">
+                                <TableHead>
+                                    <TableRow>
+                                        <TableCell sx={{ backgroundColor: 'rgb(15, 11, 42)', fontWeight: 'bold', color: 'white' }} align="center">S.No</TableCell>
+                                        <TableCell sx={{ backgroundColor: 'rgb(15, 11, 42)', fontWeight: 'bold', color: 'white' }} align="center">Party Name</TableCell>
+                                        <TableCell sx={{ backgroundColor: 'rgb(15, 11, 42)', fontWeight: 'bold', color: 'white' }} align="center">Party Type</TableCell>
+                                        <TableCell sx={{ backgroundColor: 'rgb(15, 11, 42)', fontWeight: 'bold', color: 'white' }} align="center">Contact No</TableCell>
+                                        <TableCell sx={{ backgroundColor: 'rgb(15, 11, 42)', fontWeight: 'bold', color: 'white' }} align="center">Contact Name</TableCell>
+                                        <TableCell sx={{ backgroundColor: 'rgb(15, 11, 42)', fontWeight: 'bold', color: 'white' }} align="center">Email</TableCell>
+                                        <TableCell sx={{ backgroundColor: 'rgb(15, 11, 42)', fontWeight: 'bold', color: 'white' }} align="center">GSTIN</TableCell>
+                                        <TableCell sx={{ backgroundColor: 'rgb(15, 11, 42)', fontWeight: 'bold', color: 'white' }} align="center">Products</TableCell>
+                                        <TableCell sx={{ backgroundColor: 'rgb(15, 11, 42)', fontWeight: 'bold', color: 'white' }} align="center">Action</TableCell>
+                                    </TableRow>
+                                </TableHead>
+                                <TableBody>
+
+                                </TableBody>
+                            </Table>
+                        </TableContainer>
                     </div>
                 </div>
             </div>

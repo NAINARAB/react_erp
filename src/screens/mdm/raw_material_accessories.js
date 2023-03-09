@@ -1,24 +1,40 @@
 import React from "react";
 import Header from "../../comp/header/header";
 import Sidenav from "../../comp/sidenav/sidenav";
-import { TableContainer, Table, TableBody, TableCell, TableHead, TableRow, Paper,IconButton } from "@mui/material";
+import { TableContainer, Table, TableBody, TableCell, TableHead, TableRow, Paper, IconButton } from "@mui/material";
 import '../common.css';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
+// useEffect(() => {
 
+//     fetch('https://erp-dwe8a.ondigitalocean.app/api/get?model=product')
+//         .then((res) => { return res.json(); })
+//         .then((data) => {
+//             setrows(data.data)
+//         })
 
-
-
+// }, [])
 
 
 
 function Rawmaterialsaccessories() {
-    function createData(sno, rm_name, measured_unit, min_stock, rm_max_price, currency, prefered_supplier_id, action) {
-        return { sno, rm_name, measured_unit, min_stock, rm_max_price, currency, prefered_supplier_id, action };
-    }
 
+    const [dispaddrma, setdispaddrma] = useState(false);
+    const [rmadata, setrmadata] = useState([]);
+    let count = 0;
+
+    function opnAdd() {
+        document.getElementById('adbtn').style.display = 'none';
+        document.getElementById('rma').style.display = 'none';
+        setdispaddrma(true);
+    }
+    function opnRMA() {
+        document.getElementById('rma').style.display = 'block';
+        document.getElementById('adbtn').style.display = 'block';
+        setdispaddrma(false);
+    }
     function Butns() {
         return (
             <>
@@ -29,125 +45,71 @@ function Rawmaterialsaccessories() {
     }
 
 
-    const rows = [
-        createData(1, 'Wood', 'cm', 100, 'RM Max Price', 'Currency', 'Prefered Suppliered Id', <Butns />),
-        createData(1, 'Wood', 'cm', 100, 'RM Max Price', 'Currency', 'Prefered Suppliered Id', <Butns />),
-    ];
-
-    let RMA = () => {
-        return (
-            <>
-                <div className="tablepadding">
-                    <TableContainer component={Paper} sx={{ maxHeight: 650 }}>
-                        <Table stickyHeader sx={{ minWidth: 650 }} >
-                            <TableHead >
-                                <TableRow sx={{ backgroundColor: 'rgb(15, 11, 42)' }}>
-                                    <TableCell variant="head" sx={{ backgroundColor: 'rgb(15, 11, 42)', color: 'white' }} >S.No</TableCell>
-                                    <TableCell variant="head" sx={{ backgroundColor: 'rgb(15, 11, 42)', color: 'white' }}>RM Name</TableCell>
-                                    <TableCell variant="head" sx={{ backgroundColor: 'rgb(15, 11, 42)', color: 'white' }}>Measured Unit</TableCell>
-                                    <TableCell variant="head" sx={{ backgroundColor: 'rgb(15, 11, 42)', color: 'white' }}>Min Stock</TableCell>
-                                    <TableCell variant="head" sx={{ backgroundColor: 'rgb(15, 11, 42)', color: 'white' }}>RM Max Price</TableCell>
-                                    <TableCell variant="head" sx={{ backgroundColor: 'rgb(15, 11, 42)', color: 'white' }}>Currency</TableCell>
-                                    <TableCell variant="head" sx={{ backgroundColor: 'rgb(15, 11, 42)', color: 'white' }}>Prefered Supplied Id</TableCell>
-                                    <TableCell variant="head" sx={{ backgroundColor: 'rgb(15, 11, 42)', color: 'white' }}>Action</TableCell>
-                                </TableRow>
-                            </TableHead>
-                            <TableBody>
-                                {rows.map((row) => (
-                                    <TableRow
-                                        key={row.sno}
-                                        sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                                        hover='true'
-                                    >
-                                        <TableCell component="th" scope="row">
-                                            {row.sno}
-                                        </TableCell>
-                                        <TableCell>{row.rm_name}</TableCell>
-                                        <TableCell>{row.measured_unit}</TableCell>
-                                        <TableCell>{row.min_stock}</TableCell>
-                                        <TableCell>{row.rm_max_price}</TableCell>
-                                        <TableCell>{row.currency}</TableCell>
-                                        <TableCell>{row.prefered_supplier_id}</TableCell>
-                                        <TableCell>{row.action}</TableCell>
-                                    </TableRow>
-                                ))}
-                            </TableBody>
-                        </Table>
-                    </TableContainer>
-                </div>
-            </>
-        );
-    }
-
     let AddRMA = () => {
         return (
             <>
-                <div className="tablepadding">
+                <form>
+                    <div className="tablepadding">
+                        <div className="micard">
+                            <h5 className="micardhdr">Raw Material & Accessories</h5>
+                            <div className="micardbdy row">
 
-                    <div className="micard">
-                        <h5 className="micardhdr">Raw Material & Accessories</h5>
-                        <div className="micardbdy row">
+                                <div className="col-lg-4">
+                                    <label className="micardlble">Raw Material</label><br />
+                                    <input className="micardinpt" required />
+                                </div>
 
-                            <div className="col-lg-4">
-                                <label className="micardlble">Raw Material</label><br />
-                                <input className="micardinpt" required />
+                                <div className="col-lg-4">
+                                    <label className="micardlble">Units</label><br />
+                                    <select className="micardinpt" >
+                                        <option selected='true' disabled='true' value={''} required>Select Type</option>
+                                        <option>Centimeter</option>
+                                        <option>Meter</option>
+                                    </select>
+                                </div>
+
+                                <div className="col-lg-4">
+                                    <label className="micardlble">Min Stock</label><br />
+                                    <input type='number' className="micardinpt" required />
+                                </div>
+
+                                <div className="col-lg-4">
+                                    <label className="micardlble">Currency</label><br />
+                                    <select className="micardinpt" >
+                                        <option selected='true' disabled='true' value={''} required>Select Currency</option>
+                                    </select>
+                                </div>
+
+                                <div className="col-lg-4">
+                                    <label className="micardlble">RM Max Price</label><br />
+                                    <input className="micardgrpinpt" disabled='true' />
+                                    <input type='number' className="micardgrpinpt1" />
+                                </div>
+
+                                <div className="col-lg-4">
+                                    {/* for Alignment */}
+                                </div>
                             </div>
-
-                            <div className="col-lg-4">
-                                <label className="micardlble">Units</label><br />
-                                <select className="micardinpt" >
-                                    <option selected='true' disabled='true' value={''} required>Select Type</option>
-                                    <option>Centimeter</option>
-                                    <option>Meter</option>
-                                </select>
-                            </div>
-
-                            <div className="col-lg-4">
-                                <label className="micardlble">Min Stock</label><br />
-                                <input type='number' className="micardinpt" required />
-                            </div>
-
-                            <div className="col-lg-4">
-                                <label className="micardlble">Currency</label><br />
-                                <select className="micardinpt" >
-                                    <option selected='true' disabled='true' value={''} required>Select Currency</option>
-                                </select>
-                            </div>
-
-                            <div className="col-lg-4">
-                                <label className="micardlble">RM Max Price</label><br />
-                                <select className="micardgrpinpt" >
-                                    <option selected='true'>INR</option>
-                                </select>
-                                <input type='number' className="micardgrpinpt1" />
-                            </div>
-
-                            <div className="col-lg-4">
-                                {/* for Alignment */}
-                            </div>
-                        </div>
-                    </div><br />
-                    <button className="comadbtn">Add</button>
-                    <button className="cancelbtn" onClick={opnRMA} >Back</button>
-                </div>
+                        </div><br />
+                        <button className="comadbtn">Add</button>
+                        <button className="cancelbtn" onClick={opnRMA} >Back</button>
+                    </div>
+                </form>
             </>
         );
     }
 
 
+    useEffect(() => {
 
-    const [dispRMA, setRMA] = useState(<RMA />)
+        fetch('https://erp-dwe8a.ondigitalocean.app/api/get?model=rawmaterial')
+            .then((res) => { return res.json(); })
+            .then((data) => {
+                console.log(data)
+                setrmadata(data.data)
+            })
 
-    function opnAdd() {
-        let x = document.getElementById('adbtn');
-        setRMA(<AddRMA />);
-        x.style.display = 'none';
-    }
-    function opnRMA() {
-        let x = document.getElementById('adbtn');
-        setRMA(<RMA />);
-        x.style.display = 'block';
-    }
+    }, [])
 
 
 
@@ -167,14 +129,48 @@ function Rawmaterialsaccessories() {
                         <h5>Raw Material & Accessories</h5>
                         <h6>Master Data Management / Raw Material & Accessories</h6>
                     </div>
-                    {dispRMA}
+                    <div className="tablepadding" id="rma">
+                        {rmadata.length != 0 ?
+                            <TableContainer component={Paper} sx={{ maxHeight: 650 }}>
+                                <Table stickyHeader sx={{ minWidth: 650 }} >
+                                    <TableHead >
+                                        <TableRow sx={{ backgroundColor: 'rgb(15, 11, 42)' }}>
+                                            <TableCell variant="head" sx={{ backgroundColor: 'rgb(15, 11, 42)', color: 'white' }} >S.No</TableCell>
+                                            <TableCell variant="head" sx={{ backgroundColor: 'rgb(15, 11, 42)', color: 'white' }}>RM Name</TableCell>
+                                            <TableCell variant="head" sx={{ backgroundColor: 'rgb(15, 11, 42)', color: 'white' }}>Measured Unit</TableCell>
+                                            <TableCell variant="head" sx={{ backgroundColor: 'rgb(15, 11, 42)', color: 'white' }}>Min Stock</TableCell>
+                                            <TableCell variant="head" sx={{ backgroundColor: 'rgb(15, 11, 42)', color: 'white' }}>RM Max Price</TableCell>
+                                            <TableCell variant="head" sx={{ backgroundColor: 'rgb(15, 11, 42)', color: 'white' }}>Currency</TableCell>
+                                            <TableCell variant="head" sx={{ backgroundColor: 'rgb(15, 11, 42)', color: 'white' }}>Prefered Supplied Id</TableCell>
+                                            <TableCell variant="head" sx={{ backgroundColor: 'rgb(15, 11, 42)', color: 'white' }}>Action</TableCell>
+                                        </TableRow>
+                                    </TableHead>
+                                    <TableBody>
+                                        {rmadata.map((row) => (
+                                            <TableRow
+                                                sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                                                hover='true'
+                                            >
+                                                <TableCell component="th" scope="row">
+                                                    {++count}
+                                                </TableCell>
+                                                <TableCell>{row.rm_name != null ? row.rm_name : 'Null'}</TableCell>
+                                                <TableCell>{row.measured_unit != null ? row.measured_unit : 'Null'}</TableCell>
+                                                <TableCell>{row.min_stock != null ? row.min_stock : 'Null'}</TableCell>
+                                                <TableCell>{row.rm_max_price != null ? row.rm_max_price : 'Null'}</TableCell>
+                                                <TableCell>{row.currency_get != null ? row.currency_get : 'Null'}</TableCell>
+                                                <TableCell>{row.prefered_supplier != null ? row.prefered_supplier : 'Null'}</TableCell>
+                                                <TableCell>{<Butns />}</TableCell>
+                                            </TableRow>
+                                        ))}
+                                    </TableBody>
+                                </Table>
+                            </TableContainer> : "No Data or Waiting for Server Response..."}
+                    </div>
+                    {dispaddrma === true ? <AddRMA /> : ''}
                 </div>
             </div>
         </>
-
-
-
-
     );
 }
 

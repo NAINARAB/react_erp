@@ -1,26 +1,37 @@
 import React, { useEffect, useState } from "react";
 import Header from "../../comp/header/header";
 import Sidenav from "../../comp/sidenav/sidenav";
-import { TableContainer, Table, TableBody, TableCell, TableHead, TableRow, Paper, IconButton } from "@mui/material";
+import { TableContainer, Table, TableBody, TableCell, TableHead, TableRow, Paper, IconButton, Autocomplete, TextField, Chip } from "@mui/material";
 import '../common.css';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 
 
 
-
 function Product() {
     let [rows, setrows] = useState([]);
     const [productname, setproductname] = useState('');
+    const [productcode, setproductcode] = useState('');
     const [producttype, setproductype] = useState('');
     const [currency, setcurrency] = useState('');
-    const [minpricecurrency, setminpricecurrency] = useState('');
     const [minprice, setminprice] = useState();
-    const [maxpricecurrency, setmaxpricecurrency] = useState('');
     const [maxprice, setmaxprice] = useState();
     const [multipleparts, setmultipleparts] = useState(false);
     const [dispaddpro, setaddpro] = useState(false);
     let count = 1;
+    const dummy = [];
+    function setmul(e) { setmultipleparts(e.target.checked) }
+    let enterddata = {
+        "product_code": productcode,
+        "product_name": productname,
+        "product_type": producttype,
+        "minimum_price": minprice,
+        "maximum_price": maxprice,
+        "currency": currency,
+        "multiple_parts": multipleparts,
+    };
+
+
 
     function Butns() {
         return (
@@ -31,14 +42,12 @@ function Product() {
         );
     }
 
-
     useEffect(() => {
 
         fetch('https://erp-dwe8a.ondigitalocean.app/api/get?model=product')
             .then((res) => { return res.json(); })
             .then((data) => {
                 setrows(data.data)
-                console.log(data.data)
             })
 
     }, [])
@@ -46,64 +55,113 @@ function Product() {
 
 
     let Addproduct = () => {
+
+        const url = 'https://erp-dwe8a.ondigitalocean.app/api/get?model=product'
+            const option = {
+                method: "POST",
+                body: enterddata
+            }
+
+            useEffect(() => {
+                fetch(url, option)
+                    .then(res => { return res.json() })
+                    .then(data => (console.log(data)))
+            }, [])
+
+        let Dispmultipro = () => {
+            return (
+                <><br /><br /><br /><br /><br />
+                    <div className="col-lg-4 tablepadding">
+                        <label className="micardlble">Add Multiple Parts</label>
+                        <Autocomplete
+                            sx={{ backgroundColor: 'transparent' }}
+                            multiple
+                            id="tags-filled"
+                            options={dummy.map((option) => option.title)}
+                            freeSolo
+                            renderTags={(value, getTagProps) =>
+                                value.map((option, index) => (
+                                    <Chip variant="outlined" label={option} {...getTagProps({ index })} />
+                                ))
+                            }
+                            renderInput={(params) => (
+                                <TextField
+                                    {...params}
+                                    label="Multiple Parts"
+
+                                    multiline
+                                    rows={2}
+                                    placeholder="Type here"
+                                    variant="standard"
+                                />
+                            )}
+                        />
+                    </div><div className="col-lg-4"></div><div className="col-lg-4"></div>
+                </>
+            );
+        }
         return (
             <>
-                <div className="micard">
-                    <h5 className="micardhdr">Add Product</h5>
-                    <div className="micardbdy row">
-                        <div className="col-lg-4">
-                            <label className="micardlble" >Product Name</label><br />
-                            <input className="micardinpt" onChange={(e) => { setproductname(e.target.value); }} required />
-                        </div>
+                <form>
+                    <div className="micard">
+                        <h5 className="micardhdr">Add Product</h5>
 
-                        <div className="col-lg-4">
-                            <label className="micardlble">Product Type</label><br />
-                            <select className="micardinpt" onChange={(e) => { setproductype(e.target.value); }}>
-                                <option selected='true' disabled='true' value={''} required>Select Type</option>
-                                <option>Finished</option>
-                                <option>Semi-Finished</option>
-                            </select>
-                        </div>
-
-                        <div className="col-lg-4">
-                            <label className="micardlble">Currency</label><br />
-                            <select className="micardinpt" onChange={(e) => { setcurrency(e.target.value); }}>
-                                <option selected='true' disabled='true' value={''} required>Select Currency</option>
-                            </select>
-                        </div>
-
-
-                        <div className="col-lg-4">
-                            <label className="micardlble">Min Price</label><br />
-                            <select className="micardgrpinpt" onChange={(e) => { setminpricecurrency(e.target.value) }} >
-                                <option selected='true'>INR</option>
-                            </select>
-                            <input type='number' onChange={(e) => { setminprice(e.target.value); }} className="micardgrpinpt1" />
-                        </div>
-
-
-                        <div className="col-lg-4">
-                            <label className="micardlble">Max Price</label><br />
-                            <select className="micardgrpinpt" onChange={(e) => { setmaxpricecurrency(e.target.value); }}>
-                                <option selected='true'>INR</option>
-                            </select>
-                            <input type='number' onChange={(e) => { setmaxprice(e.target.value); }} className="micardgrpinpt1" />
-                        </div>
-
-                        <div className="col-lg-4">
-                            <label className="micardlble">Multiple Parts</label><br />
-                            <div className="micardboxinpt">
-                                <input type='checkbox' id="mult" style={{ height: '1em', width: '1em' }} /> &emsp;Add Multiple Parts
+                        <div className="micardbdy row">
+                            <div className="col-lg-4">
+                                <label className="micardlble" >Product Name</label><br />
+                                <input className="micardinpt" onChange={(e) => { setproductname(e.target.value); }} required />
                             </div>
-                        </div>
-                        <div className="col-lg-10">
-                            
+
+                            <div className="col-lg-4">
+                                <label className="micardlble">Product Code</label><br />
+                                <input onChange={(e) => { setproductcode(e.target.value); }} className="micardinpt" required />
+                            </div>
+
+                            <div className="col-lg-4">
+                                <label className="micardlble">Product Type</label><br />
+                                <select className="micardinpt" value={producttype} onChange={(e) => { setproductype(e.target.value); }}>
+                                    <option selected='true' value='' required>Select Type</option>
+                                    <option>Finished</option>
+                                    <option>Semi-Finished</option>
+                                </select>
+                            </div>
+
+                            <div className="col-lg-4">
+                                <label className="micardlble">Currency</label><br />
+                                <select className="micardinpt" value={currency} onChange={(e) => { setcurrency(e.target.value); }}>
+                                    <option selected='true' value='' required>Select Currency</option>
+                                    <option>INR</option>
+                                    <option>INR2</option>
+                                </select>
+                            </div>
+
+
+                            <div className="col-lg-4">
+                                <label className="micardlble">Min Price</label><br />
+                                <input value={currency} disabled='true' className="micardgrpinpt" />
+                                <input type='number' onChange={(e) => { setminprice(e.target.value); }} className="micardgrpinpt1" />
+                            </div>
+
+
+                            <div className="col-lg-4">
+                                <label className="micardlble">Max Price</label><br />
+                                <input value={currency} disabled='true' className="micardgrpinpt" />
+                                <input type='number' onChange={(e) => { setmaxprice(e.target.value); }} className="micardgrpinpt1" />
+                            </div>
+
+                            <div className="col-lg-4">
+                                <label className="micardlble">Multiple Parts</label><br />
+                                <div className="micardboxinpt">
+                                    <input type='checkbox' onChange={setmul} style={{ height: '1em', width: '1em' }} /> &emsp;Add Multiple Parts
+                                </div>
+                            </div><div className="col-lg-4"></div><div className="col-lg-4"></div>
+                            {multipleparts == true ? <Dispmultipro /> : ""}
                         </div>
 
-                    </div>
-                </div><br />
-                <button className="comadbtn">Add</button>
-                <button className="cancelbtn" onClick={opnProdt} >Back</button>
+                    </div><br />
+                    <button className="comadbtn" type="submit">Add</button>
+                    <button className="cancelbtn" onClick={opnProdt} >Back</button>
+                </form>
             </>
         );
     }

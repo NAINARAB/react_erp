@@ -111,7 +111,7 @@
     border: 1px solid #d9d7d7;
     border-top-left-radius: 6px;
     border-bottom-left-radius: 6px;
-    padding: 0.58em 0.4em;
+    padding: 0.50em 0.4em;
     outline: none;
 }
 
@@ -134,6 +134,8 @@
 .TableCell{
     padding: 1em; font-weight: bold; font-size: 0.9rem; border-bottom: 0px solid transparent;
 }
+
+
 
 
 
