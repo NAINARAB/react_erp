@@ -6,6 +6,7 @@ import '../common.css';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { useState, useEffect } from "react";
+import Loader from "../../comp/Load/loading";
 
 // useEffect(() => {
 
@@ -165,7 +166,7 @@ function Rawmaterialsaccessories() {
                                         ))}
                                     </TableBody>
                                 </Table>
-                            </TableContainer> : "No Data or Waiting for Server Response..."}
+                            </TableContainer> : <Loader />}
                     </div>
                     {dispaddrma === true ? <AddRMA /> : ''}
                 </div>

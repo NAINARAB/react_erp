@@ -5,7 +5,7 @@ import { TableContainer, Table, TableBody, TableCell, TableHead, TableRow, Paper
 import '../common.css';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
-
+import Loader from "../../comp/Load/loading";
 
 
 function Product() {
@@ -57,16 +57,16 @@ function Product() {
     let Addproduct = () => {
 
         const url = 'https://erp-dwe8a.ondigitalocean.app/api/get?model=product'
-            const option = {
-                method: "POST",
-                body: enterddata
-            }
+        const option = {
+            method: "POST",
+            body: enterddata
+        }
 
-            useEffect(() => {
-                fetch(url, option)
-                    .then(res => { return res.json() })
-                    .then(data => (console.log(data)))
-            }, [])
+        useEffect(() => {
+            fetch(url, option)
+                .then(res => { return res.json() })
+                .then(data => (console.log(data)))
+        }, [])
 
         let Dispmultipro = () => {
             return (
@@ -239,7 +239,7 @@ function Product() {
                                             })}
                                         </TableBody>
                                     </Table>
-                                </TableContainer> : "No Data Or Looking for Response From the Server...."}
+                                </TableContainer> : <Loader />}
 
 
                             </div>

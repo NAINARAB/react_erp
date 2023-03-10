@@ -1,15 +1,11 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Header from "../../comp/header/header";
 import Sidenav from "../../comp/sidenav/sidenav";
 import { IconButton, TableContainer, Table, TableBody, TableCell, TableHead, TableRow, Paper } from "@mui/material";
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import '../common.css';
-
-
-function createUserData(sno, name, email, phone, department, subdevision, role, action) {
-    return { sno, name, email, phone, department, subdevision, role, action }
-}
+import Loader from "../../comp/Load/loading";
 
 function Butns() {
     return (
@@ -20,53 +16,43 @@ function Butns() {
     );
 }
 
-const userData = [
-    createUserData(1, 'Raj', 'raj@gmail.com', 1122334455, 'QA', 'QA2', 'Admin', <Butns />),
-    createUserData(1, 'Raj', 'raj@gmail.com', 1122334455, 'QA', 'QA2', 'Admin', <Butns />),
-    createUserData(1, 'Raj', 'raj@gmail.com', 1122334455, 'QA', 'QA2', 'Admin', <Butns />),
-    createUserData(1, 'Raj', 'raj@gmail.com', 1122334455, 'QA', 'QA2', 'Admin', <Butns />),
-    createUserData(1, 'Raj', 'raj@gmail.com', 1122334455, 'QA', 'QA2', 'Admin', <Butns />),
-    createUserData(1, 'Raj', 'raj@gmail.com', 1122334455, 'QA', 'QA2', 'Admin', <Butns />),
-    createUserData(1, 'Raj', 'raj@gmail.com', 1122334455, 'QA', 'QA2', 'Admin', <Butns />),
-    createUserData(1, 'Raj', 'raj@gmail.com', 1122334455, 'QA', 'QA2', 'Admin', <Butns />),
-    createUserData(1, 'Raj', 'raj@gmail.com', 1122334455, 'QA', 'QA2', 'Admin', <Butns />),
-    createUserData(1, 'Raj', 'raj@gmail.com', 1122334455, 'QA', 'QA2', 'Admin', <Butns />),
-]
 
-let UserComp = () => {
+let UserComp = (props) => {
+    const {users} = props;
+    let count =0;
     return (
         <>
-            <TableContainer component={Paper} sx={{ maxHeight: 640 }}>
+            {users.length != 0 ? <TableContainer component={Paper} sx={{ maxHeight: 640 }}>
                 <Table stickyHeader aria-label="collapsible table">
                     <TableHead>
                         <TableRow>
                             <TableCell sx={{ backgroundColor: 'rgb(15, 11, 42)', fontWeight: 'bold', color: 'white' }}>S.No</TableCell>
+                            <TableCell sx={{ backgroundColor: 'rgb(15, 11, 42)', fontWeight: 'bold', color: 'white' }}>Employee ID</TableCell>
                             <TableCell sx={{ backgroundColor: 'rgb(15, 11, 42)', fontWeight: 'bold', color: 'white' }}>Name</TableCell>
                             <TableCell sx={{ backgroundColor: 'rgb(15, 11, 42)', fontWeight: 'bold', color: 'white' }}>Email</TableCell>
                             <TableCell sx={{ backgroundColor: 'rgb(15, 11, 42)', fontWeight: 'bold', color: 'white' }}>Phone</TableCell>
-                            <TableCell sx={{ backgroundColor: 'rgb(15, 11, 42)', fontWeight: 'bold', color: 'white' }}>Department</TableCell>
-                            <TableCell sx={{ backgroundColor: 'rgb(15, 11, 42)', fontWeight: 'bold', color: 'white' }}>Sub Devision</TableCell>
                             <TableCell sx={{ backgroundColor: 'rgb(15, 11, 42)', fontWeight: 'bold', color: 'white' }}>Role</TableCell>
+                            <TableCell sx={{ backgroundColor: 'rgb(15, 11, 42)', fontWeight: 'bold', color: 'white' }}>Branch</TableCell>
                             <TableCell sx={{ backgroundColor: 'rgb(15, 11, 42)', fontWeight: 'bold', color: 'white' }}>Action</TableCell>
                         </TableRow>
                     </TableHead>
 
                     <TableBody>
-                        {userData.map((usr) => (
+                        {users.map((usr) => (
                             <TableRow hover='true'>
-                                <TableCell>{usr.sno}</TableCell>
-                                <TableCell>{usr.name}</TableCell>
-                                <TableCell>{usr.email}</TableCell>
-                                <TableCell>{usr.phone}</TableCell>
-                                <TableCell>{usr.department}</TableCell>
-                                <TableCell>{usr.subdevision}</TableCell>
-                                <TableCell>{usr.role}</TableCell>
-                                <TableCell>{usr.action}</TableCell>
+                                <TableCell>{++count}</TableCell>
+                                <TableCell>{usr.employee_id != null ? usr.employee_id : "Null"}</TableCell>
+                                <TableCell>{usr.name != null ? usr.name : "Null"}</TableCell>
+                                <TableCell>{usr.email != null ? usr.email : "Null"}</TableCell>
+                                <TableCell>{usr.phone != null ? usr.phone : "Null"}</TableCell>
+                                <TableCell>{usr.role_get != null ? usr.role_get : "Null"}</TableCell>
+                                <TableCell>{usr.branch != null ? usr.branch : "Null"}</TableCell>
+                                <TableCell><Butns /></TableCell>
                             </TableRow>
                         ))}
                     </TableBody>
                 </Table>
-            </TableContainer>
+            </TableContainer> : <Loader />}
         </>
     );
 }
@@ -76,7 +62,17 @@ let UserComp = () => {
 
 
 function Users() {
-    const [dispUser, setdispUser] = useState(<UserComp />);
+    const [dispUser, setdispUser] = useState(false);
+    const [usersdata, setusersdata ] = useState([]);
+
+    useEffect(() => {
+        fetch('https://erp-dwe8a.ondigitalocean.app/api/get?model=user')
+            .then((res) => { return res.json(); })
+            .then((data) => {
+                console.log(data.data);
+                setusersdata(data.data)
+            })
+    }, [])
 
     let AddUsers = () => {
         return (
@@ -124,7 +120,7 @@ function Users() {
                 </div><br />
                     <button className="comadbtn">Add</button>
                     <button className="cancelbtn" onClick={() => {
-                        setdispUser(<UserComp />)
+                        setdispUser(false)
                         document.getElementById("useradbtn").style.display = 'block';
                     }} >Back</button>
             </>
@@ -142,14 +138,14 @@ function Users() {
                 <div className="col-lg-10">
                     <div className="comhed">
                         <button className="comadbtn" id="useradbtn" onClick={() => {
-                            setdispUser(<AddUsers />)
+                            setdispUser(true);
                             document.getElementById("useradbtn").style.display = 'none';
                         }}>Add</button>
                         <h5>Users</h5>
                         <h6>Manage Users / User </h6>
                     </div>
                     <div className="tablepadding">
-                        {dispUser}
+                        {dispUser == false ? <UserComp users={usersdata} /> : <AddUsers />}
                     </div>
                 </div>
             </div>

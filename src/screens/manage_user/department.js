@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Header from "../../comp/header/header";
 import Sidenav from "../../comp/sidenav/sidenav";
 import { TableContainer, Table, TableBody, TableCell, TableHead, TableRow, Paper, IconButton } from "@mui/material";
@@ -6,13 +6,7 @@ import '../common.css';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { maxWidth } from "@mui/system";
-
-
-
-function createDepartmentData(sno, departmentname, role, action) {
-    return { sno, departmentname, role, action }
-}
-
+import Loader from "../../comp/Load/loading";
 function Butns() {
     return (
         <>
@@ -22,58 +16,51 @@ function Butns() {
     );
 }
 
-
-
-const Departmentrows = [
-    createDepartmentData(1, 'Chennai', 'TamilNadu', <Butns />),
-    createDepartmentData(1, 'Chennai', 'TamilNadu', <Butns />),
-    createDepartmentData(1, 'Chennai', 'TamilNadu', <Butns />),
-    createDepartmentData(1, 'Chennai', 'TamilNadu', <Butns />),
-    createDepartmentData(1, 'Chennai', 'TamilNadu', <Butns />),
-    createDepartmentData(1, 'Chennai', 'TamilNadu', <Butns />),
-    createDepartmentData(1, 'Chennai', 'TamilNadu', <Butns />),
-    createDepartmentData(1, 'Chennai', 'TamilNadu', <Butns />),
-    createDepartmentData(1, 'Chennai', 'TamilNadu', <Butns />),
-    createDepartmentData(1, 'Chennai', 'TamilNadu', <Butns />),
-];
-
-
-let DepartmentComp = () => {
+let DepartmentComp = (props) => {
+    const {deprt} = props;
+    let count =0;
     return (
         <>
+            {deprt.length != 0 ? 
             <TableContainer component={Paper} sx={{ maxHeight: 650 }}>
-                <Table stickyHeader aria-label="simple table">
-                    <TableHead >
-                        <TableRow>
-                            <TableCell width={100} variant="head" sx={{ backgroundColor: 'rgb(15, 11, 42)', color: 'white',fontWeight:'bold' }}>S.No</TableCell>
-                            <TableCell width={250} variant="head" sx={{ backgroundColor: 'rgb(15, 11, 42)', color: 'white',fontWeight:'bold' }}>Department Name</TableCell>
-                            <TableCell variant="head" sx={{ backgroundColor: 'rgb(15, 11, 42)', color: 'white',fontWeight:'bold' }}>Role</TableCell>
-                            <TableCell width={200} variant="head" sx={{ backgroundColor: 'rgb(15, 11, 42)', color: 'white',fontWeight:'bold' }}>Action</TableCell>
-                        </TableRow>
-                    </TableHead>
+            <Table stickyHeader aria-label="simple table">
+                <TableHead >
+                    <TableRow>
+                        <TableCell width={100} variant="head" sx={{ backgroundColor: 'rgb(15, 11, 42)', color: 'white',fontWeight:'bold' }}>S.No</TableCell>
+                        <TableCell width={250} variant="head" sx={{ backgroundColor: 'rgb(15, 11, 42)', color: 'white',fontWeight:'bold' }}>Department Name</TableCell>
+                        <TableCell variant="head" sx={{ backgroundColor: 'rgb(15, 11, 42)', color: 'white',fontWeight:'bold' }}>Role</TableCell>
+                        <TableCell width={200} variant="head" sx={{ backgroundColor: 'rgb(15, 11, 42)', color: 'white',fontWeight:'bold' }}>Action</TableCell>
+                    </TableRow>
+                </TableHead>
 
-                    <TableBody>
-                        {Departmentrows.map((dept) => (
-                            <TableRow hover='true'>
-                                <TableCell>{dept.sno}</TableCell>
-                                <TableCell>{dept.departmentname}</TableCell>
-                                <TableCell>{dept.role}</TableCell>
-                                <TableCell>{dept.action}</TableCell>
-                            </TableRow>
-                        ))}
-                    </TableBody>
-                </Table>
-            </TableContainer>
+                <TableBody>
+                    {deprt.map((dept) => (
+                        <TableRow hover='true'>
+                            <TableCell>{++count}</TableCell>
+                            <TableCell>{dept.name}</TableCell>
+                            <TableCell>{dept.role}</TableCell>
+                            <TableCell><Butns /></TableCell>
+                        </TableRow>
+                    ))}
+                </TableBody>
+            </Table>
+        </TableContainer> : <Loader />}
         </>
     );
 }
 
-
-
-
-
 function Department() {
-    const [dispdept, setdispdept] = useState(<DepartmentComp />);
+    const [dispdept, setdispdept] = useState(false);
+    const [departmentdata, setdepartmentdata] = useState([]);
+
+    useEffect(() => {
+        fetch('https://erp-dwe8a.ondigitalocean.app/api/get?model=department')
+            .then((res) => { return res.json(); })
+            .then((data) => {
+                console.log(data.data);
+                setdepartmentdata(data.data)
+            })
+    }, [])
 
     function AddDepartment() {
         return (
@@ -92,7 +79,7 @@ function Department() {
                     </div>
                 </div><br />
                 <button className="comadbtn">Add</button>
-                <button className="cancelbtn" onClick={() => {setdispdept(<DepartmentComp />)
+                <button className="cancelbtn" onClick={() => {setdispdept(false)
                     document.getElementById("departmentadbtn").style.display = 'block';
             }} >Back</button>
             </>
@@ -111,14 +98,14 @@ function Department() {
                     <div>
                         <div className="comhed">
                             <button className="comadbtn" id='departmentadbtn' onClick={() => {
-                                setdispdept(<AddDepartment />);
+                                setdispdept(true);
                                 document.getElementById('departmentadbtn').style.display = 'none';
                             }} >Add</button>
                             <h5>Departments</h5>
                             <h6>Manage Users / Departments</h6>
                         </div>
                         <div className="tablepadding">
-                            {dispdept}
+                            {dispdept == false ? <DepartmentComp deprt={departmentdata} /> : <AddDepartment />}
                         </div>
                     </div>
                 </div>

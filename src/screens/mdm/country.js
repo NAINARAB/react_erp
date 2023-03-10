@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Header from "../../comp/header/header";
 import Sidenav from "../../comp/sidenav/sidenav";
 import { IconButton, TableContainer, Table, TableBody, TableCell, TableHead, TableRow, Paper } from "@mui/material";
@@ -6,11 +6,8 @@ import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import '../common.css';
 import { maxWidth } from "@mui/system";
+import Loader from "../../comp/Load/loading";
 
-
-function createCountryData(sno, country, action) {
-    return { sno, country, action }
-}
 
 function Butns() {
     return (
@@ -21,45 +18,51 @@ function Butns() {
     );
 }
 
-let Countrycomp = () => {
+let Countrycomp = (props) => {
+    const { countrys } = props;
+    let count = 0;
     return (
         <>
-            <TableContainer component={Paper} sx={{ maxHeight:650}}>
-                <Table stickyHeader sx={{ minWidth: 650 }} aria-label="simple table">
-                    <TableHead>
-                        <TableRow>
-                            <TableCell variant="head" align="left" Width={120} sx={{ backgroundColor: 'rgb(15, 11, 42)', color: 'white', fontWeight: 'bold' }}>S.No</TableCell>
-                            <TableCell variant="head" align="left" width={maxWidth} sx={{ backgroundColor: 'rgb(15, 11, 42)', color: 'white', fontWeight: 'bold' }}>Country</TableCell>
-                            <TableCell variant="head" align="left" width={200} sx={{ backgroundColor: 'rgb(15, 11, 42)', color: 'white', fontWeight: 'bold' }}>Action</TableCell>
-                        </TableRow>
-                    </TableHead>
-                    <TableBody>
-                        {Countryrows.map((cntry) => (
-                            <TableRow hover='true'>
-                                <TableCell >{cntry.sno}</TableCell>
-                                <TableCell>{cntry.country}</TableCell>
-                                <TableCell align="left">{cntry.action}</TableCell>
+            {countrys.length != 0 ?
+
+                <TableContainer component={Paper} sx={{ maxHeight: 650 }}>
+                    <Table stickyHeader sx={{ minWidth: 650 }} aria-label="simple table">
+                        <TableHead>
+                            <TableRow>
+                                <TableCell variant="head" align="left" Width={120} sx={{ backgroundColor: 'rgb(15, 11, 42)', color: 'white', fontWeight: 'bold' }}>S.No</TableCell>
+                                <TableCell variant="head" align="left" width={maxWidth} sx={{ backgroundColor: 'rgb(15, 11, 42)', color: 'white', fontWeight: 'bold' }}>Country</TableCell>
+                                <TableCell variant="head" align="left" width={200} sx={{ backgroundColor: 'rgb(15, 11, 42)', color: 'white', fontWeight: 'bold' }}>Action</TableCell>
                             </TableRow>
-                        ))}
-                    </TableBody>
-                </Table>
-            </TableContainer>
+                        </TableHead>
+                        <TableBody>
+                            {countrys.map((cntry) => (
+                                <TableRow hover='true'>
+                                    <TableCell >{++count}</TableCell>
+                                    <TableCell>{cntry.country_name}</TableCell>
+                                    <TableCell align="left"><Butns /></TableCell>
+                                </TableRow>
+                            ))}
+                        </TableBody>
+                    </Table>
+                </TableContainer> : <Loader />}
         </>
     );
 }
 
 
-const Countryrows = [
-    createCountryData(1, 'India', <Butns />),
-    createCountryData(1, 'India', <Butns />),
-    createCountryData(1, 'India', <Butns />),
-    createCountryData(6, 'India', <Butns />),
-    createCountryData(1, 'India', <Butns />),
-    createCountryData(1, 'India', <Butns />),
-]
-
-
 function Country() {
+    const [dispcountry, setdispcountry] = useState(false);
+    const [countrydata, setcountrydata] = useState([]);
+
+
+    useEffect(() => {
+        fetch('https://erp-dwe8a.ondigitalocean.app/api/get?model=country')
+            .then((res) => { return res.json(); })
+            .then((data) => {
+                console.log(data.data);
+                setcountrydata(data.data);
+            })
+    }, [])
 
     function AddCountry() {
         return (
@@ -75,14 +78,13 @@ function Country() {
                 </div><br />
                 <button className="comadbtn">Add</button>
                 <button className="cancelbtn" onClick={() => {
-                    setdispcountry(<Countrycomp />)
+                    setdispcountry(false)
                     document.getElementById('countryadbtn').style.display = 'block';
                 }} >Back</button>
             </>
         );
     }
 
-    const [dispcountry, setdispcountry] = useState(<Countrycomp />)
     return (
         <>
             <div className="row" >
@@ -95,14 +97,14 @@ function Country() {
                 <div className="col-lg-10">
                     <div className="comhed">
                         <button className="comadbtn" id="countryadbtn" onClick={() => {
-                            setdispcountry(<AddCountry />)
+                            setdispcountry(true)
                             document.getElementById("countryadbtn").style.display = 'none';
                         }}>Add</button>
                         <h5>Country</h5>
                         <h6>Master Data Management / Country </h6>
                     </div>
                     <div className="tablepadding">
-                        {dispcountry}
+                        {dispcountry === false ? <Countrycomp countrys={countrydata} /> : <AddCountry />}
                     </div>
                 </div>
             </div>

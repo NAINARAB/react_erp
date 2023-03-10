@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Header from "../../comp/header/header";
 import Sidenav from "../../comp/sidenav/sidenav";
 import { IconButton, TableContainer, Table, TableBody, TableCell, TableHead, TableRow, Paper } from "@mui/material";
@@ -6,10 +6,8 @@ import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import '../common.css';
 import { maxWidth } from "@mui/system";
+import Loader from "../../comp/Load/loading";
 
-function createUserroleData(sno, role, department, action) {
-    return { sno, role, department, action };
-}
 
 function Butns() {
     return (
@@ -20,45 +18,37 @@ function Butns() {
     );
 }
 
-const userroledata = [
-    createUserroleData(1, "Manager", "Department", <Butns />),
-    createUserroleData(1, "Manager", "Department", <Butns />),
-    createUserroleData(1, "Manager", "Department", <Butns />),
-    createUserroleData(1, "Manager", "Department", <Butns />),
-    createUserroleData(1, "Manager", "Department", <Butns />),
-    createUserroleData(1, "Manager", "Department", <Butns />),
-    createUserroleData(1, "Manager", "Department", <Butns />),
-    createUserroleData(1, "Manager", "Department", <Butns />),
-    createUserroleData(1, "Manager", "Department", <Butns />),
-    createUserroleData(1, "Manager", "Department", <Butns />),
-]
 
-let UserRoleComp = () => {
+let UserRoleComp = (props) => {
+    const { userrole } = props;
+    let count =0;
     return (
         <>
-            <TableContainer component={Paper} sx={{ maxHeight: 640 }}>
+            {userrole.length != 0 ? <TableContainer component={Paper} sx={{ maxHeight: 640 }}>
                 <Table stickyHeader aria-label="collapsible table">
                     <TableHead>
                         <TableRow>
-                            <TableCell width={100} sx={{ backgroundColor: 'rgb(15, 11, 42)', fontWeight: 'bold', color: 'white' }}>S.No</TableCell>
-                            <TableCell width={250} sx={{ backgroundColor: 'rgb(15, 11, 42)', fontWeight: 'bold', color: 'white' }}>Role</TableCell>
-                            <TableCell width={maxWidth} sx={{ backgroundColor: 'rgb(15, 11, 42)', fontWeight: 'bold', color: 'white' }}>Department</TableCell>
-                            <TableCell width={200} sx={{ backgroundColor: 'rgb(15, 11, 42)', fontWeight: 'bold', color: 'white' }}>Action</TableCell>
+                            <TableCell sx={{ backgroundColor: 'rgb(15, 11, 42)', fontWeight: 'bold', color: 'white' }}>S.No</TableCell>
+                            <TableCell sx={{ backgroundColor: 'rgb(15, 11, 42)', fontWeight: 'bold', color: 'white' }}>Role</TableCell>
+                            <TableCell sx={{ backgroundColor: 'rgb(15, 11, 42)', fontWeight: 'bold', color: 'white' }}>Department</TableCell>
+                            <TableCell sx={{ backgroundColor: 'rgb(15, 11, 42)', fontWeight: 'bold', color: 'white' }}>Devision</TableCell>
+                            <TableCell align="center" width={200} sx={{ backgroundColor: 'rgb(15, 11, 42)', fontWeight: 'bold', color: 'white' }}>Action</TableCell>
                         </TableRow>
                     </TableHead>
 
                     <TableBody>
-                        {userroledata.map((urd) => (
+                        {userrole.map((urd) => (
                             <TableRow hover='true'>
-                                <TableCell>{urd.sno}</TableCell>
-                                <TableCell>{urd.role}</TableCell>
-                                <TableCell>{urd.department}</TableCell>
-                                <TableCell>{urd.action}</TableCell>
+                                <TableCell>{++count}</TableCell>
+                                <TableCell>{urd.role != null ? urd.role : "Null"}</TableCell>
+                                <TableCell>{urd.department_get != null ? urd.department_get : "Null"}</TableCell>
+                                <TableCell>{urd.division_get != null ? urd.division_get : "Null"}</TableCell>
+                                <TableCell align="center"><Butns /></TableCell>
                             </TableRow>
                         ))}
                     </TableBody>
                 </Table>
-            </TableContainer>
+            </TableContainer> : <Loader />}
         </>
     );
 }
@@ -66,7 +56,17 @@ let UserRoleComp = () => {
 
 function Userrole() {
 
-    const [dispUserRole, setUserRole] = useState(<UserRoleComp />)
+    const [dispUserRole, setUserRole] = useState(false);
+    const [userroledata, setuserroledata] = useState([]);
+
+    useEffect(() => {
+        fetch('https://erp-dwe8a.ondigitalocean.app/api/get?model=userrole')
+            .then((res) => { return res.json(); })
+            .then((data) => {
+                console.log(data.data);
+                setuserroledata(data.data);
+            })
+    }, [])
 
     let AddUserRole = () => {
         return (
@@ -90,7 +90,7 @@ function Userrole() {
                 </div><br />
                 <button className="comadbtn">Add</button>
                 <button className="cancelbtn" onClick={() => {
-                    setUserRole(<UserRoleComp />)
+                    setUserRole(false)
                     document.getElementById("userroleadbtn").style.display = 'block';
                 }} >Back</button>
             </>
@@ -109,14 +109,14 @@ function Userrole() {
                 <div className="col-lg-10">
                     <div className="comhed">
                         <button className="comadbtn" id="userroleadbtn" onClick={() => {
-                            setUserRole(<AddUserRole />);
+                            setUserRole(true);
                             document.getElementById("userroleadbtn").style.display = 'none';
                         }}>Add</button>
                         <h5>User Role</h5>
                         <h6>Manage Users / User Role </h6>
                     </div>
                     <div className="tablepadding">
-                        {dispUserRole}
+                        {dispUserRole == false ? <UserRoleComp userrole={userroledata} /> : <AddUserRole />}
                     </div>
                 </div>
             </div>

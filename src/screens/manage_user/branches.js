@@ -1,15 +1,11 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Header from "../../comp/header/header";
 import Sidenav from "../../comp/sidenav/sidenav";
 import { TableContainer, Table, TableBody, TableCell, TableHead, TableRow, Paper, IconButton } from "@mui/material";
 import '../common.css';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
-
-function createBranchesData(sno, cityname, state, country, pincode, gstnumber, action) {
-    return { sno, cityname, state, country, pincode, gstnumber, action };
-}
-
+import Loader from "../../comp/Load/loading";
 function Butns() {
     return (
         <>
@@ -19,64 +15,50 @@ function Butns() {
     );
 }
 
-const Branchesrows = [
-    createBranchesData(1, 'Madurai', 'Tamilnadu', 'India', 123456, 123456789012, <Butns />),
-    createBranchesData(1, 'Madurai', 'Tamilnadu', 'India', 123456, 123456789012, <Butns />),
-    createBranchesData(1, 'Madurai', 'Tamilnadu', 'India', 123456, 123456789012, <Butns />),
-    createBranchesData(1, 'Madurai', 'Tamilnadu', 'India', 123456, 123456789012, <Butns />),
-    createBranchesData(1, 'Madurai', 'Tamilnadu', 'India', 123456, 123456789012, <Butns />),
-    createBranchesData(1, 'Madurai', 'Tamilnadu', 'India', 123456, 123456789012, <Butns />),
-    createBranchesData(1, 'Madurai', 'Tamilnadu', 'India', 123456, 123456789012, <Butns />),
-    createBranchesData(1, 'Madurai', 'Tamilnadu', 'India', 123456, 123456789012, <Butns />),
-    createBranchesData(1, 'Madurai', 'Tamilnadu', 'India', 123456, 123456789012, <Butns />),
-    createBranchesData(1, 'Madurai', 'Tamilnadu', 'India', 123456, 123456789012, <Butns />),
-];
 
-
-
-let BranchesTble = () => {
+let BranchesTble = (props) => {
+    const { branch } = props;
+    let count =0;
     return (
         <>
+            {branch.length != 0 ? 
             <TableContainer component={Paper} sx={{ maxHeight: 650 }}>
-                <Table stickyHeader aria-label="simple table">
-                    <TableHead>
-                        <TableRow>
-                            <TableCell width={100} variant="head" sx={{ backgroundColor: 'rgb(15, 11, 42)', color: 'white' }}>S.No</TableCell>
-                            <TableCell variant="head" sx={{ backgroundColor: 'rgb(15, 11, 42)', color: 'white' }}>City Name</TableCell>
-                            <TableCell variant="head" sx={{ backgroundColor: 'rgb(15, 11, 42)', color: 'white' }}>State</TableCell>
-                            <TableCell variant="head" sx={{ backgroundColor: 'rgb(15, 11, 42)', color: 'white' }}>Country</TableCell>
-                            <TableCell variant="head" sx={{ backgroundColor: 'rgb(15, 11, 42)', color: 'white' }}>Pin Code</TableCell>
-                            <TableCell variant="head" sx={{ backgroundColor: 'rgb(15, 11, 42)', color: 'white' }}>GST Number</TableCell>
-                            <TableCell variant="head" sx={{ backgroundColor: 'rgb(15, 11, 42)', color: 'white' }}>Action</TableCell>
-                        </TableRow>
-                    </TableHead>
+            <Table stickyHeader aria-label="simple table">
+                <TableHead>
+                    <TableRow>
+                        <TableCell width={100} variant="head" sx={{ backgroundColor: 'rgb(15, 11, 42)', color: 'white',fontWeight:'bold' }}>S.No</TableCell>
+                        <TableCell variant="head" sx={{ backgroundColor: 'rgb(15, 11, 42)', color: 'white',fontWeight:'bold' }}>City Name</TableCell>
+                        <TableCell variant="head" sx={{ backgroundColor: 'rgb(15, 11, 42)', color: 'white',fontWeight:'bold' }}>State</TableCell>
+                        <TableCell variant="head" sx={{ backgroundColor: 'rgb(15, 11, 42)', color: 'white',fontWeight:'bold' }}>Country</TableCell>
+                        <TableCell variant="head" sx={{ backgroundColor: 'rgb(15, 11, 42)', color: 'white',fontWeight:'bold' }}>Pin Code</TableCell>
+                        <TableCell variant="head" sx={{ backgroundColor: 'rgb(15, 11, 42)', color: 'white',fontWeight:'bold' }}>GST Number</TableCell>
+                        <TableCell variant="head" sx={{ backgroundColor: 'rgb(15, 11, 42)', color: 'white',fontWeight:'bold' }}>Action</TableCell>
+                    </TableRow>
+                </TableHead>
 
-                    <TableBody>
-                        {Branchesrows.map((brs) => (
-                            <TableRow sx={{ '&:last-child td, &:last-child th': { border: 0 } }} hover='true'>
-                                <TableCell>{brs.sno}</TableCell>
-                                <TableCell>{brs.cityname}</TableCell>
-                                <TableCell>{brs.state}</TableCell>
-                                <TableCell>{brs.country}</TableCell>
-                                <TableCell>{brs.pincode}</TableCell>
-                                <TableCell>{brs.gstnumber}</TableCell>
-                                <TableCell>{brs.action}</TableCell>
-                            </TableRow>
-                        ))}
-                    </TableBody>
-                </Table>
-            </TableContainer>
+                <TableBody>
+                    {branch.map((brs) => (
+                        <TableRow sx={{ '&:last-child td, &:last-child th': { border: 0 } }} hover='true'>
+                            <TableCell>{++count}</TableCell>
+                            <TableCell>{brs.cityname}</TableCell>
+                            <TableCell>{brs.state}</TableCell>
+                            <TableCell>{brs.country}</TableCell>
+                            <TableCell>{brs.pincode}</TableCell>
+                            <TableCell>{brs.GST_Number}</TableCell>
+                            <TableCell><Butns /></TableCell>
+                        </TableRow>
+                    ))}
+                </TableBody>
+            </Table>
+        </TableContainer> : <Loader /> }
         </>
     );
 }
 
 
-
-
-
 function Branches() {
-    const [dispbranch, setdispbranch] = useState(<BranchesTble />);
-
+    const [dispbranch, setdispbranch] = useState(false);
+    const [branchdata, setbranchdata] = useState([]);
     function AddBranches() {
         return (
             <>
@@ -115,12 +97,21 @@ function Branches() {
                     </div>
                 </div><br />
                 <button className="comadbtn">Add</button>
-                <button className="cancelbtn" onClick={() => { setdispbranch(<BranchesTble />)
+                <button className="cancelbtn" onClick={() => { setdispbranch(false)
                     document.getElementById('branchadbtn').style.display ='block';
                 }} >Back</button>
             </>
         );
     }
+
+    useEffect(() => {
+        fetch('https://erp-dwe8a.ondigitalocean.app/api/get?model=branch')
+            .then((res) => { return res.json(); })
+            .then((data) => {
+                console.log(data.data);
+                setbranchdata(data.data)
+            })
+    }, [])
     return (
         <>
             <div className="row">
@@ -133,14 +124,14 @@ function Branches() {
                 <div className="col-lg-10">
                     <div>
                         <div className="comhed">
-                            <button className="comadbtn" id='branchadbtn' onClick={() => { setdispbranch(<AddBranches />)
+                            <button className="comadbtn" id='branchadbtn' onClick={() => { setdispbranch(true)
                                 document.getElementById('branchadbtn').style.display ='none';
                         }} >Add</button>
                             <h5>Branches</h5>
                             <h6>Manage Users / Branches</h6>
                         </div>
                         <div className="tablepadding">
-                            {dispbranch}
+                            {dispbranch == false ? <BranchesTble branch={branchdata} /> : <AddBranches />}
                         </div>
                     </div>
                 </div>
