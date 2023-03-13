@@ -1,18 +1,28 @@
 import * as React from 'react';
 import './sidenav.css'
 import { useNavigate } from 'react-router-dom';
-
-
-
+import { IconButton } from '@mui/material';
+import MenuIcon from '@mui/icons-material/Menu';
+import CloseIcon from '@mui/icons-material/Close';
 
 
 function Sidenav() {
 
     let currentUser = sessionStorage.getItem('id');
+    const [opncond, setopencond] = React.useState(false)
     const navigate = useNavigate();
     return (
         <div>
-            <div>
+            <div className='menuhide'>
+                {opncond === false ? <IconButton size='small' sx={{ color: 'white', fontWeight:'bold' }} 
+                 onClick={() => {document.getElementById('sid').style.display = 'block'; setopencond(true)}}
+                ><MenuIcon /></IconButton> : 
+                
+                <IconButton size='small' sx={{ color: 'white', fontWeight:'bold' }}
+                onClick={() => {document.getElementById('sid').style.display = 'none'; setopencond(false)}}
+                ><CloseIcon /></IconButton>}
+            </div>
+                <div className='hideside' id='sid'>
                 <section className="section-content">
                     <div>
                         <aside>
@@ -48,7 +58,7 @@ function Sidenav() {
                                         <button className="nav-link sbutton butful" data-bs-toggle="collapse" data-bs-target="#menu_item1">
                                             <i className="bi bi-person-circle itme"></i>&ensp;
                                             Admin&ensp; <i class="bi bi-chevron-right itmeright"></i> </button>
-                                        <ul id="menu_item1" className="submenu collapse" style={{paddingLeft:'0',paddingRight:'0'}} data-bs-parent="#nav_accordion">
+                                        <ul id="menu_item1" className="submenu collapse" style={{ paddingLeft: '0', paddingRight: '0' }} data-bs-parent="#nav_accordion">
 
 
                                             <li>
@@ -74,11 +84,11 @@ function Sidenav() {
                                                     <i className="bi bi-people-fill itme"></i>&ensp;
                                                     Manage Users &ensp;<i className="bi bi-chevron-right itmeright"></i></button>
                                                 <ul id="menu_item3" class="submenu collapse">
-                                                    <li><button className="nav-link sbutton" onClick={() => { navigate ('/admin/manageusers/branches')}}><i className="bi bi-dot"></i>Branches</button></li>
-                                                    <li><button className="nav-link sbutton" onClick={() => { navigate ('/admin/manageusers/department')}}><i className="bi bi-dot"></i>Department</button></li>
-                                                    <li><button className="nav-link sbutton" onClick={() => { navigate ('/admin/manageusers/devision')}}><i className="bi bi-dot"></i>Devision</button></li>
-                                                    <li><button className="nav-link sbutton" onClick={() => { navigate ('/admin/manageusers/users')}}><i className="bi bi-dot"></i>User</button></li>
-                                                    <li><button className="nav-link sbutton" onClick={() => { navigate ('/admin/manageusers/userrole')}}><i className="bi bi-dot"></i>User Role</button></li>
+                                                    <li><button className="nav-link sbutton" onClick={() => { navigate('/admin/manageusers/branches') }}><i className="bi bi-dot"></i>Branches</button></li>
+                                                    <li><button className="nav-link sbutton" onClick={() => { navigate('/admin/manageusers/department') }}><i className="bi bi-dot"></i>Department</button></li>
+                                                    <li><button className="nav-link sbutton" onClick={() => { navigate('/admin/manageusers/devision') }}><i className="bi bi-dot"></i>Devision</button></li>
+                                                    <li><button className="nav-link sbutton" onClick={() => { navigate('/admin/manageusers/users') }}><i className="bi bi-dot"></i>User</button></li>
+                                                    <li><button className="nav-link sbutton" onClick={() => { navigate('/admin/manageusers/userrole') }}><i className="bi bi-dot"></i>User Role</button></li>
                                                 </ul>
                                             </li>
 

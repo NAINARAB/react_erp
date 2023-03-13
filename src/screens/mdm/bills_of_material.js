@@ -9,7 +9,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import Draggable from 'react-draggable';
 import { Dialog, DialogContent, DialogTitle, Slide, DialogActions } from '@mui/material/';
-
+//https://erp-new-production.up.railway.app/api/get?model=billofmaterial&filter_by=product_code&filter_value={primary_key}
 // https://erp-dwe8a.ondigitalocean.app/api/get?model=billofmaterial
 
 const Transition = React.forwardRef(function Transition(props, ref) {

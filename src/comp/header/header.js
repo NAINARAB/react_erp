@@ -1,6 +1,5 @@
 import * as React from 'react';
 import './header.css';
-import { useNavigate } from "react-router-dom";
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import SettingsIcon from '@mui/icons-material/Settings';
 

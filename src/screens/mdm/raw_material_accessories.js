@@ -8,22 +8,13 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import { useState, useEffect } from "react";
 import Loader from "../../comp/Load/loading";
 
-// useEffect(() => {
-
-//     fetch('https://erp-dwe8a.ondigitalocean.app/api/get?model=product')
-//         .then((res) => { return res.json(); })
-//         .then((data) => {
-//             setrows(data.data)
-//         })
-
-// }, [])
-
-
 
 function Rawmaterialsaccessories() {
 
     const [dispaddrma, setdispaddrma] = useState(false);
     const [rmadata, setrmadata] = useState([]);
+
+
     let count = 0;
 
     function opnAdd() {
@@ -47,6 +38,12 @@ function Rawmaterialsaccessories() {
 
 
     let AddRMA = () => {
+        const [rmname, setrmname] = useState('');
+        const [rmcode, setrmcode] = useState('')
+        const [units, setunits] = useState();
+        const [minstock, setminstock] = useState();
+        const [currency, setcurrency] = useState();
+        const [rmmaxprice, setrmmaxprice] = useState();
         return (
             <>
                 <form>
@@ -57,12 +54,17 @@ function Rawmaterialsaccessories() {
 
                                 <div className="col-lg-4">
                                     <label className="micardlble">Raw Material</label><br />
-                                    <input className="micardinpt" required />
+                                    <input className="micardinpt" onChange={(e) => setrmname(e.target.value)} required />
+                                </div>
+
+                                <div className="col-lg-4">
+                                    <label className="micardlble">RM Code</label><br />
+                                    <input className="micardinpt" onChange={(e) => setrmcode(e.target.value)} required />
                                 </div>
 
                                 <div className="col-lg-4">
                                     <label className="micardlble">Units</label><br />
-                                    <select className="micardinpt" >
+                                    <select className="micardinpt" onChange={(e) => setunits(e.target.value)}>
                                         <option selected='true' disabled='true' value={''} required>Select Type</option>
                                         <option>Centimeter</option>
                                         <option>Meter</option>

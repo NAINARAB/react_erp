@@ -7,6 +7,9 @@ import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import '../common.css';
+import Loader from "../../comp/Load/loading";
+
+let count =0;
 
 
 function Butns() {
@@ -18,9 +21,69 @@ function Butns() {
     );
 }
 
+let PartyComp = (props) => {
+    const { propobj } = props;
+    console.log(propobj, "partsdat")
+    const [open, setOpen] = useState(false);
+
+    return (<React.Fragment>
+        <TableRow sx={{ '& > *': { borderBottom: 'unset' } }} hover='true' onClick={() => setOpen(!open)} key={count}>
+            <TableCell align="center" component="th" scope="row">
+                {++count }
+            </TableCell>
+            <TableCell align="center">{propobj.party_name == null ? "Null" : propobj.party_name}</TableCell>
+            <TableCell align="center">{propobj.party_type == null ? "Null" : propobj.party_type}</TableCell>
+            <TableCell align="center">{propobj.party_contact_no == null ? "Null" : propobj.party_contact_no}</TableCell>
+            <TableCell align="center">{propobj.party_contact_name == null ? "Null" : propobj.party_contact_name}</TableCell>
+            <TableCell align="center">{propobj.party_email == null ? "Null" : propobj.party_email}</TableCell>
+            <TableCell align="center">{propobj.party_gstin == null ? "Null" : propobj.party_gstin}</TableCell>
+            <TableCell align="center">{propobj.party_address == null ? "Null" : propobj.party_address}</TableCell>
+            <TableCell width={300} align="center"><Butns />
+                <IconButton
+                    aria-label="expand"
+                    size="small"
+                    onClick={() => setOpen(!open)}
+                >
+                    {open ? <KeyboardArrowUpIcon sx={{ fontSize: '2rem' }} /> : <KeyboardArrowDownIcon sx={{ fontSize: '2rem' }} />}
+                </IconButton>
+            </TableCell>
+        </TableRow>
+
+        <TableRow>
+            <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={9}>
+                <Collapse in={open} timeout="auto" unmountOnExit>
+                    <Box sx={{ margin: 3 }}>
+                        <TableContainer>
+                            <Table size="small" sx={{ width: '50%', background: 'transparant' }}>
+                                <TableHead>
+                                    <TableRow>
+                                        <TableCell align="center" sx={{ padding: '1em', fontWeight: 'bold', fontSize: '0.9rem', borderBottom: '0px solid transparent' }}>Country</TableCell>
+                                        <TableCell align="center" sx={{ padding: '1em', fontWeight: 'bold', fontSize: '0.9rem', borderBottom: '0px solid transparent' }}>State</TableCell>
+                                        <TableCell align="center" sx={{ padding: '1em', fontWeight: 'bold', fontSize: '0.9rem', borderBottom: '0px solid transparent' }}>Address</TableCell>
+                                        <TableCell align="center" sx={{ padding: '1em', fontWeight: 'bold', fontSize: '0.9rem', borderBottom: '0px solid transparent' }}>Pin Code</TableCell>
+                                    </TableRow>
+                                </TableHead>
+                                <TableBody>
+                                    <TableRow>
+                                        <TableCell align="center" sx={{ borderBottom: '0px solid transparent' }}>{propobj.party_country_get == null ? "Null" : propobj.party_country_get}</TableCell>
+                                        <TableCell align="center" sx={{ borderBottom: '0px solid transparent' }}>{propobj.party_state == null ? "Null" : propobj.party_state}</TableCell>
+                                        <TableCell align="center" sx={{ borderBottom: '0px solid transparent' }}>{propobj.party_address == null ? "Null" : propobj.party_address}</TableCell>
+                                        <TableCell align="center" sx={{ borderBottom: '0px solid transparent' }}>{propobj.party_pincode == null ? "Null" : propobj.party_pincode}</TableCell>
+                                    </TableRow>
+                                </TableBody>
+                            </Table>
+                        </TableContainer>
+                    </Box>
+                </Collapse>
+            </TableCell>
+        </TableRow>
+    </React.Fragment>
+    );
+}
+
 
 function Parties() {
-    const [dispparties, setdispparties] = useState();
+    const [dispparties, setdispparties] = useState(false);
     const [partydata, setpartydata] = useState([]);
 
     useEffect(() => {
@@ -29,8 +92,6 @@ function Parties() {
             .then((res) => { return res.json(); })
             .then((resdata) => {
                 setpartydata(resdata.data);
-                console.log(resdata.data);
-                console.log("partyday",partydata.map(ob => (ob.party_name)))
             })
 
     }, [])
@@ -105,14 +166,13 @@ function Parties() {
                 </div><br />
                 <button className="comadbtn">Add</button>
                 <button className="cancelbtn" onClick={() => {
-                    setdispparties();
+                    setdispparties(false);
                     document.getElementById("prtyadbtn").style.display = 'block';
                 }}>Back</button>
             </>
         );
     }
-    const [open, setOpen] = useState(false);
-    let count = 0;
+
     return (
         <>
             <div className="row" >
@@ -131,10 +191,9 @@ function Parties() {
                         <h5>Parties</h5>
                         <h6>Master Data Management / Parties </h6>
                     </div>
-                    <div style={{ padding: '0em 1em' }}>
-                        <br />
-                        {partydata.length != 0 ?
-                            <TableContainer component={Paper} sx={{ maxHeight: 640 }}>
+                    <div className="tablepadding">
+                        {dispparties === false ? <>
+                            {partydata.length !== 0 ? <TableContainer component={Paper} sx={{ maxHeight: 640 }}>
                                 <Table stickyHeader aria-label="collapsible table">
                                     <TableHead>
                                         <TableRow>
@@ -150,67 +209,12 @@ function Parties() {
                                         </TableRow>
                                     </TableHead>
                                     <TableBody>
-                                        {partydata.map((propobj) => () => {
-                                            return (
-                                                <>
-                                                    <React.Fragment>
-                                                        <TableRow sx={{ '& > *': { borderBottom: 'unset' } }} hover='true' onClick={() => setOpen(!open)} key={count}>
-                                                            <TableCell align="center" component="th" scope="row">
-                                                                {++count}
-                                                            </TableCell>
-                                                            <TableCell align="center">{propobj.party_name == null ? "Null" : propobj.party_name}</TableCell>
-                                                            <TableCell align="center">{propobj.party_type == null ? "Null" : propobj.party_type}</TableCell>
-                                                            <TableCell align="center">{propobj.party_contact_no == null ? "Null" : propobj.party_contact_no}</TableCell>
-                                                            <TableCell align="center">{propobj.party_contact_name == null ? "Null" : propobj.party_contact_name}</TableCell>
-                                                            <TableCell align="center">{propobj.party_email == null ? "Null" : propobj.party_email}</TableCell>
-                                                            <TableCell align="center">{propobj.party_gstin == null ? "Null" : propobj.party_gstin}</TableCell>
-                                                            <TableCell align="center">{propobj.party_address == null ? "Null" : propobj.party_address}</TableCell>
-                                                            <TableCell width={300} align="center">
-                                                                <IconButton
-                                                                    aria-label="expand row"
-                                                                    size="small"
-                                                                    onClick={() => setOpen(!open)}
-                                                                >
-                                                                    {open ? <KeyboardArrowUpIcon sx={{ fontSize: '2rem' }} /> : <KeyboardArrowDownIcon sx={{ fontSize: '2rem' }} />}
-                                                                </IconButton>
-                                                            </TableCell>
-                                                        </TableRow>
-
-                                                        {/* <TableRow>
-                                                            <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={9}>
-                                                                <Collapse in={open} timeout="auto" unmountOnExit>
-                                                                    <Box sx={{ margin: 3 }}>
-                                                                        <TableContainer>
-                                                                            <Table size="small" sx={{ width: '50%', background: 'transparant' }}>
-                                                                                <TableHead>
-                                                                                    <TableRow>
-                                                                                        <TableCell align="center" sx={{ padding: '1em', fontWeight: 'bold', fontSize: '0.9rem', borderBottom: '0px solid transparent' }}>Country</TableCell>
-                                                                                        <TableCell align="center" sx={{ padding: '1em', fontWeight: 'bold', fontSize: '0.9rem', borderBottom: '0px solid transparent' }}>State</TableCell>
-                                                                                        <TableCell align="center" sx={{ padding: '1em', fontWeight: 'bold', fontSize: '0.9rem', borderBottom: '0px solid transparent' }}>Address</TableCell>
-                                                                                        <TableCell align="center" sx={{ padding: '1em', fontWeight: 'bold', fontSize: '0.9rem', borderBottom: '0px solid transparent' }}>Pin Code</TableCell>
-                                                                                    </TableRow>
-                                                                                </TableHead>
-                                                                                <TableBody>
-                                                                                    <TableRow>
-                                                                                        <TableCell align="center" sx={{ borderBottom: '0px solid transparent' }}>{propobj.party_country_get == null ? "Null" : propobj.party_country_get}</TableCell>
-                                                                                        <TableCell align="center" sx={{ borderBottom: '0px solid transparent' }}>{propobj.party_state == null ? "Null" : propobj.party_state}</TableCell>
-                                                                                        <TableCell align="center" sx={{ borderBottom: '0px solid transparent' }}>{propobj.party_address == null ? "Null" : propobj.party_address}</TableCell>
-                                                                                        <TableCell align="center" sx={{ borderBottom: '0px solid transparent' }}>{propobj.party_pincode == null ? "Null" : propobj.party_pincode}</TableCell>
-                                                                                    </TableRow>
-                                                                                </TableBody>
-                                                                            </Table>
-                                                                        </TableContainer>
-                                                                    </Box>
-                                                                </Collapse>
-                                                            </TableCell>
-                                                        </TableRow> */}
-                                                    </React.Fragment>
-                                                </>
-                                            );
-                                        })}
+                                        {partydata.map(propobject => (
+                                            <PartyComp propobj={propobject} />
+                                        ))}
                                     </TableBody>
                                 </Table>
-                            </TableContainer> : "Looking for data... "}
+                            </TableContainer> : <Loader />} </> : <AddParties />}
                     </div>
                 </div>
             </div>

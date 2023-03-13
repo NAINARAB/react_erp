@@ -42,7 +42,7 @@ let BranchesTble = (props) => {
                             <TableCell>{++count}</TableCell>
                             <TableCell>{brs.cityname}</TableCell>
                             <TableCell>{brs.state}</TableCell>
-                            <TableCell>{brs.country}</TableCell>
+                            <TableCell>{brs.country_get}</TableCell>
                             <TableCell>{brs.pincode}</TableCell>
                             <TableCell>{brs.GST_Number}</TableCell>
                             <TableCell><Butns /></TableCell>

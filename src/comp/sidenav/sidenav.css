@@ -88,3 +88,20 @@
     margin: 0px;
     font-size:20px;
 }
+
+
+.menuhide{
+    position: absolute;
+    top: 20px;
+    left: 27px;
+    display: none;
+}
+
+@media only screen and (max-width: 991px) {
+    .menuhide{
+        display: block;
+    }
+    .hideside{
+        display: none;
+    }
+  }

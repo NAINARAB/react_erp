@@ -5,7 +5,7 @@ import { TableContainer, Table, TableBody, TableCell, TableHead, TableRow, Paper
 import { maxWidth } from "@mui/system";
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
-
+import Loader from "../../comp/Load/loading";
 
 
 function Butns() {
@@ -45,7 +45,7 @@ let PhasesRowsComp = (props) => {
                             </TableBody>
                         </Table>
                     </TableContainer>
-                </div> : "Looking For Data Or No Data"}
+                </div> : <Loader />}
         </>
     );
 }

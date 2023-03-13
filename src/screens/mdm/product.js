@@ -6,42 +6,25 @@ import '../common.css';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import Loader from "../../comp/Load/loading";
-
+import axios from "axios";
 
 function Product() {
     let [rows, setrows] = useState([]);
-    const [productname, setproductname] = useState('');
-    const [productcode, setproductcode] = useState('');
-    const [producttype, setproductype] = useState('');
-    const [currency, setcurrency] = useState('');
-    const [minprice, setminprice] = useState();
-    const [maxprice, setmaxprice] = useState();
-    const [multipleparts, setmultipleparts] = useState(false);
     const [dispaddpro, setaddpro] = useState(false);
+    const [countrysdat, setcountrydat] = useState([])
     let count = 1;
     const dummy = [];
-    function setmul(e) { setmultipleparts(e.target.checked) }
-    let enterddata = {
-        "product_code": productcode,
-        "product_name": productname,
-        "product_type": producttype,
-        "minimum_price": minprice,
-        "maximum_price": maxprice,
-        "currency": currency,
-        "multiple_parts": multipleparts,
-    };
-
-
 
     function Butns() {
         return (
             <>
-                <IconButton aria-label="expand row" size="small" sx={{ marginLeft: '0.5em' }}><EditIcon /></IconButton>
-                <IconButton aria-label="expand row" size="small" sx={{ color: 'rgba(255, 0, 0, 0.755)', marginRight: '1em' }}><DeleteIcon /></IconButton>
+                <IconButton aria-label="expand" size="small" sx={{ marginLeft: '0.5em' }}><EditIcon /></IconButton>
+                <IconButton aria-label="expand" size="small" sx={{ color: 'rgba(255, 0, 0, 0.755)', marginRight: '1em' }}><DeleteIcon /></IconButton>
             </>
         );
     }
 
+    //for fetch the product
     useEffect(() => {
 
         fetch('https://erp-dwe8a.ondigitalocean.app/api/get?model=product')
@@ -52,26 +35,70 @@ function Product() {
 
     }, [])
 
+    //for fetch the countrys
+    useEffect(() => {
+        fetch('https://erp-dwe8a.ondigitalocean.app/api/get?model=country')
+            .then((res) => { return res.json(); })
+            .then((data) => {
+                setcountrydat(data.data);
+            })
+    }, [])
+
 
 
     let Addproduct = () => {
+        const [productname, setproductname] = useState('');
+        const [productcode, setproductcode] = useState('');
+        const [producttype, setproductype] = useState('');
+        const [currency, setcurrency] = useState('');
+        const [minprice, setminprice] = useState();
+        const [maxprice, setmaxprice] = useState();
+        const [multipleparts, setmultipleparts] = useState(false);
+        const [multipartarr, setmultipartarr ] = useState([]);
+        
 
-        const url = 'https://erp-dwe8a.ondigitalocean.app/api/get?model=product'
-        const option = {
-            method: "POST",
-            body: enterddata
+        const prdtpost = axios.create({
+            baseURL: "https://erp-dwe8a.ondigitalocean.app/api/get?model=product"
+        });
+
+        const postProduct = (productname, productcode, producttype, currency, minprice, maxprice, multipleparts, multipartarr ) => {
+            prdtpost.post('', {
+                product_code: productcode,
+                product_name: productname,
+                product_type: producttype,
+                maximum_price: maxprice,
+                minimum_price: minprice,
+                currency: currency,
+                multiple_parts: multipleparts,
+                parts: multipartarr
+            })
+                .then((res) => {
+                    console.log("after then", res)
+                    if (res.data.status === 'success') {
+                        alert("Post Successfully");
+                        console.log("Posted the data")
+                    }
+                    else {
+                        if (res.data.status === 'failure') {
+                            alert('Something Went Wrong Please Try Again...');
+                        }
+                    }
+
+                }).catch((err) => {
+                    console.log(err);
+                })
+        };
+
+        let doPost = (e) => {
+            e.preventDefault();
+            postProduct(productname, productcode, producttype, currency, minprice, maxprice, multipleparts, multipartarr);
         }
 
-        useEffect(() => {
-            fetch(url, option)
-                .then(res => { return res.json() })
-                .then(data => (console.log(data)))
-        }, [])
 
         let Dispmultipro = () => {
             return (
                 <><br /><br /><br /><br /><br />
-                    <div className="col-lg-4 tablepadding">
+                    <div className="col-lg-6 tablepadding">
                         <label className="micardlble">Add Multiple Parts</label>
                         <Autocomplete
                             sx={{ backgroundColor: 'transparent' }}
@@ -88,15 +115,15 @@ function Product() {
                                 <TextField
                                     {...params}
                                     label="Multiple Parts"
-
                                     multiline
-                                    rows={2}
+                                    rows={3}
                                     placeholder="Type here"
                                     variant="standard"
+                                    onChange={(e) => setmultipartarr(e.target.value)}
                                 />
                             )}
                         />
-                    </div><div className="col-lg-4"></div><div className="col-lg-4"></div>
+                    </div><div className="col-lg-6"></div>
                 </>
             );
         }
@@ -109,7 +136,7 @@ function Product() {
                         <div className="micardbdy row">
                             <div className="col-lg-4">
                                 <label className="micardlble" >Product Name</label><br />
-                                <input className="micardinpt" onChange={(e) => { setproductname(e.target.value); }} required />
+                                <input className="micardinpt" onChange={(e) => setproductname(e.target.value)} required/>
                             </div>
 
                             <div className="col-lg-4">
@@ -119,19 +146,22 @@ function Product() {
 
                             <div className="col-lg-4">
                                 <label className="micardlble">Product Type</label><br />
-                                <select className="micardinpt" value={producttype} onChange={(e) => { setproductype(e.target.value); }}>
-                                    <option selected='true' value='' required>Select Type</option>
-                                    <option>Finished</option>
-                                    <option>Semi-Finished</option>
+                                <select className="micardinpt" value={producttype} onChange={(e) => { setproductype(e.target.value); }} required>
+                                    <option selected='true' value='' >Select Type</option>
+                                    <option value={"finished"}>Finished</option>
+                                    <option value={"semi-finished"}>Semi-Finished</option>
                                 </select>
                             </div>
 
                             <div className="col-lg-4">
                                 <label className="micardlble">Currency</label><br />
-                                <select className="micardinpt" value={currency} onChange={(e) => { setcurrency(e.target.value); }}>
-                                    <option selected='true' value='' required>Select Currency</option>
-                                    <option>INR</option>
-                                    <option>INR2</option>
+                                <select className="micardinpt" value={currency} onChange={(e) => { setcurrency(e.target.value); }} required>
+                                    <option selected='true' value=''>Select Currency</option>
+                                    {countrysdat.map(conryobj => (
+                                        <>
+                                            <option value={conryobj.pk}>{conryobj.country_name}</option>
+                                        </>
+                                    ))}
                                 </select>
                             </div>
 
@@ -146,20 +176,20 @@ function Product() {
                             <div className="col-lg-4">
                                 <label className="micardlble">Max Price</label><br />
                                 <input value={currency} disabled='true' className="micardgrpinpt" />
-                                <input type='number' onChange={(e) => { setmaxprice(e.target.value); }} className="micardgrpinpt1" />
+                                <input type='number' min={parseInt(minprice)+1} onChange={(e) => { setmaxprice(e.target.value); }} className="micardgrpinpt1" />
                             </div>
 
                             <div className="col-lg-4">
                                 <label className="micardlble">Multiple Parts</label><br />
                                 <div className="micardboxinpt">
-                                    <input type='checkbox' onChange={setmul} style={{ height: '1em', width: '1em' }} /> &emsp;Add Multiple Parts
+                                    <input type='checkbox' checked={multipleparts} onChange={() => {setmultipleparts(!multipleparts)}} style={{ height: '1em', width: '1em' }} /> &emsp;Add Multiple Parts
                                 </div>
                             </div><div className="col-lg-4"></div><div className="col-lg-4"></div>
-                            {multipleparts == true ? <Dispmultipro /> : ""}
+                            {multipleparts === true ? <Dispmultipro /> : null}
                         </div>
 
                     </div><br />
-                    <button className="comadbtn" type="submit">Add</button>
+                    <button className="comadbtn" onClick={doPost}>Add</button>
                     <button className="cancelbtn" onClick={opnProdt} >Back</button>
                 </form>
             </>
@@ -198,7 +228,7 @@ function Product() {
                         </div>
                         <div className="tablepadding">
                             <div id="dispproduct">
-                                {rows.length != 0 ? <TableContainer component={Paper} sx={{ maxHeight: 650 }}>
+                                {rows.length !== 0 ? <TableContainer component={Paper} sx={{ maxHeight: 650 }}>
                                     <Table stickyHeader aria-label="simple table">
                                         <TableHead >
                                             <TableRow>
@@ -223,15 +253,15 @@ function Product() {
                                                             <TableCell component="th" scope="row">
                                                                 {count++}
                                                             </TableCell>
-                                                            <TableCell>{rowobj.product_name == null ? "Null" : rowobj.product_name}</TableCell>
-                                                            <TableCell>{rowobj.product_type == null ? "Null" : rowobj.product_type}</TableCell>
-                                                            <TableCell>{rowobj.min_stock == null ? "Null" : rowobj.min_stock}</TableCell>
-                                                            <TableCell>{rowobj.minimum_price == null ? "Null" : rowobj.minimum_price}</TableCell>
-                                                            <TableCell>{rowobj.maximum_price == null ? "Null" : rowobj.maximum_price}</TableCell>
-                                                            <TableCell>{rowobj.currency_get == null ? "Null" : rowobj.currency_get}</TableCell>
+                                                            <TableCell>{rowobj.product_name === null ? "Null" : rowobj.product_name}</TableCell>
+                                                            <TableCell>{rowobj.product_type === null ? "Null" : rowobj.product_type}</TableCell>
+                                                            <TableCell>{rowobj.min_stock === null ? "Null" : rowobj.min_stock}</TableCell>
+                                                            <TableCell>{rowobj.minimum_price === null ? "Null" : rowobj.minimum_price}</TableCell>
+                                                            <TableCell>{rowobj.maximum_price === null ? "Null" : rowobj.maximum_price}</TableCell>
+                                                            <TableCell>{rowobj.currency_get === null ? "Null" : rowobj.currency_get}</TableCell>
                                                             <TableCell>{rowobj.multiple_parts ? "True" : "False"}
-                                                                {rowobj.multiple_parts == null ? "Null" : ''}</TableCell>
-                                                            <TableCell>{rowobj.parts == null ? "Null" : rowobj.parts}</TableCell>
+                                                                {rowobj.multiple_parts === null ? "Null" : ''}</TableCell>
+                                                            <TableCell>{rowobj.parts === null ? "Null" : rowobj.parts}</TableCell>
                                                             <TableCell><Butns /></TableCell>
                                                         </TableRow>
                                                     </>
@@ -240,10 +270,8 @@ function Product() {
                                         </TableBody>
                                     </Table>
                                 </TableContainer> : <Loader />}
-
-
                             </div>
-                            {dispaddpro == false ? '' : <Addproduct />}
+                            {dispaddpro === false ? '' : <Addproduct />}
                         </div>
                     </div>
                 </div>
