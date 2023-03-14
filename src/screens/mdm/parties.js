@@ -23,7 +23,6 @@ function Butns() {
 
 let PartyComp = (props) => {
     const { propobj } = props;
-    console.log(propobj, "partsdat")
     const [open, setOpen] = useState(false);
 
     return (<React.Fragment>

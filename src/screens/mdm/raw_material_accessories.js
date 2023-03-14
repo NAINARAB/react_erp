@@ -7,14 +7,13 @@ import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { useState, useEffect } from "react";
 import Loader from "../../comp/Load/loading";
+import axios from "axios";
 
 
 function Rawmaterialsaccessories() {
 
     const [dispaddrma, setdispaddrma] = useState(false);
     const [rmadata, setrmadata] = useState([]);
-
-
     let count = 0;
 
     function opnAdd() {
@@ -44,6 +43,62 @@ function Rawmaterialsaccessories() {
         const [minstock, setminstock] = useState();
         const [currency, setcurrency] = useState();
         const [rmmaxprice, setrmmaxprice] = useState();
+        const [countrysdat, setcountrydat] = useState([])
+        const [measurdunit, setmeasuredunit] = useState([])
+
+        useEffect(() => {
+            fetch('https://erp-dwe8a.ondigitalocean.app/api/get?model=country')
+                .then((res) => { return res.json(); })
+                .then((data) => {
+                    setcountrydat(data.data);
+                })
+        }, [])
+        useEffect(() => {
+            fetch('https://erp-dwe8a.ondigitalocean.app/api/get?model=measuredunits')
+                .then((res) => { return res.json(); })
+                .then((data) => {
+                    setmeasuredunit(data.data);
+                })
+        }, [])
+
+
+        const rmapost = axios.create({
+            baseURL: "https://erp-dwe8a.ondigitalocean.app/api/get?model=rawmaterial"
+        });
+
+        const postrma = (rmcode, rmname, unit, minstock, rmmaxprice, currency,) => {
+            rmapost.post('', {
+                rm_code: rmcode,
+                rm_name: rmname,
+                measured_unit: unit,
+                min_stock: minstock,
+                rm_max_price: rmmaxprice,
+                currency: currency,
+            })
+                .then((res) => {
+                    console.log("after then", res)
+                    if (res.data.status === 'success') {
+                        alert("Post Successfully");
+                        console.log("Posted the data")
+                    }
+                    else {
+                        if (res.data.status === 'failure') {
+                            alert('Something Went Wrong Please Try Again...');
+                        }
+                    }
+
+                }).catch((err) => {
+                    console.log(err);
+                })
+        };
+
+        let doPost = (e) => {
+            e.preventDefault();
+            postrma(rmcode,rmname,units,minstock,rmmaxprice,currency);
+        }
+
+
+
         return (
             <>
                 <form>
@@ -66,27 +121,35 @@ function Rawmaterialsaccessories() {
                                     <label className="micardlble">Units</label><br />
                                     <select className="micardinpt" onChange={(e) => setunits(e.target.value)}>
                                         <option selected='true' disabled='true' value={''} required>Select Type</option>
-                                        <option>Centimeter</option>
-                                        <option>Meter</option>
+                                        {measurdunit.map(unitobj => (
+                                            <>
+                                                <option value={unitobj.pk}>{unitobj.measured_unit_name}</option>
+                                            </>
+                                        ))}
                                     </select>
                                 </div>
 
                                 <div className="col-lg-4">
                                     <label className="micardlble">Min Stock</label><br />
-                                    <input type='number' className="micardinpt" required />
+                                    <input type='number' className="micardinpt" onChange={(e) => setminstock(e.target.value)} required />
                                 </div>
 
                                 <div className="col-lg-4">
                                     <label className="micardlble">Currency</label><br />
-                                    <select className="micardinpt" >
+                                    <select className="micardinpt" onChange={(e) => setcurrency(e.target.value)} >
                                         <option selected='true' disabled='true' value={''} required>Select Currency</option>
+                                        {countrysdat.map(conryobj => (
+                                            <>
+                                                <option value={conryobj.pk}>{conryobj.country_name}</option>
+                                            </>
+                                        ))}
                                     </select>
                                 </div>
 
                                 <div className="col-lg-4">
                                     <label className="micardlble">RM Max Price</label><br />
-                                    <input className="micardgrpinpt" disabled='true' />
-                                    <input type='number' className="micardgrpinpt1" />
+                                    <input className="micardgrpinpt" value={currency} disabled='true' />
+                                    <input type='number' onChange={(e) => setrmmaxprice(e.target.value)} className="micardgrpinpt1" />
                                 </div>
 
                                 <div className="col-lg-4">
@@ -94,7 +157,7 @@ function Rawmaterialsaccessories() {
                                 </div>
                             </div>
                         </div><br />
-                        <button className="comadbtn">Add</button>
+                        <button className="comadbtn" onClick={doPost}>Add</button>
                         <button className="cancelbtn" onClick={opnRMA} >Back</button>
                     </div>
                 </form>
@@ -111,10 +174,7 @@ function Rawmaterialsaccessories() {
                 console.log(data)
                 setrmadata(data.data)
             })
-
     }, [])
-
-
 
     return (
 
@@ -158,7 +218,7 @@ function Rawmaterialsaccessories() {
                                                     {++count}
                                                 </TableCell>
                                                 <TableCell>{row.rm_name != null ? row.rm_name : 'Null'}</TableCell>
-                                                <TableCell>{row.measured_unit != null ? row.measured_unit : 'Null'}</TableCell>
+                                                <TableCell>{row.measured_unit_get != null ? row.measured_unit_get : 'Null'}</TableCell>
                                                 <TableCell>{row.min_stock != null ? row.min_stock : 'Null'}</TableCell>
                                                 <TableCell>{row.rm_max_price != null ? row.rm_max_price : 'Null'}</TableCell>
                                                 <TableCell>{row.currency_get != null ? row.currency_get : 'Null'}</TableCell>
@@ -170,7 +230,7 @@ function Rawmaterialsaccessories() {
                                 </Table>
                             </TableContainer> : <Loader />}
                     </div>
-                    {dispaddrma === true ? <AddRMA /> : ''}
+                    {dispaddrma === true ? <AddRMA /> : null}
                 </div>
             </div>
         </>
