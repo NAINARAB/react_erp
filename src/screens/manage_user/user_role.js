@@ -7,7 +7,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import '../common.css';
 import { maxWidth } from "@mui/system";
 import Loader from "../../comp/Load/loading";
-
+import axios from "axios";
 
 function Butns() {
     return (
@@ -21,7 +21,7 @@ function Butns() {
 
 let UserRoleComp = (props) => {
     const { userrole } = props;
-    let count =0;
+    let count = 0;
     return (
         <>
             {userrole.length != 0 ? <TableContainer component={Paper} sx={{ maxHeight: 640 }}>
@@ -69,31 +69,96 @@ function Userrole() {
     }, [])
 
     let AddUserRole = () => {
+        const [deptdat, setdeptdat] = useState([]);
+        const [devisiondata, setdevisiondata] = useState([]);
+        const [urole, seturole] = useState('');
+        const [dept, setdept] = useState();
+        const [dev, setdev] = useState();
+        useEffect(() => {
+            fetch('https://erp-dwe8a.ondigitalocean.app/api/get?model=department')
+                .then((res) => { return res.json(); })
+                .then((data) => {
+                    setdeptdat(data.data);
+                })
+        }, [])
+
+        useEffect(() => {
+            fetch('https://erp-dwe8a.ondigitalocean.app/api/get?model=subdivision')
+                .then((res) => { return res.json(); })
+                .then((data) => {
+                    console.log(data.data);
+                    setdevisiondata(data.data)
+                })
+        }, [])
+
+        const posturole = axios.create({
+            baseURL: "https://erp-dwe8a.ondigitalocean.app/api/get?model=userrole"
+        });
+
+        const posturolefun = (rol,dep,div) => {
+            posturole.post('', {
+                role:rol,
+                department:dep,
+                division:div
+            })
+                .then((res) => {
+                    console.log("after then", res)
+                    if (res.data.status === 'success') {
+                        alert("User Role Added");
+                    }
+                    else {
+                        if (res.data.status === 'failure') {
+                            alert('Something Went Wrong Please Try Again...');
+                        }
+                    }
+
+                }).catch((err) => {
+                    console.log(err);
+                })
+        };
+        let doPost = (e) => {
+            e.preventDefault();
+            posturolefun(urole,dept,dev);
+        }
         return (
-            <>
+            <form>
                 <div className="micard">
                     <h5 className="micardhdr">Add User Role</h5>
                     <div className="micardbdy row">
                         <div className="col-lg-4">
                             <label className="micardlble">User Role</label><br />
-                            <input className="micardinpt" onChange={(e) => { }} required />
+                            <input className="micardinpt" onChange={(e) => { seturole(e.target.value) }} required />
                         </div>
                         <div className="col-lg-4">
                             <label className="micardlble">Department</label><br />
-                            <select className="micardinpt" onChange={(e) => { }}>
+                            <select className="micardinpt" onChange={(e) => { setdept(e.target.value) }}>
                                 <option selected='true' disabled='true' value={''} required>Select Department</option>
-                                <option>QA</option>
-                                <option>QA2</option>
+                                {deptdat.map(deptobj => (
+                                    <>
+                                        <option value={deptobj.pk}>{deptobj.name}</option>
+                                    </>
+                                ))}
                             </select>
-                        </div><div className="col-lg-4"></div>
+                        </div>
+                        <div className="col-lg-4">
+                            <label className="micardlble">Devision</label><br />
+                            <select className="micardinpt" onChange={(e) => { setdev(e.target.value) }}>
+                                <option selected='true' disabled='true' value={''} required>Select Devision</option>
+                                {devisiondata.map(devobj => (
+                                    <>
+                                        <option value={devobj.pk}>{devobj.name}</option>
+                                    </>
+                                ))}
+                            </select>
+                        </div>
                     </div>
                 </div><br />
-                <button className="comadbtn">Add</button>
-                <button className="cancelbtn" onClick={() => {
+                <button className="comadbtn" type="submit" onClick={doPost}>Add</button>
+                <button className="cancelbtn" onClick={() => {  
                     setUserRole(false)
                     document.getElementById("userroleadbtn").style.display = 'block';
                 }} >Back</button>
-            </>
+            </form>
         );
     }
 

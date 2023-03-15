@@ -6,6 +6,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import '../common.css';
 import Loader from "../../comp/Load/loading";
+import axios from "axios";
 
 function Butns() {
     return (
@@ -18,8 +19,8 @@ function Butns() {
 
 
 let UserComp = (props) => {
-    const {users} = props;
-    let count =0;
+    const { users } = props;
+    let count = 0;
     return (
         <>
             {users.length != 0 ? <TableContainer component={Paper} sx={{ maxHeight: 640 }}>
@@ -46,7 +47,7 @@ let UserComp = (props) => {
                                 <TableCell>{usr.email != null ? usr.email : "Null"}</TableCell>
                                 <TableCell>{usr.phone != null ? usr.phone : "Null"}</TableCell>
                                 <TableCell>{usr.role_get != null ? usr.role_get : "Null"}</TableCell>
-                                <TableCell>{usr.branch != null ? usr.branch : "Null"}</TableCell>
+                                <TableCell>{usr.branch_get != null ? usr.branch_get : "Null"}</TableCell>
                                 <TableCell><Butns /></TableCell>
                             </TableRow>
                         ))}
@@ -63,7 +64,7 @@ let UserComp = (props) => {
 
 function Users() {
     const [dispUser, setdispUser] = useState(false);
-    const [usersdata, setusersdata ] = useState([]);
+    const [usersdata, setusersdata] = useState([]);
 
     useEffect(() => {
         fetch('https://erp-dwe8a.ondigitalocean.app/api/get?model=user')
@@ -75,54 +76,122 @@ function Users() {
     }, [])
 
     let AddUsers = () => {
+        const[branchdat, setbranchdat] = useState([]);
+        const[userroldat, setusrroldat] = useState([]);
+        const[uname, setuname]= useState('');
+        const[empid, setempid]= useState('');
+        const[emailid, setemailid]= useState('');
+        const[phone, setphone]= useState('');
+        const[branch, setbranch]= useState();
+        const[urole, seturole] = useState();
+        const[password, setpassword]= useState('');
+        //branchdata
+        useEffect(() => {
+            fetch('https://erp-dwe8a.ondigitalocean.app/api/get?model=branch')
+                .then((res) => { return res.json(); })
+                .then((data) => {
+                    setbranchdat(data.data)
+                })
+        }, [])
+        //user role data
+        useEffect(() => {
+            fetch('https://erp-dwe8a.ondigitalocean.app/api/get?model=userrole')
+                .then((res) => { return res.json(); })
+                .then((data) => {
+                    setusrroldat(data.data);
+                })
+        }, [])
+
+        //post url
+        const postusrurl = axios.create({
+            baseURL: "https://erp-dwe8a.ondigitalocean.app/api/signup   "
+        });
+
+        const postnewuser = (eid, name, email, phn, pswrd, rol, brach) => {
+            postusrurl.post('', {
+                employee_id: eid,
+                name: name,
+                email: email,
+                phone:phn,
+                password:pswrd,
+                role: rol,
+                branch:brach
+            })
+                .then((res) => {
+                    console.log("after then", res)
+                    if (res.data.status === 'success') {
+                        alert("New User Account Created");
+                    }
+                    else {
+                        if (res.data.status === 'failure') {
+                            alert('Something Went Wrong Please Try Again...');
+                        }
+                    }
+
+                }).catch((err) => {
+                    console.log(err);
+                })
+        };
+        let doPost = (e) => {
+            e.preventDefault();
+            postnewuser(empid,uname,emailid,phone,password,urole,branch);
+        }
         return (
             <>
-                <div className="micard">
-                    <h5 className="micardhdr">Add User</h5>
-                    <div className="micardbdy row">
-                        <div className="col-lg-4">
-                            <label className="micardlble">User Name</label><br />
-                            <input className="micardinpt" onChange={(e) => { }} required />
+                <form>
+                    <div className="micard">
+                        <h5 className="micardhdr">Add User</h5>
+                        <div className="micardbdy row">
+                            <div className="col-lg-4">
+                                <label className="micardlble">User Name</label><br />
+                                <input className="micardinpt" onChange={(e) => { setuname(e.target.value) }} required />
+                            </div>
+                            <div className="col-lg-4">
+                                <label className="micardlble">Employee Id</label><br />
+                                <input className="micardinpt" onChange={(e) => { setempid(e.target.value) }} required />
+                            </div>
+                            <div className="col-lg-4">
+                                <label className="micardlble">Email</label><br />
+                                <input className="micardinpt" onChange={(e) => { setemailid(e.target.value) }} required />
+                            </div>
+                            <div className="col-lg-4">
+                                <label className="micardlble">Phone</label><br />
+                                <input className="micardinpt" onChange={(e) => { setphone(e.target.value) }} required />
+                            </div>
+                            <div className="col-lg-4">
+                                <label className="micardlble">Branches</label><br />
+                                <select className="micardinpt" onChange={(e) => { setbranch(e.target.value) }}>
+                                    <option selected='true' disabled='true' value={''} required>Select Branches</option>
+                                    {branchdat.map(brnchobj => (
+                                        <>
+                                            <option value={brnchobj.pk}>{brnchobj.branch_name}</option>
+                                        </>
+                                    ))}
+                                </select>
+                            </div>
+                            <div className="col-lg-4">
+                                <label className="micardlble">Role</label><br />
+                                <select className="micardinpt" onChange={(e) => { seturole(e.target.value) }}>
+                                    <option selected='true' disabled='true' value={''} required>Select Role</option>
+                                    {userroldat.map(rolobj => (
+                                        <>
+                                            <option value={rolobj.pk}>{rolobj.role}</option>
+                                        </>
+                                    ))}
+                                </select>
+                            </div>
+                            <div className="col-lg-4">
+                                <label className="micardlble">Password</label><br />
+                                <input type={'password'} className="micardinpt" onChange={(e) => { setpassword(e.target.value) }} />
+                            </div><div className="col-lg-4">{/* For Alignment */}</div><div className="col-lg-4"></div>
                         </div>
-                        <div className="col-lg-4">
-                            <label className="micardlble">Email</label><br />
-                            <input className="micardinpt" onChange={(e) => { }} required />
-                        </div>
-                        <div className="col-lg-4">
-                            <label className="micardlble">Phone</label><br />
-                            <input className="micardinpt" onChange={(e) => { }} required />
-                        </div>
-                        <div className="col-lg-4">
-                            <label className="micardlble">Department</label><br />
-                            <select className="micardinpt" onChange={(e) => { }}>
-                                <option selected='true' disabled='true' value={''} required>Select Department</option>
-                                <option>QA</option>
-                                <option>QA2</option>
-                            </select>
-                        </div>
-                        <div className="col-lg-4">
-                            <label className="micardlble">Devision</label><br />
-                            <select className="micardinpt" onChange={(e) => {}}>
-                                <option selected='true' disabled='true' value={''} required>Select Type</option>
-                                <option>QA2</option>
-                                <option>sample</option>
-                            </select>
-                        </div>
-                        <div className="col-lg-4">
-                            <label className="micardlble">User Role</label><br />
-                            <select className="micardinpt" onChange={(e) => {  }}>
-                                <option selected='true' disabled='true' value={''} required>Select Role</option>
-                                <option>Admin</option>
-                                <option>User</option>
-                            </select>
-                        </div>
-                    </div>
-                </div><br />
-                    <button className="comadbtn">Add</button>
+                    </div><br />
+                    <button className="comadbtn" type="submit" onClick={doPost}>Add</button>
                     <button className="cancelbtn" onClick={() => {
                         setdispUser(false)
                         document.getElementById("useradbtn").style.display = 'block';
                     }} >Back</button>
+                </form>
             </>
         );
     }

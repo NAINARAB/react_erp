@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useState, useEffect } from 'react';
 import './sidenav.css'
 import { useNavigate } from 'react-router-dom';
 import { IconButton } from '@mui/material';
@@ -7,8 +8,19 @@ import CloseIcon from '@mui/icons-material/Close';
 
 
 function Sidenav() {
+    const [crntusrnme, setcrntusrnme] = useState('');
+    const [usrrol, setusrrol] = useState('');
 
-    let currentUser = sessionStorage.getItem('id');
+    useEffect(() => {
+        fetch('https://erp-dwe8a.ondigitalocean.app/api/profile/')
+            .then((res) => { return res.json(); })
+            .then((data) => {console.log(data.data)
+                setcrntusrnme(data.data.name);console.log("name", data.data.name)
+                setusrrol(data.data.role_get); console.log("role", data.data.role_get)
+            })
+    }, [])
+
+    let currentUser = sessionStorage.getItem('name');
     const [opncond, setopencond] = React.useState(false)
     const navigate = useNavigate();
     return (
@@ -34,7 +46,7 @@ function Sidenav() {
                                     <div className='usrinfo' style={{ display: 'flex' }}>
                                         <i className="bi bi-person-circle" ></i>
                                         <div>
-                                            <h5>NainarAB</h5>
+                                            <h5>Nainar AB</h5>
                                             <p>Admin</p>
                                         </div>
 

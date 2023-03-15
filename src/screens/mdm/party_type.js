@@ -6,6 +6,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { maxWidth } from "@mui/system";
 import Loader from "../../comp/Load/loading";
+import axios from "axios";
 
 
 function Butns() {
@@ -45,7 +46,7 @@ let PartyTypecomp = (props) => {
                             </TableBody>
                         </Table>
                     </TableContainer>
-                </div>  : <Loader />}
+                </div> : <Loader />}
         </>
     );
 }
@@ -68,22 +69,52 @@ function Partytype() {
 
 
     let AddPartyType = () => {
+        const [partyinpt, setpartyinpt] = useState('');
+        const postprtytype = axios.create({
+            baseURL: "https://erp-dwe8a.ondigitalocean.app/api/get?model=partytype"
+        });
+
+        const postPT = (prty) => {
+            postprtytype.post('', {
+                party_type: prty
+            })
+                .then((res) => {
+                    console.log("after then", res)
+                    if (res.data.status === 'success') {
+                        alert("Party Type Added");
+                    }
+                    else {
+                        if (res.data.status === 'failure') {
+                            alert('Something Went Wrong Please Try Again...');
+                        }
+                    }
+
+                }).catch((err) => {
+                    console.log(err);
+                })
+        };
+        let doPost = (e) => {
+            e.preventDefault();
+            postPT(partyinpt);
+        }
         return (
             <>
-                <div className="micard">
-                    <h5 className="micardhdr">Add Product</h5>
-                    <div className="micardbdy row">
-                        <div className="col-lg-4">
-                            <label className="micardlble" >Party Type</label><br />
-                            <input className="micardinpt" onChange={(e) => { }} required />
-                        </div><div className="col-lg-4"></div><div className="col-lg-4"></div>
-                    </div>
-                </div><br />
-                <button className="comadbtn">Add</button>
-                <button className="cancelbtn" onClick={() => {
-                    setdisppartytypes(false)
-                    document.getElementById('prtytypeadbtn').style.display = 'block';
-                }} >Back</button>
+                <form>
+                    <div className="micard">
+                        <h5 className="micardhdr">Add Product</h5>
+                        <div className="micardbdy row">
+                            <div className="col-lg-4">
+                                <label className="micardlble" >Party Type</label><br />
+                                <input className="micardinpt" onChange={(e) => { setpartyinpt(e.target.value) }} required />
+                            </div><div className="col-lg-4"></div><div className="col-lg-4"></div>
+                        </div>
+                    </div><br />
+                    <button className="comadbtn" onClick={doPost}>Add</button>
+                    <button className="cancelbtn" onClick={() => {
+                        setdisppartytypes(false)
+                        document.getElementById('prtytypeadbtn').style.display = 'block';
+                    }} >Back</button>
+                </form>
             </>
         );
     }

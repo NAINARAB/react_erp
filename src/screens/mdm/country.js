@@ -7,7 +7,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import '../common.css';
 import { maxWidth } from "@mui/system";
 import Loader from "../../comp/Load/loading";
-
+import axios from "axios";
 
 function Butns() {
     return (
@@ -65,22 +65,52 @@ function Country() {
     }, [])
 
     function AddCountry() {
+        const [countryinpt, setcountryinpt] = useState('');
+        const postcountryinpt = axios.create({
+            baseURL: "https://erp-dwe8a.ondigitalocean.app/api/get?model=country"
+        });
+
+        const postcountry = (country) => {
+            postcountryinpt.post('', {
+                country_name: country
+            })
+                .then((res) => {
+                    console.log("after then", res)
+                    if (res.data.status === 'success') {
+                        alert("Country Added");
+                    }
+                    else {
+                        if (res.data.status === 'failure') {
+                            alert('Something Went Wrong Please Try Again...');
+                        }
+                    }
+
+                }).catch((err) => {
+                    console.log(err);
+                })
+        };
+        let doPost = (e) => {
+            e.preventDefault();
+            postcountry(countryinpt);
+        }
         return (
             <>
-                <div className="micard">
-                    <h5 className="micardhdr">Add Country</h5>
-                    <div className="micardbdy row">
-                        <div className="col-lg-4">
-                            <label className="micardlble" >Country</label><br />
-                            <input className="micardinpt" onChange={(e) => { }} required />
-                        </div><div className="col-lg-4"></div><div className="col-lg-4"></div>
-                    </div>
-                </div><br />
-                <button className="comadbtn">Add</button>
-                <button className="cancelbtn" onClick={() => {
-                    setdispcountry(false)
-                    document.getElementById('countryadbtn').style.display = 'block';
-                }} >Back</button>
+                <form>
+                    <div className="micard">
+                        <h5 className="micardhdr">Add Country</h5>
+                        <div className="micardbdy row">
+                            <div className="col-lg-4">
+                                <label className="micardlble" >Country</label><br />
+                                <input className="micardinpt" onChange={(e) => { setcountryinpt(e.target.value) }} required />
+                            </div><div className="col-lg-4"></div><div className="col-lg-4"></div>
+                        </div>
+                    </div><br />
+                    <button className="comadbtn" type="submit" onClick={doPost}>Add</button>
+                    <button className="cancelbtn" onClick={() => {
+                        setdispcountry(false)
+                        document.getElementById('countryadbtn').style.display = 'block';
+                    }} >Back</button>
+                </form>
             </>
         );
     }

@@ -7,6 +7,8 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import '../common.css';
 import { maxWidth } from "@mui/system";
 import Loader from "../../comp/Load/loading";
+import axios from "axios";
+
 
 function Butns() {
     return (
@@ -20,9 +22,9 @@ function Butns() {
 
 let Devisioncomp = (props) => {
     const { devision } = props;
-    let count =0;
+    let count = 0;
     return (
-         <> { devision.length != 0 ?
+        <> {devision.length != 0 ?
             <TableContainer component={Paper} sx={{ maxHeight: 640 }}>
                 <Table stickyHeader aria-label="collapsible table">
                     <TableHead>
@@ -47,7 +49,7 @@ let Devisioncomp = (props) => {
                 </Table>
             </TableContainer>
             : <Loader />}
-        </> 
+        </>
     );
 }
 
@@ -66,26 +68,75 @@ function Devision() {
     }, [])
 
     let AddDevision = () => {
+        const [devisionname, setdevisionname] = useState('');
+        const [departmentname, setdepartmentname] = useState('');
+        const [deptdat, setdeptdat] = useState([]);
+
+        useEffect(() => {
+            fetch('https://erp-dwe8a.ondigitalocean.app/api/get?model=department')
+                .then((res) => { return res.json(); })
+                .then((data) => {
+                    setdeptdat(data.data);
+                })
+        }, [])
+
+        const postdev = axios.create({
+            baseURL: "https://erp-dwe8a.ondigitalocean.app/api/get?model=subdivision"
+        });
+
+        const postdevfun = (dep,rol) => {
+            postdev.post('', {
+                department: dep,
+                name: rol
+            })
+                .then((res) => {
+                    console.log("after then", res)
+                    if (res.data.status === 'success') {
+                        alert("Devision Added");
+                    }
+                    else {
+                        if (res.data.status === 'failure') {
+                            alert('Something Went Wrong Please Try Again...');
+                        }
+                    }
+
+                }).catch((err) => {
+                    console.log(err);
+                })
+        };
+        let doPost = (e) => {
+            e.preventDefault();
+            postdevfun(departmentname, devisionname);
+        }
         return (
             <>
-                <div className="micard">
-                    <h5 className="micardhdr">Add Devision</h5>
-                    <div className="micardbdy row">
-                        <div className="col-lg-4">
-                            <label className="micardlble">Devision Name</label><br />
-                            <input className="micardinpt" onChange={(e) => { }} required />
+                <form>
+                    <div className="micard">
+                        <h5 className="micardhdr">Add Devision</h5>
+                        <div className="micardbdy row">
+                            <div className="col-lg-4">
+                                <label className="micardlble">Devision Name</label><br />
+                                <input className="micardinpt" onChange={(e) => { setdevisionname(e.target.value) }} required />
+                            </div>
+                            <div className="col-lg-4">
+                                <label className="micardlble">Department Name</label><br />
+                                <select className="micardinpt" onChange={(e) => { setdepartmentname(e.target.value) }} required >
+                                    <option selected='true' disabled='true' value={''} required>Select Department</option>
+                                    {deptdat.map(deptobj => (
+                                        <>
+                                            <option value={deptobj.pk}>{deptobj.name}</option>
+                                        </>
+                                    ))}
+                                </select>
+                            </div><div className="col-lg-4"></div>
                         </div>
-                        <div className="col-lg-4">
-                            <label className="micardlble">Department Name</label><br />
-                            <input className="micardinpt" onChange={(e) => { }} required />
-                        </div><div className="col-lg-4"></div>
-                    </div>
-                </div><br />
-                <button className="comadbtn">Add</button>
-                <button className="cancelbtn" onClick={() => {
-                    setdispDevision(false);
-                    document.getElementById("devisionadbtn").style.display = 'block';
-                }}>Back</button>
+                    </div><br />
+                    <button className="comadbtn" onClick={doPost}>Add</button>
+                    <button className="cancelbtn" onClick={() => {
+                        setdispDevision(false);
+                        document.getElementById("devisionadbtn").style.display = 'block';
+                    }}>Back</button>
+                </form>
             </>
         );
     }

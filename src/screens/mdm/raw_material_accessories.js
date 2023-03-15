@@ -44,6 +44,7 @@ function Rawmaterialsaccessories() {
         const [currency, setcurrency] = useState();
         const [rmmaxprice, setrmmaxprice] = useState();
         const [countrysdat, setcountrydat] = useState([])
+        const [curncydat, setcurncydat] = useState([])
         const [measurdunit, setmeasuredunit] = useState([])
 
         useEffect(() => {
@@ -51,6 +52,13 @@ function Rawmaterialsaccessories() {
                 .then((res) => { return res.json(); })
                 .then((data) => {
                     setcountrydat(data.data);
+                })
+        }, [])//currency
+        useEffect(() => {
+            fetch('https://erp-dwe8a.ondigitalocean.app/api/get?model=currency')
+                .then((res) => { return res.json(); })
+                .then((data) => {
+                    setcurncydat(data.data);
                 })
         }, [])
         useEffect(() => {
@@ -138,9 +146,9 @@ function Rawmaterialsaccessories() {
                                     <label className="micardlble">Currency</label><br />
                                     <select className="micardinpt" onChange={(e) => setcurrency(e.target.value)} >
                                         <option selected='true' disabled='true' value={''} required>Select Currency</option>
-                                        {countrysdat.map(conryobj => (
+                                        {curncydat.map(crncyobj => (
                                             <>
-                                                <option value={conryobj.pk}>{conryobj.country_name}</option>
+                                                <option value={crncyobj.pk}>{crncyobj.currency_name}</option>
                                             </>
                                         ))}
                                     </select>

@@ -6,7 +6,7 @@ import { maxWidth } from "@mui/system";
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import Loader from "../../comp/Load/loading";
-
+import axios from "axios";
 
 function Butns() {
     return (
@@ -93,22 +93,53 @@ function Phases() {
     );
 
     function AddPhases() {
+        const [phase, setphase] = useState('');
+        const postphase = axios.create({
+            baseURL: "https://erp-dwe8a.ondigitalocean.app/api/get?model=productionphase"
+        });
+
+        const postphasefun = (producphase) => {
+            postphase.post('', {
+                phase_name: producphase
+            })
+                .then((res) => {
+                    console.log("after then", res)
+                    if (res.data.status === 'success') {
+                        alert("Phase Added");
+                    }
+                    else {
+                        if (res.data.status === 'failure') {
+                            alert('Something Went Wrong Please Try Again...');
+                        }
+                    }
+
+                }).catch((err) => {
+                    console.log(err);
+                })
+        };
+        let doPost = (e) => {
+            e.preventDefault();
+            postphasefun(phase);
+        }
+
         return (
             <>
-                <div className="micard">
-                    <h5 className="micardhdr">Add Phases</h5>
-                    <div className="micardbdy row">
-                        <div className="col-lg-4">
-                            <label className="micardlble" >Phases</label><br />
-                            <input className="micardinpt" onChange={(e) => { }} required />
-                        </div><div className="col-lg-4">{/* <- For Alignment -> */}</div><div className="col-lg-4"></div>
-                    </div>
-                </div><br />
-                <button className="comadbtn">Add</button>
-                <button className="cancelbtn" onClick={() => {
-                    setDispPhases(false)
-                    document.getElementById('phasadbtn').style.display = 'block';
-                }} >Back</button>
+                <form>
+                    <div className="micard">
+                        <h5 className="micardhdr">Add Phases</h5>
+                        <div className="micardbdy row">
+                            <div className="col-lg-4">
+                                <label className="micardlble" >Phases</label><br />
+                                <input className="micardinpt" onChange={(e) => { setphase(e.target.value) }} required />
+                            </div><div className="col-lg-4">{/* <- For Alignment -> */}</div><div className="col-lg-4"></div>
+                        </div>
+                    </div><br />
+                    <button className="comadbtn" type="submit" onClick={doPost}>Add</button>
+                    <button className="cancelbtn" onClick={() => {
+                        setDispPhases(false)
+                        document.getElementById('phasadbtn').style.display = 'block';
+                    }} >Back</button>
+                </form>
             </>
         );
     }

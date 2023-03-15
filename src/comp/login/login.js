@@ -62,7 +62,7 @@ function Login() {
 
                             <br /><br />
                             <form>
-                                Email
+                            Employee ID
                                 <input type='text' className='loginpt' onChange={(e) => { setEmployeeid(e.target.value) }} required autoFocus='ture' />
                                 Password
                                 <input type='password' className='loginpt' onChange={(e) => { setpassword(e.target.value) }} required /><br />

@@ -7,6 +7,9 @@ import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { maxWidth } from "@mui/system";
 import Loader from "../../comp/Load/loading";
+import axios from "axios";
+
+
 function Butns() {
     return (
         <>
@@ -17,34 +20,34 @@ function Butns() {
 }
 
 let DepartmentComp = (props) => {
-    const {deprt} = props;
-    let count =0;
+    const { deprt } = props;
+    let count = 0;
     return (
         <>
-            {deprt.length != 0 ? 
-            <TableContainer component={Paper} sx={{ maxHeight: 650 }}>
-            <Table stickyHeader aria-label="simple table">
-                <TableHead >
-                    <TableRow>
-                        <TableCell width={100} variant="head" sx={{ backgroundColor: 'rgb(15, 11, 42)', color: 'white',fontWeight:'bold' }}>S.No</TableCell>
-                        <TableCell width={250} variant="head" sx={{ backgroundColor: 'rgb(15, 11, 42)', color: 'white',fontWeight:'bold' }}>Department Name</TableCell>
-                        <TableCell variant="head" sx={{ backgroundColor: 'rgb(15, 11, 42)', color: 'white',fontWeight:'bold' }}>Role</TableCell>
-                        <TableCell width={200} variant="head" sx={{ backgroundColor: 'rgb(15, 11, 42)', color: 'white',fontWeight:'bold' }}>Action</TableCell>
-                    </TableRow>
-                </TableHead>
+            {deprt.length != 0 ?
+                <TableContainer component={Paper} sx={{ maxHeight: 650 }}>
+                    <Table stickyHeader aria-label="simple table">
+                        <TableHead >
+                            <TableRow>
+                                <TableCell width={100} variant="head" sx={{ backgroundColor: 'rgb(15, 11, 42)', color: 'white', fontWeight: 'bold' }}>S.No</TableCell>
+                                <TableCell width={250} variant="head" sx={{ backgroundColor: 'rgb(15, 11, 42)', color: 'white', fontWeight: 'bold' }}>Department Name</TableCell>
+                                <TableCell variant="head" sx={{ backgroundColor: 'rgb(15, 11, 42)', color: 'white', fontWeight: 'bold' }}>Role</TableCell>
+                                <TableCell width={200} variant="head" sx={{ backgroundColor: 'rgb(15, 11, 42)', color: 'white', fontWeight: 'bold' }}>Action</TableCell>
+                            </TableRow>
+                        </TableHead>
 
-                <TableBody>
-                    {deprt.map((dept) => (
-                        <TableRow hover='true'>
-                            <TableCell>{++count}</TableCell>
-                            <TableCell>{dept.name}</TableCell>
-                            <TableCell>{dept.role}</TableCell>
-                            <TableCell><Butns /></TableCell>
-                        </TableRow>
-                    ))}
-                </TableBody>
-            </Table>
-        </TableContainer> : <Loader />}
+                        <TableBody>
+                            {deprt.map((dept) => (
+                                <TableRow hover='true'>
+                                    <TableCell>{++count}</TableCell>
+                                    <TableCell>{dept.name}</TableCell>
+                                    <TableCell>{dept.role}</TableCell>
+                                    <TableCell><Butns /></TableCell>
+                                </TableRow>
+                            ))}
+                        </TableBody>
+                    </Table>
+                </TableContainer> : <Loader />}
         </>
     );
 }
@@ -63,25 +66,58 @@ function Department() {
     }, [])
 
     function AddDepartment() {
+        const [deptname, setdeptname] = useState('');
+        const [deptrole, setdeptrole] = useState('');
+        const postdept = axios.create({
+            baseURL: "https://erp-dwe8a.ondigitalocean.app/api/get?model=department"
+        });
+
+        const postdeptfun = (depart,deptrl) => {
+            postdept.post('', {
+                name: depart,
+                role: deptrl
+            })
+                .then((res) => {
+                    console.log("after then", res)
+                    if (res.data.status === 'success') {
+                        alert("Department Added");
+                    }
+                    else {
+                        if (res.data.status === 'failure') {
+                            alert('Something Went Wrong Please Try Again...');
+                        }
+                    }
+
+                }).catch((err) => {
+                    console.log(err);
+                })
+        };
+        let doPost = (e) => {
+            e.preventDefault();
+            postdeptfun(deptname,deptrole);
+        }
         return (
             <>
-                <div className="micard">
-                    <h5 className="micardhdr">Add Department</h5>
-                    <div className="micardbdy row">
-                        <div className="col-lg-4">
-                            <label className="micardlble" >Product Name</label><br />
-                            <input className="micardinpt" onChange={(e) => { }} required />
+                <form>
+                    <div className="micard">
+                        <h5 className="micardhdr">Add Department</h5>
+                        <div className="micardbdy row">
+                            <div className="col-lg-4">
+                                <label className="micardlble" >Department Name</label><br />
+                                <input className="micardinpt" onChange={(e) => { setdeptname(e.target.value) }} required />
+                            </div>
+                            <div className="col-lg-4">
+                                <label className="micardlble" >Role</label><br />
+                                <input className="micardinpt" onChange={(e) => { setdeptrole(e.target.value) }} required />
+                            </div><div className="col-lg-4"></div>
                         </div>
-                        <div className="col-lg-4">
-                            <label className="micardlble" >Product Name</label><br />
-                            <input className="micardinpt" onChange={(e) => { }} required />
-                        </div><div className="col-lg-4"></div>
-                    </div>
-                </div><br />
-                <button className="comadbtn">Add</button>
-                <button className="cancelbtn" onClick={() => {setdispdept(false)
-                    document.getElementById("departmentadbtn").style.display = 'block';
-            }} >Back</button>
+                    </div><br />
+                    <button className="comadbtn" onClick={doPost} type='submit'>Add</button>
+                    <button className="cancelbtn" onClick={() => {
+                        setdispdept(false)
+                        document.getElementById("departmentadbtn").style.display = 'block';
+                    }} >Back</button>
+                </form>
             </>
         );
     }

@@ -6,6 +6,8 @@ import '../common.css';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import Loader from "../../comp/Load/loading";
+import axios from "axios";
+
 function Butns() {
     return (
         <>
@@ -18,39 +20,41 @@ function Butns() {
 
 let BranchesTble = (props) => {
     const { branch } = props;
-    let count =0;
+    let count = 0;
     return (
         <>
-            {branch.length != 0 ? 
-            <TableContainer component={Paper} sx={{ maxHeight: 650 }}>
-            <Table stickyHeader aria-label="simple table">
-                <TableHead>
-                    <TableRow>
-                        <TableCell width={100} variant="head" sx={{ backgroundColor: 'rgb(15, 11, 42)', color: 'white',fontWeight:'bold' }}>S.No</TableCell>
-                        <TableCell variant="head" sx={{ backgroundColor: 'rgb(15, 11, 42)', color: 'white',fontWeight:'bold' }}>City Name</TableCell>
-                        <TableCell variant="head" sx={{ backgroundColor: 'rgb(15, 11, 42)', color: 'white',fontWeight:'bold' }}>State</TableCell>
-                        <TableCell variant="head" sx={{ backgroundColor: 'rgb(15, 11, 42)', color: 'white',fontWeight:'bold' }}>Country</TableCell>
-                        <TableCell variant="head" sx={{ backgroundColor: 'rgb(15, 11, 42)', color: 'white',fontWeight:'bold' }}>Pin Code</TableCell>
-                        <TableCell variant="head" sx={{ backgroundColor: 'rgb(15, 11, 42)', color: 'white',fontWeight:'bold' }}>GST Number</TableCell>
-                        <TableCell variant="head" sx={{ backgroundColor: 'rgb(15, 11, 42)', color: 'white',fontWeight:'bold' }}>Action</TableCell>
-                    </TableRow>
-                </TableHead>
+            {branch.length != 0 ?
+                <TableContainer component={Paper} sx={{ maxHeight: 650 }}>
+                    <Table stickyHeader aria-label="simple table">
+                        <TableHead>
+                            <TableRow>
+                                <TableCell width={100} variant="head" sx={{ backgroundColor: 'rgb(15, 11, 42)', color: 'white', fontWeight: 'bold' }}>S.No</TableCell>
+                                <TableCell variant="head" sx={{ backgroundColor: 'rgb(15, 11, 42)', color: 'white', fontWeight: 'bold' }}>Branch Name</TableCell>
+                                <TableCell variant="head" sx={{ backgroundColor: 'rgb(15, 11, 42)', color: 'white', fontWeight: 'bold' }}>City Name</TableCell>
+                                <TableCell variant="head" sx={{ backgroundColor: 'rgb(15, 11, 42)', color: 'white', fontWeight: 'bold' }}>State</TableCell>
+                                <TableCell variant="head" sx={{ backgroundColor: 'rgb(15, 11, 42)', color: 'white', fontWeight: 'bold' }}>Country</TableCell>
+                                <TableCell variant="head" sx={{ backgroundColor: 'rgb(15, 11, 42)', color: 'white', fontWeight: 'bold' }}>Pin Code</TableCell>
+                                <TableCell variant="head" sx={{ backgroundColor: 'rgb(15, 11, 42)', color: 'white', fontWeight: 'bold' }}>GST Number</TableCell>
+                                <TableCell variant="head" sx={{ backgroundColor: 'rgb(15, 11, 42)', color: 'white', fontWeight: 'bold' }}>Action</TableCell>
+                            </TableRow>
+                        </TableHead>
 
-                <TableBody>
-                    {branch.map((brs) => (
-                        <TableRow sx={{ '&:last-child td, &:last-child th': { border: 0 } }} hover='true'>
-                            <TableCell>{++count}</TableCell>
-                            <TableCell>{brs.cityname}</TableCell>
-                            <TableCell>{brs.state}</TableCell>
-                            <TableCell>{brs.country_get}</TableCell>
-                            <TableCell>{brs.pincode}</TableCell>
-                            <TableCell>{brs.GST_Number}</TableCell>
-                            <TableCell><Butns /></TableCell>
-                        </TableRow>
-                    ))}
-                </TableBody>
-            </Table>
-        </TableContainer> : <Loader /> }
+                        <TableBody>
+                            {branch.map((brs) => (
+                                <TableRow sx={{ '&:last-child td, &:last-child th': { border: 0 } }} hover='true'>
+                                    <TableCell>{++count}</TableCell>
+                                    <TableCell>{brs.branch_name}</TableCell>
+                                    <TableCell>{brs.cityname}</TableCell>
+                                    <TableCell>{brs.state}</TableCell>
+                                    <TableCell>{brs.country_get}</TableCell>
+                                    <TableCell>{brs.pincode}</TableCell>
+                                    <TableCell>{brs.GST_Number}</TableCell>
+                                    <TableCell><Butns /></TableCell>
+                                </TableRow>
+                            ))}
+                        </TableBody>
+                    </Table>
+                </TableContainer> : <Loader />}
         </>
     );
 }
@@ -59,47 +63,130 @@ let BranchesTble = (props) => {
 function Branches() {
     const [dispbranch, setdispbranch] = useState(false);
     const [branchdata, setbranchdata] = useState([]);
+
+
     function AddBranches() {
+        const [countrydat, setcountrydat] = useState([]);
+        const [statedat, setstatedat] = useState([]);
+        const [branchname, setbranchname] = useState('')
+        const [cityname, setcityname] = useState('');
+        const [state, setstate] = useState('');
+        const [country, setcountry] = useState('');
+        const [pincode, setpincode] = useState('');
+        const [gstnumber, setgstnumber] = useState('');
+        const [address, setaddress] = useState('');
+        useEffect(() => {
+            fetch('https://erp-dwe8a.ondigitalocean.app/api/get?model=country')
+                .then((res) => { return res.json(); })
+                .then((data) => {
+                    setcountrydat(data.data);
+                })
+        }, [])
+        useEffect(() => {
+            fetch('https://erp-dwe8a.ondigitalocean.app/api/get?model=state')
+                .then((res) => { return res.json(); })
+                .then((data) => {
+                    setstatedat(data.data);
+                })
+        }, [])//https://erp-dwe8a.ondigitalocean.app/api/get?model=branch
+
+        const postbranchurl = axios.create({
+            baseURL: "https://erp-dwe8a.ondigitalocean.app/api/get?model=branch"
+        });
+
+        const postbranchfun = (branchname, cityname, state, country, pincode, gstnumbert, address) => {
+            postbranchurl.post('', {
+                branch_name: branchname,
+                cityname: cityname,
+                state: state,
+                country: country,
+                pincode: pincode,
+                gst_number: gstnumbert,
+                address: address,
+            })
+                .then((res) => {
+                    console.log("after then", res)
+                    if (res.data.status === 'success') {
+                        alert("Branch Added");
+                    }
+                    else {
+                        if (res.data.status === 'failure') {
+                            alert('Something Went Wrong Please Try Again...');
+                        }
+                    }
+
+                }).catch((err) => {
+                    console.log(err);
+                })
+        };
+        let doPost = (e) => {
+            e.preventDefault();
+            postbranchfun(branchname, cityname, state, country, pincode, gstnumber, address);
+        }
         return (
             <>
-                <div className="micard">
-                    <h5 className="micardhdr" >Add Branches</h5>
+                <form>
+                    <div className="micard">
+                        <h5 className="micardhdr" >Add Branches</h5>
 
-                    <div className="micardbdy row">
-                        <div className="col-lg-4">
-                            <label className="micardlble" >City Name</label><br />
-                            <input className="micardinpt" onChange={(e) => { }} required />
+                        <div className="micardbdy row">
+
+                            <div className="col-lg-4">
+                                <label className="micardlble" >Branch Name</label><br />
+                                <input className="micardinpt" onChange={(e) => { setbranchname(e.target.value) }} required />
+                            </div>
+
+                            <div className="col-lg-4">
+                                <label className="micardlble" >City Name</label><br />
+                                <input className="micardinpt" onChange={(e) => { setcityname(e.target.value) }} required />
+                            </div>
+
+                            <div className="col-lg-4">
+                                <label className="micardlble" >State</label><br />
+                                <select className="micardinpt" onChange={(e) => { setstate(e.target.value) }} required >
+                                    <option selected='true' disabled='true' value={''} required>Select State</option>
+                                    {statedat.map(statobj => (
+                                        <>
+                                            <option value={statobj.pk}>{statobj.state_name}</option>
+                                        </>
+                                    ))}
+                                </select>
+                            </div>
+
+                            <div className="col-lg-4">
+                                <label className="micardlble" >Country</label><br />
+                                <select className="micardinpt" onChange={(e) => { setcountry(e.target.value) }}>
+                                    <option selected='true' disabled='true' value={''} required>Select Country</option>
+                                    {countrydat.map(cntryobj => (
+                                        <>
+                                            <option value={cntryobj.pk}>{cntryobj.country_name}</option>
+                                        </>
+                                    ))}
+                                </select>
+                            </div>
+
+                            <div className="col-lg-4">
+                                <label className="micardlble" >Pin code</label><br />
+                                <input type='number' className="micardinpt" onChange={(e) => { setpincode(e.target.value) }} required />
+                            </div>
+
+                            <div className="col-lg-4">
+                                <label className="micardlble" >GST Number</label><br />
+                                <input className="micardinpt" onChange={(e) => { setgstnumber(e.target.value) }} required />
+                            </div>
+
+                            <div className="col-lg-4">
+                                <label className="micardlble" >Address</label><br />
+                                <textarea className="micardinpt" onChange={(e) => { setaddress(e.target.value) }} required />
+                            </div><div className="col-lg-4"></div><div className="col-lg-4"></div>
                         </div>
-
-                        <div className="col-lg-4">
-                            <label className="micardlble" >State</label><br />
-                            <input className="micardinpt" onChange={(e) => { }} required />
-                        </div>
-
-                        <div className="col-lg-4">
-                            <label className="micardlble" >Country</label><br />
-                            <select className="micardinpt" onChange={(e) => { }}>
-                                <option selected='true' disabled='true' value={''} required>Select Country</option>
-                                <option>India</option>
-                                <option>USA</option>
-                            </select>
-                        </div>
-
-                        <div className="col-lg-4">
-                            <label className="micardlble" >Pin code</label><br />
-                            <input type='number' className="micardinpt" onChange={(e) => { }} required />
-                        </div>
-
-                        <div className="col-lg-4">
-                            <label className="micardlble" >GST Number</label><br />
-                            <input type='number' className="micardinpt" onChange={(e) => { }} required />
-                        </div><div className="col-lg-4"></div>
-                    </div>
-                </div><br />
-                <button className="comadbtn">Add</button>
-                <button className="cancelbtn" onClick={() => { setdispbranch(false)
-                    document.getElementById('branchadbtn').style.display ='block';
-                }} >Back</button>
+                    </div><br />
+                    <button className="comadbtn" type="submit" onClick={doPost}>Add</button>
+                    <button className="cancelbtn" onClick={() => {
+                        setdispbranch(false)
+                        document.getElementById('branchadbtn').style.display = 'block';
+                    }} >Back</button>
+                </form>
             </>
         );
     }
@@ -124,9 +211,10 @@ function Branches() {
                 <div className="col-lg-10">
                     <div>
                         <div className="comhed">
-                            <button className="comadbtn" id='branchadbtn' onClick={() => { setdispbranch(true)
-                                document.getElementById('branchadbtn').style.display ='none';
-                        }} >Add</button>
+                            <button className="comadbtn" id='branchadbtn' onClick={() => {
+                                setdispbranch(true)
+                                document.getElementById('branchadbtn').style.display = 'none';
+                            }} >Add</button>
                             <h5>Branches</h5>
                             <h6>Manage Users / Branches</h6>
                         </div>
