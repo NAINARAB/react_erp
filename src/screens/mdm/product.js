@@ -15,11 +15,15 @@ function Product() {
     let count = 1;
     const dummy = [];
 
-    function Butns() {
+    function Butns(props) {
+        let pkvalue = props; //&pk=${pkvalue}  http://localhost:8080/deleteimage/${id} $pkvalue ,{method:"DELETE"}
+        console.log(props)
+
         return (
             <>
                 <IconButton aria-label="expand" size="small" sx={{ marginLeft: '0.5em' }}><EditIcon /></IconButton>
-                <IconButton aria-label="expand" size="small" sx={{ color: 'rgba(255, 0, 0, 0.755)', marginRight: '1em' }}><DeleteIcon /></IconButton>
+                <IconButton aria-label="expand" size="small" sx={{ color: 'rgba(255, 0, 0, 0.755)', marginRight: '1em' }}>
+                    <DeleteIcon /></IconButton>
             </>
         );
     }
@@ -35,9 +39,9 @@ function Product() {
 
     }, [])
 
-    //for fetch the countrys
+    //for fetch the countrys currency
     useEffect(() => {
-        fetch('https://erp-dwe8a.ondigitalocean.app/api/get?model=country')
+        fetch('https://erp-dwe8a.ondigitalocean.app/api/get?model=currency')
             .then((res) => { return res.json(); })
             .then((data) => {
                 setcountrydat(data.data);
@@ -54,14 +58,14 @@ function Product() {
         const [minprice, setminprice] = useState();
         const [maxprice, setmaxprice] = useState();
         const [multipleparts, setmultipleparts] = useState(false);
-        const [multipartarr, setmultipartarr ] = useState([]);
-        
+        const [multipartarr, setmultipartarr] = useState([]);
+
 
         const prdtpost = axios.create({
             baseURL: "https://erp-dwe8a.ondigitalocean.app/api/get?model=product"
         });
 
-        const postProduct = (productname, productcode, producttype, currency, minprice, maxprice, multipleparts, multipartarr ) => {
+        const postProduct = (productname, productcode, producttype, currency, minprice, maxprice, multipleparts, multipartarr) => {
             prdtpost.post('', {
                 product_code: productcode,
                 product_name: productname,
@@ -136,7 +140,7 @@ function Product() {
                         <div className="micardbdy row">
                             <div className="col-lg-4">
                                 <label className="micardlble" >Product Name</label><br />
-                                <input className="micardinpt" onChange={(e) => setproductname(e.target.value)} required/>
+                                <input className="micardinpt" onChange={(e) => setproductname(e.target.value)} required />
                             </div>
 
                             <div className="col-lg-4">
@@ -159,7 +163,7 @@ function Product() {
                                     <option selected='true' value=''>Select Currency</option>
                                     {countrysdat.map(conryobj => (
                                         <>
-                                            <option value={conryobj.pk}>{conryobj.country_name}</option>
+                                            <option value={conryobj.pk}>{conryobj.currency_name}</option>
                                         </>
                                     ))}
                                 </select>
@@ -176,13 +180,13 @@ function Product() {
                             <div className="col-lg-4">
                                 <label className="micardlble">Max Price</label><br />
                                 <input value={currency} disabled='true' className="micardgrpinpt" />
-                                <input type='number' min={parseInt(minprice)+1} onChange={(e) => { setmaxprice(e.target.value); }} className="micardgrpinpt1" />
+                                <input type='number' min={parseInt(minprice) + 1} onChange={(e) => { setmaxprice(e.target.value); }} className="micardgrpinpt1" />
                             </div>
 
                             <div className="col-lg-4">
                                 <label className="micardlble">Multiple Parts</label><br />
                                 <div className="micardboxinpt">
-                                    <input type='checkbox' checked={multipleparts} onChange={() => {setmultipleparts(!multipleparts)}} style={{ height: '1em', width: '1em' }} /> &emsp;Add Multiple Parts
+                                    <input type='checkbox' checked={multipleparts} onChange={() => { setmultipleparts(!multipleparts) }} style={{ height: '1em', width: '1em' }} /> &emsp;Add Multiple Parts
                                 </div>
                             </div><div className="col-lg-4"></div><div className="col-lg-4"></div>
                             {multipleparts === true ? <Dispmultipro /> : null}
@@ -208,6 +212,19 @@ function Product() {
         setaddpro(false)
     }
 
+    const deleterow = (pk) => {
+        var crntpk = pk;
+        const deleterowurl = axios.create({
+            baseURL: `https://erp-new-production.up.railway.app/data-management/?model_name=product&pk=${crntpk}`
+        });
+
+        deleterowurl.delete('', {
+        })
+            .then((response) => {
+                console.log("after then", response)
+            })
+        // window.location.reload();
+    };
 
 
     return (
@@ -262,7 +279,10 @@ function Product() {
                                                             <TableCell>{rowobj.multiple_parts ? "True" : "False"}
                                                                 {rowobj.multiple_parts === null ? "Null" : ''}</TableCell>
                                                             <TableCell>{rowobj.parts === null ? "Null" : rowobj.parts}</TableCell>
-                                                            <TableCell><Butns /></TableCell>
+                                                            <TableCell>
+                                                                <IconButton aria-label="expand" onClick={deleterow(rowobj.pk)} size="small" sx={{ color: 'rgba(255, 0, 0, 0.755)', marginRight: '1em' }}>
+                                                                    <DeleteIcon /></IconButton>
+                                                            </TableCell>
                                                         </TableRow>
                                                     </>
                                                 )
@@ -271,7 +291,7 @@ function Product() {
                                     </Table>
                                 </TableContainer> : <Loader />}
                             </div>
-                            {dispaddpro === false ? '' : <Addproduct />}
+                            {dispaddpro === false ? null : <Addproduct />}
                         </div>
                     </div>
                 </div>

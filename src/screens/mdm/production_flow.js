@@ -55,9 +55,6 @@ function Row(props) {
     const [productionphasearr, setproductionphasearr] = useState([]);
     const [parts, setparts] = useState([])
 
-
-
-
     const openDialogue = () => {
         setDispDilog(true);
     };
@@ -66,12 +63,12 @@ function Row(props) {
     };
     //Production flow
 
-    useEffect(() => { //
+    useEffect(() => { //billofmaterial&filter_by=&{product_code}&filter_value&{row.pk} 
 
-        fetch(`https://erp-new-production.up.railway.app/api/get?model=productivity&filter_by=&{product}&filter_value&{pk}`)
+        fetch(`https://erp-new-production.up.railway.app/api/get?model=productivity&filter_by=&{product}&filter_value=${row.pk}`)
             .then((res) => { return res.json(); })
             .then((data) => {
-                setpfdatas(data.data);
+                setpfdatas(data.data);console.log("PF Data",data.data)
             })
     }, [])
 
@@ -82,7 +79,7 @@ function Row(props) {
         fetch('https://erp-new-production.up.railway.app/api/get?model=productionphase')
             .then((res) => { return res.json(); })
             .then((data) => {
-                setproductionphasearr(data.data);console.log(data.data)
+                setproductionphasearr(data.data);
             })
     }, [])
 
@@ -123,9 +120,9 @@ function Row(props) {
                     <TableCell style={{ paddingBottom: 0, paddingTop: 0, backgroundColor: '#f2f2f2' }} colSpan={5}>
                         <Collapse in={open} timeout="auto" unmountOnExit>
                             <Box sx={{ margin: '7em 5em' }}>
-                                {/* <div>
+                                <div>
                                         <h5>{row.product_name} ( Product-Code : {row.product_code})</h5>
-                                    </div> */}
+                                    </div>
                                 {row.pk == pfdatas.map(chek => (chek.product)) ?
                                     <>
                                         <TableContainer component={Paper}>
@@ -143,17 +140,17 @@ function Row(props) {
                                                 <TableBody>
                                                     {pfdatas.map((PF) => (
                                                         <TableRow>
-                                                            <TableCell align='center' component="th" scope="row">{PF.part_name}</TableCell>
-                                                            <TableCell align='center'>{PF.phase_get}</TableCell>
-                                                            <TableCell align='center'>{PF.quantity_perday}</TableCell>
-                                                            <TableCell align='center'>{PF.scrap_quantity}</TableCell>
+                                                            <TableCell align='center' component="th" scope="row">{PF.part_name !== null ? PF.part_name : "Null"}</TableCell>
+                                                            <TableCell align='center'>{PF.phase_get !== null ? PF.phase_get : "Null"}</TableCell>
+                                                            <TableCell align='center'>{PF.quantity_perday !== null ? PF.quantity_perday : "Null"}</TableCell>
+                                                            <TableCell align='center'>{PF.scrap_quantity !== null ? PF.scrap_quantity : "Null"}</TableCell>
                                                             <TableCell align='center'><Butns /></TableCell>
                                                         </TableRow>
                                                     ))}
                                                 </TableBody>
                                             </Table>
                                         </TableContainer>
-                                    </> : <h3>No Data :(</h3>}
+                                    </> : <h3>No Data </h3>}
                                 <IconButton aria-label="expand row" onClick={openDialogue} size="small" sx={{ float: 'right', backgroundColor: 'white', margin: '0.5em', color: '#e3242b' }}>{<AddIcon />}</IconButton>
                             </Box>
                         </Collapse>
@@ -197,7 +194,6 @@ function Row(props) {
                         <Button onClick={handleClose}>Cancel</Button>
                         <Button onClick={handleClose}>Add</Button>
                     </DialogActions>
-
                 </Dialog>
             </div>
         </>
