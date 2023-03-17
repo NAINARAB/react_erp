@@ -13,7 +13,6 @@ import { Dialog, DialogContent, DialogTitle, Slide, DialogActions } from '@mui/m
 import Loader from '../../comp/Load/loading';
 
 
-// https://erp-dwe8a.ondigitalocean.app/api/get?model=productionflow
 
 
 const Transition = React.forwardRef(function Transition(props, ref) {
@@ -63,7 +62,7 @@ function Row(props) {
     };
     //Production flow
 
-    useEffect(() => { //billofmaterial&filter_by=&{product_code}&filter_value&{row.pk} 
+    useEffect(() => { 
 
         fetch(`https://erp-new-production.up.railway.app/api/get?model=productivity&filter_by=&{product}&filter_value=${row.pk}`)
             .then((res) => { return res.json(); })
@@ -85,7 +84,7 @@ function Row(props) {
 
     //parts product
     useEffect(() => {
-        fetch('https://erp-dwe8a.ondigitalocean.app/api/get?model=product')
+        fetch('https://erp-new-production.up.railway.app/api/get?model=product')
             .then((res) => { return res.json(); })
             .then((data) => {
                 setparts(data.data)
@@ -205,7 +204,7 @@ function Productionflow() {
     const [productdata, setproductdata] = useState([]);
 
     useEffect(() => {
-        fetch('https://erp-dwe8a.ondigitalocean.app/api/get?model=product')
+        fetch('https://erp-new-production.up.railway.app/api/get?model=product')
             .then((res) => { return res.json(); })
             .then((data) => {
                 setproductdata(data.data)

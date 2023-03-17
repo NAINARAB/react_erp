@@ -60,7 +60,7 @@ function Userrole() {
     const [userroledata, setuserroledata] = useState([]);
 
     useEffect(() => {
-        fetch('https://erp-dwe8a.ondigitalocean.app/api/get?model=userrole')
+        fetch('https://erp-new-production.up.railway.app/api/get?model=userrole')
             .then((res) => { return res.json(); })
             .then((data) => {
                 console.log(data.data);
@@ -75,7 +75,7 @@ function Userrole() {
         const [dept, setdept] = useState();
         const [dev, setdev] = useState();
         useEffect(() => {
-            fetch('https://erp-dwe8a.ondigitalocean.app/api/get?model=department')
+            fetch('https://erp-new-production.up.railway.app/api/get?model=department')
                 .then((res) => { return res.json(); })
                 .then((data) => {
                     setdeptdat(data.data);
@@ -83,7 +83,7 @@ function Userrole() {
         }, [])
 
         useEffect(() => {
-            fetch('https://erp-dwe8a.ondigitalocean.app/api/get?model=subdivision')
+            fetch('https://erp-new-production.up.railway.app/api/get?model=subdivision')
                 .then((res) => { return res.json(); })
                 .then((data) => {
                     console.log(data.data);
@@ -92,7 +92,7 @@ function Userrole() {
         }, [])
 
         const posturole = axios.create({
-            baseURL: "https://erp-dwe8a.ondigitalocean.app/api/get?model=userrole"
+            baseURL: "https://erp-new-production.up.railway.app/api/get?model=userrole"
         });
 
         const posturolefun = (rol,dep,div) => {

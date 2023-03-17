@@ -76,14 +76,14 @@ function Branches() {
         const [gstnumber, setgstnumber] = useState('');
         const [address, setaddress] = useState('');
         useEffect(() => {
-            fetch('https://erp-dwe8a.ondigitalocean.app/api/get?model=country')
+            fetch('https://erp-new-production.up.railway.app/api/get?model=country')
                 .then((res) => { return res.json(); })
                 .then((data) => {
                     setcountrydat(data.data);
                 })
         }, [])
         useEffect(() => {
-            fetch('https://erp-dwe8a.ondigitalocean.app/api/get?model=state')
+            fetch('https://erp-new-production.up.railway.app/api/get?model=state')
                 .then((res) => { return res.json(); })
                 .then((data) => {
                     setstatedat(data.data);
@@ -91,7 +91,7 @@ function Branches() {
         }, [])//https://erp-dwe8a.ondigitalocean.app/api/get?model=branch
 
         const postbranchurl = axios.create({
-            baseURL: "https://erp-dwe8a.ondigitalocean.app/api/get?model=branch"
+            baseURL: "hhttps://erp-new-production.up.railway.app/api/get?model=branch"
         });
 
         const postbranchfun = (branchname, cityname, state, country, pincode, gstnumbert, address) => {
@@ -192,7 +192,7 @@ function Branches() {
     }
 
     useEffect(() => {
-        fetch('https://erp-dwe8a.ondigitalocean.app/api/get?model=branch')
+        fetch('https://erp-new-production.up.railway.app/api/get?model=branch')
             .then((res) => { return res.json(); })
             .then((data) => {
                 console.log(data.data);

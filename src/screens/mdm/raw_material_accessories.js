@@ -1,7 +1,8 @@
 import React from "react";
 import Header from "../../comp/header/header";
 import Sidenav from "../../comp/sidenav/sidenav";
-import { TableContainer, Table, TableBody, TableCell, TableHead, TableRow, Paper, IconButton } from "@mui/material";
+import {Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Button,
+     TableContainer, Table, TableBody, TableCell, TableHead, TableRow, Paper, IconButton } from "@mui/material";
 import '../common.css';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -15,6 +16,17 @@ function Rawmaterialsaccessories() {
     const [dispaddrma, setdispaddrma] = useState(false);
     const [rmadata, setrmadata] = useState([]);
     let count = 0;
+    const [pk, setpk] = useState();
+    const [delproname, setdelproname] = useState('');
+    const [open, setOpen] = useState(false);
+
+    const handleClickOpen = () => {
+        setOpen(true);
+    };
+
+    const handleClose = () => {
+        setOpen(false);
+    };
 
     function opnAdd() {
         document.getElementById('adbtn').style.display = 'none';
@@ -26,14 +38,7 @@ function Rawmaterialsaccessories() {
         document.getElementById('adbtn').style.display = 'block';
         setdispaddrma(false);
     }
-    function Butns() {
-        return (
-            <>
-                <IconButton aria-label="expand row" size="small" sx={{ marginLeft: '0.5em' }}><EditIcon /></IconButton>
-                <IconButton aria-label="expand row" size="small" sx={{ color: 'rgba(255, 0, 0, 0.755)', marginRight: '1em' }}><DeleteIcon /></IconButton>
-            </>
-        );
-    }
+    
 
 
     let AddRMA = () => {
@@ -43,35 +48,26 @@ function Rawmaterialsaccessories() {
         const [minstock, setminstock] = useState();
         const [currency, setcurrency] = useState();
         const [rmmaxprice, setrmmaxprice] = useState();
-        const [countrysdat, setcountrydat] = useState([])
         const [curncydat, setcurncydat] = useState([])
         const [measurdunit, setmeasuredunit] = useState([])
 
         useEffect(() => {
-            fetch('https://erp-dwe8a.ondigitalocean.app/api/get?model=country')
-                .then((res) => { return res.json(); })
-                .then((data) => {
-                    setcountrydat(data.data);
-                })
-        }, [])//currency
-        useEffect(() => {
-            fetch('https://erp-dwe8a.ondigitalocean.app/api/get?model=currency')
+            fetch('https://erp-new-production.up.railway.app/api/get?model=currency')
                 .then((res) => { return res.json(); })
                 .then((data) => {
                     setcurncydat(data.data);
                 })
-        }, [])
-        useEffect(() => {
-            fetch('https://erp-dwe8a.ondigitalocean.app/api/get?model=measuredunits')
+            fetch('https://erp-new-production.up.railway.app/api/get?model=measuredunits')
                 .then((res) => { return res.json(); })
                 .then((data) => {
                     setmeasuredunit(data.data);
                 })
         }, [])
+        
 
 
         const rmapost = axios.create({
-            baseURL: "https://erp-dwe8a.ondigitalocean.app/api/get?model=rawmaterial"
+            baseURL: "https://erp-new-production.up.railway.app/api/get?model=rawmaterial"
         });
 
         const postrma = (rmcode, rmname, unit, minstock, rmmaxprice, currency,) => {
@@ -103,6 +99,7 @@ function Rawmaterialsaccessories() {
         let doPost = (e) => {
             e.preventDefault();
             postrma(rmcode,rmname,units,minstock,rmmaxprice,currency);
+            window.location.reload();
         }
 
 
@@ -176,7 +173,7 @@ function Rawmaterialsaccessories() {
 
     useEffect(() => {
 
-        fetch('https://erp-dwe8a.ondigitalocean.app/api/get?model=rawmaterial')
+        fetch('https://erp-new-production.up.railway.app/api/get?model=rawmaterial')
             .then((res) => { return res.json(); })
             .then((data) => {
                 console.log(data)
@@ -184,9 +181,30 @@ function Rawmaterialsaccessories() {
             })
     }, [])
 
+
+    function doDelete() {
+        deleteRowRM(pk);
+    }
+    const deleteRowRM = (pkobj) => {
+        let currentpk = pkobj;
+        const deleterowurl = axios.create({
+            baseURL: `https://erp-new-production.up.railway.app/api/get?model=rawmaterial&pk=${currentpk}`
+        });
+
+        deleterowurl.delete('', {
+        })
+            .then((response) => {
+                console.log("after then", response);
+                window.location.reload();
+            })
+            .catch((err) => {
+                console.log(err);
+            })
+    }
+
     return (
 
-        <>
+        <div>
             <div className="row">
                 <div className="col-lg-12">
                     <Header />
@@ -231,7 +249,14 @@ function Rawmaterialsaccessories() {
                                                 <TableCell>{row.rm_max_price != null ? row.rm_max_price : 'Null'}</TableCell>
                                                 <TableCell>{row.currency_get != null ? row.currency_get : 'Null'}</TableCell>
                                                 <TableCell>{row.prefered_supplier != null ? row.prefered_supplier : 'Null'}</TableCell>
-                                                <TableCell>{<Butns />}</TableCell>
+                                                <TableCell>
+                                                <IconButton aria-label="expand row" size="small">
+                                                    <EditIcon /></IconButton>
+                                                    
+                                                    <IconButton aria-label="expand row" size="small" onClick={() => {
+                                                    setpk(row.pk); setdelproname(row.rm_name); handleClickOpen();
+                                                }}
+                                                sx={{ color: 'rgba(255, 0, 0, 0.755)' }}><DeleteIcon /></IconButton></TableCell>
                                             </TableRow>
                                         ))}
                                     </TableBody>
@@ -241,7 +266,30 @@ function Rawmaterialsaccessories() {
                     {dispaddrma === true ? <AddRMA /> : null}
                 </div>
             </div>
-        </>
+            <div>
+                <Dialog
+                    open={open}
+                    onClose={handleClose}
+                    aria-labelledby="alert-dialog-title"
+                    aria-describedby="alert-dialog-description"
+                >
+                    <DialogTitle id="alert-dialog-title">
+                        {"Do You Want To Delete ? "}
+                    </DialogTitle>
+                    <DialogContent>
+                        <DialogContentText id="alert-dialog-description">
+                            <b style={{color: 'black'}}>{delproname}</b>
+                        </DialogContentText>
+                    </DialogContent>
+                    <DialogActions>
+                        <Button onClick={handleClose}>Cancel</Button>
+                        <Button onClick={doDelete} autoFocus sx={{ color: 'red' }}>
+                            Delete
+                        </Button>
+                    </DialogActions>
+                </Dialog>
+            </div>
+        </div>
     );
 }
 

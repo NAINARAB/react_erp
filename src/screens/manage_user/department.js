@@ -57,7 +57,7 @@ function Department() {
     const [departmentdata, setdepartmentdata] = useState([]);
 
     useEffect(() => {
-        fetch('https://erp-dwe8a.ondigitalocean.app/api/get?model=department')
+        fetch('https://erp-new-production.up.railway.app/api/get?model=department')
             .then((res) => { return res.json(); })
             .then((data) => {
                 console.log(data.data);
@@ -69,7 +69,7 @@ function Department() {
         const [deptname, setdeptname] = useState('');
         const [deptrole, setdeptrole] = useState('');
         const postdept = axios.create({
-            baseURL: "https://erp-dwe8a.ondigitalocean.app/api/get?model=department"
+            baseURL: "https://erp-new-production.up.railway.app/api/get?model=department"
         });
 
         const postdeptfun = (depart,deptrl) => {

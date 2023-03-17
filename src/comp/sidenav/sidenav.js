@@ -8,17 +8,17 @@ import CloseIcon from '@mui/icons-material/Close';
 
 
 function Sidenav() {
-    const [crntusrnme, setcrntusrnme] = useState('');
-    const [usrrol, setusrrol] = useState('');
+    // const [crntusrnme, setcrntusrnme] = useState('');
+    // const [usrrol, setusrrol] = useState('');
 
-    useEffect(() => {
-        fetch('https://erp-dwe8a.ondigitalocean.app/api/profile/')
-            .then((res) => { return res.json(); })
-            .then((data) => {console.log(data.data)
-                setcrntusrnme(data.data.name);console.log("name", data.data.name)
-                setusrrol(data.data.role_get); console.log("role", data.data.role_get)
-            })
-    }, [])
+    // useEffect(() => {
+    //     fetch('https://erp-new-production.up.railway.app/api/profile/')
+    //         .then((res) => { return res.json(); })
+    //         .then((data) => {console.log(data.data)
+    //             setcrntusrnme(data.data.name);console.log("name", data.data.name)
+    //             setusrrol(data.data.role_get); console.log("role", data.data.role_get)
+    //         })
+    // }, [])
 
     let currentUser = sessionStorage.getItem('name');
     const [opncond, setopencond] = React.useState(false)
@@ -69,7 +69,7 @@ function Sidenav() {
                                     <li className="nav-item">
                                         <button className="nav-link sbutton butful" data-bs-toggle="collapse" data-bs-target="#menu_item1">
                                             <i className="bi bi-person-circle itme"></i>&ensp;
-                                            Admin&ensp; <i class="bi bi-chevron-right itmeright"></i> </button>
+                                            Admin&ensp; <i className="bi bi-chevron-right itmeright"></i> </button>
                                         <ul id="menu_item1" className="submenu collapse" style={{ paddingLeft: '0', paddingRight: '0' }} data-bs-parent="#nav_accordion">
 
 
@@ -78,9 +78,9 @@ function Sidenav() {
                                                     <i className="bi bi-ui-checks itme"></i>&ensp;
                                                     Master Data Management &ensp;<i className="bi bi-chevron-right itmeright"></i> </button>
                                                 <ul id="menu_item2" className="submenu collapse">
-                                                    <li><button className="nav-link sbutton" onClick={() => { navigate('/admin/mdm/product') }}><i class="bi bi-dot"></i>Product</button></li>
-                                                    <li><button className="nav-link sbutton" onClick={() => { navigate('/admin/mdm/rawmaterialsaccessories') }}><i class="bi bi-dot"></i>Raw Material & Accessories</button></li>
-                                                    <li><button className="nav-link sbutton" onClick={() => { navigate('/admin/mdm/billsofmaterials') }}><i class="bi bi-dot"></i>Bills of Materials</button></li>
+                                                    <li><button className="nav-link sbutton" onClick={() => { navigate('/admin/mdm/product') }}><i className="bi bi-dot"></i>Product</button></li>
+                                                    <li><button className="nav-link sbutton" onClick={() => { navigate('/admin/mdm/rawmaterialsaccessories') }}><i className="bi bi-dot"></i>Raw Material & Accessories</button></li>
+                                                    <li><button className="nav-link sbutton" onClick={() => { navigate('/admin/mdm/billsofmaterials') }}><i className="bi bi-dot"></i>Bills of Materials</button></li>
                                                     <li><button className="nav-link sbutton" onClick={() => { navigate('/admin/mdm/productionflow') }}><i className="bi bi-dot"></i>Production Flow</button></li>
                                                     <li><button className="nav-link sbutton" onClick={() => { navigate('/admin/mdm/parties') }}><i className="bi bi-dot"></i>Parties</button></li>
                                                     <li><button className="nav-link sbutton" onClick={() => { navigate('/admin/mdm/phases') }}><i className="bi bi-dot"></i>Phases</button></li>
@@ -95,7 +95,7 @@ function Sidenav() {
                                                 <button className="nav-link sbutton butful" data-bs-toggle="collapse" data-bs-target="#menu_item3">
                                                     <i className="bi bi-people-fill itme"></i>&ensp;
                                                     Manage Users &ensp;<i className="bi bi-chevron-right itmeright"></i></button>
-                                                <ul id="menu_item3" class="submenu collapse">
+                                                <ul id="menu_item3" className="submenu collapse">
                                                     <li><button className="nav-link sbutton" onClick={() => { navigate('/admin/manageusers/branches') }}><i className="bi bi-dot"></i>Branches</button></li>
                                                     <li><button className="nav-link sbutton" onClick={() => { navigate('/admin/manageusers/department') }}><i className="bi bi-dot"></i>Department</button></li>
                                                     <li><button className="nav-link sbutton" onClick={() => { navigate('/admin/manageusers/devision') }}><i className="bi bi-dot"></i>Devision</button></li>

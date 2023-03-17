@@ -1,12 +1,17 @@
 import React, { useEffect, useState } from "react";
 import Header from "../../comp/header/header";
 import Sidenav from "../../comp/sidenav/sidenav";
-import { TableContainer, Table, TableBody, TableCell, TableHead, TableRow, Paper, IconButton, Autocomplete, TextField, Chip } from "@mui/material";
+import {
+    Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Button,
+    TableContainer, Table, TableBody, TableCell, TableHead, TableRow, Paper, IconButton, Autocomplete, TextField, Chip
+} from "@mui/material";
 import '../common.css';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import Loader from "../../comp/Load/loading";
 import axios from "axios";
+
+
 
 function Product() {
     let [rows, setrows] = useState([]);
@@ -14,10 +19,21 @@ function Product() {
     const [countrysdat, setcountrydat] = useState([])
     let count = 1;
     const dummy = [];
+    const [pk, setpk] = useState();
+    const [delproname, setdelproname] = useState('');
+    const [open, setOpen] = useState(false);
+
+    const handleClickOpen = () => {
+        setOpen(true);
+    };
+
+    const handleClose = () => {
+        setOpen(false);
+    };
 
     function Butns(props) {
         let pkvalue = props; //&pk=${pkvalue}  http://localhost:8080/deleteimage/${id} $pkvalue ,{method:"DELETE"}
-        console.log(props)
+        console.log(props);
 
         return (
             <>
@@ -28,25 +44,22 @@ function Product() {
         );
     }
 
-    //for fetch the product
     useEffect(() => {
 
-        fetch('https://erp-dwe8a.ondigitalocean.app/api/get?model=product')
+        fetch('https://erp-new-production.up.railway.app/api/get?model=product')
             .then((res) => { return res.json(); })
             .then((data) => {
                 setrows(data.data)
+            })
+        fetch('https://erp-new-production.up.railway.app/api/get?model=currency')
+            .then((res) => { return res.json(); })
+            .then((data) => {
+                setcountrydat(data.data);
             })
 
     }, [])
 
     //for fetch the countrys currency
-    useEffect(() => {
-        fetch('https://erp-dwe8a.ondigitalocean.app/api/get?model=currency')
-            .then((res) => { return res.json(); })
-            .then((data) => {
-                setcountrydat(data.data);
-            })
-    }, [])
 
 
 
@@ -62,7 +75,7 @@ function Product() {
 
 
         const prdtpost = axios.create({
-            baseURL: "https://erp-dwe8a.ondigitalocean.app/api/get?model=product"
+            baseURL: "https://erp-new-production.up.railway.app/api/get?model=product"
         });
 
         const postProduct = (productname, productcode, producttype, currency, minprice, maxprice, multipleparts, multipartarr) => {
@@ -96,6 +109,7 @@ function Product() {
         let doPost = (e) => {
             e.preventDefault();
             postProduct(productname, productcode, producttype, currency, minprice, maxprice, multipleparts, multipartarr);
+            window.location.reload();
         }
 
 
@@ -160,13 +174,14 @@ function Product() {
                             <div className="col-lg-4">
                                 <label className="micardlble">Currency</label><br />
                                 <select className="micardinpt" value={currency} onChange={(e) => { setcurrency(e.target.value); }} required>
-                                    <option selected='true' value=''>Select Currency</option>
-                                    {countrysdat.map(conryobj => (
+                                    <option value="" disabled='true' >Select Currency</option>
+                                    {countrysdat.map(contobj => (
                                         <>
-                                            <option value={conryobj.pk}>{conryobj.currency_name}</option>
+                                            <option value={contobj.pk}>{contobj.currency_name}</option>
                                         </>
                                     ))}
                                 </select>
+                                
                             </div>
 
 
@@ -212,20 +227,31 @@ function Product() {
         setaddpro(false)
     }
 
-    const deleterow = (pk) => {
-        var crntpk = pk;
+
+
+
+
+    function doDelete() {
+        deleteRow(pk);
+    }
+
+    const deleteRow = (pkobj) => {
+        console.log(pkobj)
+        let currentpk = pkobj;
         const deleterowurl = axios.create({
-            baseURL: `https://erp-new-production.up.railway.app/data-management/?model_name=product&pk=${crntpk}`
+            baseURL: `https://erp-new-production.up.railway.app/api/get?model=product&pk=${currentpk}`
         });
 
         deleterowurl.delete('', {
         })
             .then((response) => {
-                console.log("after then", response)
+                console.log("after then", response);
+                window.location.reload();
             })
-        // window.location.reload();
-    };
-
+            .catch((err) => {
+                console.log(err);
+            })
+    }
 
     return (
         <>
@@ -266,7 +292,7 @@ function Product() {
 
                                                 return (
                                                     <>
-                                                        <TableRow sx={{ '&:last-child td, &:last-child th': { border: 0 } }} hover='true'>
+                                                        <TableRow sx={{ '&:last-child td, &:last-child th': { border: 0 } }} hover={true}>
                                                             <TableCell component="th" scope="row">
                                                                 {count++}
                                                             </TableCell>
@@ -280,7 +306,8 @@ function Product() {
                                                                 {rowobj.multiple_parts === null ? "Null" : ''}</TableCell>
                                                             <TableCell>{rowobj.parts === null ? "Null" : rowobj.parts}</TableCell>
                                                             <TableCell>
-                                                                <IconButton aria-label="expand" onClick={deleterow(rowobj.pk)} size="small" sx={{ color: 'rgba(255, 0, 0, 0.755)', marginRight: '1em' }}>
+                                                                <IconButton aria-label="expand" onClick={() => { setpk(rowobj.pk); setdelproname(rowobj.product_name); handleClickOpen(); }}
+                                                                    size="small" sx={{ color: 'rgba(255, 0, 0, 0.755)', marginRight: '1em' }}>
                                                                     <DeleteIcon /></IconButton>
                                                             </TableCell>
                                                         </TableRow>
@@ -295,6 +322,31 @@ function Product() {
                         </div>
                     </div>
                 </div>
+            </div>
+
+            {/* Delete Dialog */}
+            <div>
+                <Dialog
+                    open={open}
+                    onClose={handleClose}
+                    aria-labelledby="alert-dialog-title"
+                    aria-describedby="alert-dialog-description"
+                >
+                    <DialogTitle id="alert-dialog-title">
+                        {"Do You Want To Delete ? "}
+                    </DialogTitle>
+                    <DialogContent>
+                        <DialogContentText id="alert-dialog-description">
+                            <b style={{color: 'black'}}>{delproname}</b>
+                        </DialogContentText>
+                    </DialogContent>
+                    <DialogActions>
+                        <Button onClick={handleClose}>Cancel</Button>
+                        <Button onClick={doDelete} autoFocus sx={{ color: 'red' }}>
+                            Delete
+                        </Button>
+                    </DialogActions>
+                </Dialog>
             </div>
         </>
     );

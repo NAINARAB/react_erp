@@ -59,7 +59,7 @@ function Devision() {
     const [dispDevision, setdispDevision] = useState(false);
     const [devisiondata, setdevisiondata] = useState([]);
     useEffect(() => {
-        fetch('https://erp-dwe8a.ondigitalocean.app/api/get?model=subdivision')
+        fetch('https://erp-new-production.up.railway.app/api/get?model=subdivision')
             .then((res) => { return res.json(); })
             .then((data) => {
                 console.log(data.data);
@@ -73,7 +73,7 @@ function Devision() {
         const [deptdat, setdeptdat] = useState([]);
 
         useEffect(() => {
-            fetch('https://erp-dwe8a.ondigitalocean.app/api/get?model=department')
+            fetch('https://erp-new-production.up.railway.app/api/get?model=department')
                 .then((res) => { return res.json(); })
                 .then((data) => {
                     setdeptdat(data.data);
@@ -81,7 +81,7 @@ function Devision() {
         }, [])
 
         const postdev = axios.create({
-            baseURL: "https://erp-dwe8a.ondigitalocean.app/api/get?model=subdivision"
+            baseURL: "https://erp-new-production.up.railway.app/api/get?model=subdivision"
         });
 
         const postdevfun = (dep,rol) => {

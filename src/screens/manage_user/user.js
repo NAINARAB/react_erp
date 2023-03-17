@@ -67,7 +67,7 @@ function Users() {
     const [usersdata, setusersdata] = useState([]);
 
     useEffect(() => {
-        fetch('https://erp-dwe8a.ondigitalocean.app/api/get?model=user')
+        fetch('https://erp-new-production.up.railway.app/api/get?model=user')
             .then((res) => { return res.json(); })
             .then((data) => {
                 console.log(data.data);
@@ -87,7 +87,7 @@ function Users() {
         const[password, setpassword]= useState('');
         //branchdata
         useEffect(() => {
-            fetch('https://erp-dwe8a.ondigitalocean.app/api/get?model=branch')
+            fetch('https://erp-new-production.up.railway.app/api/get?model=branch')
                 .then((res) => { return res.json(); })
                 .then((data) => {
                     setbranchdat(data.data)
@@ -95,7 +95,7 @@ function Users() {
         }, [])
         //user role data
         useEffect(() => {
-            fetch('https://erp-dwe8a.ondigitalocean.app/api/get?model=userrole')
+            fetch('https://erp-new-production.up.railway.app/api/get?model=userrole')
                 .then((res) => { return res.json(); })
                 .then((data) => {
                     setusrroldat(data.data);
@@ -104,7 +104,7 @@ function Users() {
 
         //post url
         const postusrurl = axios.create({
-            baseURL: "https://erp-dwe8a.ondigitalocean.app/api/signup   "
+            baseURL: "https://erp-new-production.up.railway.app/api/signup   "
         });
 
         const postnewuser = (eid, name, email, phn, pswrd, rol, brach) => {

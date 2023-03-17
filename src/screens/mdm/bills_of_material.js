@@ -173,7 +173,7 @@ function Billsofmaterials() {
     let count = 0;
     useEffect(() => {
 
-        fetch('https://erp-dwe8a.ondigitalocean.app/api/get?model=product')
+        fetch('https://erp-new-production.up.railway.app/api/get?model=product')
             .then((res) => { return res.json(); })
             .then((data) => {
                 setproductdata(data.data); 

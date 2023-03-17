@@ -59,7 +59,7 @@ function Partytype() {
     const [partttypedata, setpartytypedata] = useState([]);
 
     useEffect(() => {
-        fetch('https://erp-dwe8a.ondigitalocean.app/api/get?model=partytype')
+        fetch('https://erp-new-production.up.railway.app/api/get?model=partytype')
             .then((res) => { return res.json(); })
             .then((data) => {
                 console.log(data.data);
@@ -71,7 +71,7 @@ function Partytype() {
     let AddPartyType = () => {
         const [partyinpt, setpartyinpt] = useState('');
         const postprtytype = axios.create({
-            baseURL: "https://erp-dwe8a.ondigitalocean.app/api/get?model=partytype"
+            baseURL: "https://erp-new-production.up.railway.app/api/get?model=partytype"
         });
 
         const postPT = (prty) => {

@@ -87,7 +87,7 @@ function Parties() {
 
     useEffect(() => {
 
-        fetch('https://erp-dwe8a.ondigitalocean.app/api/get?model=parties')
+        fetch('https://erp-new-production.up.railway.app/api/get?model=parties')
             .then((res) => { return res.json(); })
             .then((resdata) => {
                 setpartydata(resdata.data);

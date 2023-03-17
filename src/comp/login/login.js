@@ -3,15 +3,14 @@ import { useNavigate } from "react-router-dom";
 import { useState } from 'react';
 import axios from 'axios';
 import './login.css';
-
-axios.defaults.xsrfCookieName = 'csrftoken'
-axios.defaults.xsrfHeaderName = 'X-CSRFToken'
+import jQuery from 'jquery'; 
 
 // function getCookie(name) {
 //     var cookieValue = null;
 //     if (document.cookie && document.cookie !== '') {
 //         var cookies = document.cookie.split(';');
 //         for (var i = 0; i < cookies.length; i++) {
+            
 //             var cookie = jQuery.trim(cookies[i]);
 //             if (cookie.substring(0, name.length + 1) === (name + '=')) {
 //                 cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
@@ -31,12 +30,12 @@ function Login() {
     // const headers= { "Content-Type": "application/json", "X-CSRFToken" : csrftoken}
 
     const client1 = axios.create({
-        baseURL: "https://erp-dwe8a.ondigitalocean.app/api/login/"
+        baseURL: "https://erp-new-production.up.railway.app/api/login/"
     });
 
 
     const getLogin = (employee_id, password) => {
-        client1.post('', {
+        client1.post('',{
             employee_id: employee_id,
             password: password,
         })
@@ -66,10 +65,6 @@ function Login() {
         e.preventDefault();
         getLogin(employee_id, password);
     }
-
-
-
-
 
     return (
         <div>

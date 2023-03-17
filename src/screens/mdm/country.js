@@ -56,7 +56,7 @@ function Country() {
 
 
     useEffect(() => {
-        fetch('https://erp-dwe8a.ondigitalocean.app/api/get?model=country')
+        fetch('https://erp-new-production.up.railway.app/api/get?model=country')
             .then((res) => { return res.json(); })
             .then((data) => {
                 console.log(data.data);
@@ -67,7 +67,7 @@ function Country() {
     function AddCountry() {
         const [countryinpt, setcountryinpt] = useState('');
         const postcountryinpt = axios.create({
-            baseURL: "https://erp-dwe8a.ondigitalocean.app/api/get?model=country"
+            baseURL: "https://erp-new-production.up.railway.app/api/get?model=country"
         });
 
         const postcountry = (country) => {
