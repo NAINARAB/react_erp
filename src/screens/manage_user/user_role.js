@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
 import Header from "../../comp/header/header";
 import Sidenav from "../../comp/sidenav/sidenav";
-import { IconButton, TableContainer, Table, TableBody, TableCell, TableHead, TableRow, Paper } from "@mui/material";
+import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Button,
+    IconButton, TableContainer, Table, TableBody, TableCell, TableHead, TableRow, Paper } from "@mui/material";
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import '../common.css';
@@ -22,6 +23,38 @@ function Butns() {
 let UserRoleComp = (props) => {
     const { userrole } = props;
     let count = 0;
+    const [pk, setpk] = useState();
+    const [delproname, setdelproname] = useState('');
+    const [open, setOpen] = useState(false);
+
+    const handleClickOpen = () => {
+        setOpen(true);
+    };
+
+    const handleClose = () => {
+        setOpen(false);
+    };
+
+    function doDelete() {
+        deleteRow(pk);
+    }
+
+    const deleteRow = (pkobj) => {
+        let currentpk = pkobj;
+        const deleterowurl = axios.create({ //userrole
+            baseURL: `https://erp-new-production.up.railway.app/api/get?model=userrole&pk=${currentpk}`
+        });
+
+        deleterowurl.delete('', {
+        })
+            .then((response) => {
+                console.log("after then", response);
+                window.location.reload();
+            })
+            .catch((err) => {
+                console.log(err);
+            })
+    }
     return (
         <>
             {userrole.length != 0 ? <TableContainer component={Paper} sx={{ maxHeight: 640 }}>
@@ -43,12 +76,38 @@ let UserRoleComp = (props) => {
                                 <TableCell>{urd.role != null ? urd.role : "Null"}</TableCell>
                                 <TableCell>{urd.department_get != null ? urd.department_get : "Null"}</TableCell>
                                 <TableCell>{urd.division_get != null ? urd.division_get : "Null"}</TableCell>
-                                <TableCell align="center"><Butns /></TableCell>
+                                <TableCell align="center"><IconButton aria-label="expand row" size="small"
+                                    onClick={() => { setpk(urd.pk); setdelproname(urd.role); handleClickOpen(); }}
+                                    sx={{ color: 'rgba(255, 0, 0, 0.755)', marginRight: '1em' }}>
+                                    <DeleteIcon /></IconButton></TableCell>
                             </TableRow>
                         ))}
                     </TableBody>
                 </Table>
             </TableContainer> : <Loader />}
+            <div>
+                <Dialog
+                    open={open}
+                    onClose={handleClose}
+                    aria-labelledby="alert-dialog-title"
+                    aria-describedby="alert-dialog-description"
+                >
+                    <DialogTitle id="alert-dialog-title">
+                        {"Do You Want To Delete ? "}
+                    </DialogTitle>
+                    <DialogContent>
+                        <DialogContentText id="alert-dialog-description">
+                            <b style={{ color: 'black' }}>User Role : &emsp;{delproname}</b>
+                        </DialogContentText>
+                    </DialogContent>
+                    <DialogActions>
+                        <Button onClick={handleClose}>Cancel</Button>
+                        <Button onClick={doDelete} autoFocus sx={{ color: 'red' }}>
+                            Delete
+                        </Button>
+                    </DialogActions>
+                </Dialog>
+            </div>
         </>
     );
 }
@@ -105,6 +164,7 @@ function Userrole() {
                     console.log("after then", res)
                     if (res.data.status === 'success') {
                         alert("User Role Added");
+                        window.location.reload();
                     }
                     else {
                         if (res.data.status === 'failure') {

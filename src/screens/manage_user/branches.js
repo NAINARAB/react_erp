@@ -1,7 +1,10 @@
 import React, { useState, useEffect } from "react";
 import Header from "../../comp/header/header";
 import Sidenav from "../../comp/sidenav/sidenav";
-import { TableContainer, Table, TableBody, TableCell, TableHead, TableRow, Paper, IconButton } from "@mui/material";
+import {
+    Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Button,
+    TableContainer, Table, TableBody, TableCell, TableHead, TableRow, Paper, IconButton
+} from "@mui/material";
 import '../common.css';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -12,7 +15,7 @@ function Butns() {
     return (
         <>
             <IconButton aria-label="expand row" size="small" sx={{ marginLeft: '0.5em' }}><EditIcon /></IconButton>
-            <IconButton aria-label="expand row" size="small" sx={{ color: 'rgba(255, 0, 0, 0.755)', marginRight: '1em' }}><DeleteIcon /></IconButton>
+
         </>
     );
 }
@@ -21,6 +24,38 @@ function Butns() {
 let BranchesTble = (props) => {
     const { branch } = props;
     let count = 0;
+    const [pk, setpk] = useState();
+    const [delproname, setdelproname] = useState('');
+    const [open, setOpen] = useState(false);
+
+    const handleClickOpen = () => {
+        setOpen(true);
+    };
+
+    const handleClose = () => {
+        setOpen(false);
+    };
+
+    function doDelete() {
+        deleteRow(pk);
+    }
+
+    const deleteRow = (pkobj) => {
+        let currentpk = pkobj;
+        const deleterowurl = axios.create({ //phase
+            baseURL: `https://erp-new-production.up.railway.app/api/get?model=branch&pk=${currentpk}`
+        });
+
+        deleterowurl.delete('', {
+        })
+            .then((response) => {
+                console.log("after then", response);
+                window.location.reload();
+            })
+            .catch((err) => {
+                console.log(err);
+            })
+    }
     return (
         <>
             {branch.length != 0 ?
@@ -43,18 +78,46 @@ let BranchesTble = (props) => {
                             {branch.map((brs) => (
                                 <TableRow sx={{ '&:last-child td, &:last-child th': { border: 0 } }} hover='true'>
                                     <TableCell>{++count}</TableCell>
-                                    <TableCell>{brs.branch_name}</TableCell>
-                                    <TableCell>{brs.cityname}</TableCell>
-                                    <TableCell>{brs.state}</TableCell>
-                                    <TableCell>{brs.country_get}</TableCell>
-                                    <TableCell>{brs.pincode}</TableCell>
-                                    <TableCell>{brs.GST_Number}</TableCell>
-                                    <TableCell><Butns /></TableCell>
+                                    <TableCell>{brs.branch_name !== null ? brs.branch_name : "Null"}</TableCell>
+                                    <TableCell>{brs.cityname !== null ? brs.cityname : "Null"}</TableCell>
+                                    <TableCell>{brs.state !== null ?  brs.state : "Null"}</TableCell>
+                                    <TableCell>{brs.country_get !== null ?  brs.country_get : "Null"}</TableCell>
+                                    <TableCell>{brs.pincode !== null ?  brs.pincode : "Null"}</TableCell>
+                                    <TableCell>{brs.GST_Number !== null ?  brs.GST_Number : "Null"}</TableCell>
+                                    <TableCell>
+                                        <IconButton aria-label="expand row" size="small"
+                                            onClick={() => { setpk(brs.pk); setdelproname(brs.branch_name); handleClickOpen(); }}
+                                            sx={{ color: 'rgba(255, 0, 0, 0.755)', marginRight: '1em' }}>
+                                            <DeleteIcon /></IconButton>
+                                    </TableCell>
                                 </TableRow>
                             ))}
                         </TableBody>
                     </Table>
                 </TableContainer> : <Loader />}
+            <div>
+                <Dialog
+                    open={open}
+                    onClose={handleClose}
+                    aria-labelledby="alert-dialog-title"
+                    aria-describedby="alert-dialog-description"
+                >
+                    <DialogTitle id="alert-dialog-title">
+                        {"Do You Want To Delete ? "}
+                    </DialogTitle>
+                    <DialogContent>
+                        <DialogContentText id="alert-dialog-description">
+                            <b style={{ color: 'black' }}>Branch Name: &emsp;{delproname}</b>
+                        </DialogContentText>
+                    </DialogContent>
+                    <DialogActions>
+                        <Button onClick={handleClose}>Cancel</Button>
+                        <Button onClick={doDelete} autoFocus sx={{ color: 'red' }}>
+                            Delete
+                        </Button>
+                    </DialogActions>
+                </Dialog>
+            </div>
         </>
     );
 }
@@ -72,7 +135,7 @@ function Branches() {
         const [cityname, setcityname] = useState('');
         const [state, setstate] = useState('');
         const [country, setcountry] = useState('');
-        const [pincode, setpincode] = useState('');
+        const [pincode, setpincode] = useState();
         const [gstnumber, setgstnumber] = useState('');
         const [address, setaddress] = useState('');
         useEffect(() => {
@@ -81,17 +144,15 @@ function Branches() {
                 .then((data) => {
                     setcountrydat(data.data);
                 })
-        }, [])
-        useEffect(() => {
             fetch('https://erp-new-production.up.railway.app/api/get?model=state')
                 .then((res) => { return res.json(); })
                 .then((data) => {
                     setstatedat(data.data);
                 })
-        }, [])//https://erp-dwe8a.ondigitalocean.app/api/get?model=branch
+        }, [])
 
         const postbranchurl = axios.create({
-            baseURL: "hhttps://erp-new-production.up.railway.app/api/get?model=branch"
+            baseURL: "https://erp-new-production.up.railway.app/api/get?model=branch"
         });
 
         const postbranchfun = (branchname, cityname, state, country, pincode, gstnumbert, address) => {
@@ -101,13 +162,14 @@ function Branches() {
                 state: state,
                 country: country,
                 pincode: pincode,
-                gst_number: gstnumbert,
+                GST_Number: gstnumbert,
                 address: address,
             })
                 .then((res) => {
                     console.log("after then", res)
                     if (res.data.status === 'success') {
                         alert("Branch Added");
+                        window.location.reload();
                     }
                     else {
                         if (res.data.status === 'failure') {
@@ -195,7 +257,6 @@ function Branches() {
         fetch('https://erp-new-production.up.railway.app/api/get?model=branch')
             .then((res) => { return res.json(); })
             .then((data) => {
-                console.log(data.data);
                 setbranchdata(data.data)
             })
     }, [])

@@ -67,27 +67,25 @@ function Product() {
         const [productname, setproductname] = useState('');
         const [productcode, setproductcode] = useState('');
         const [producttype, setproductype] = useState('');
-        const [currency, setcurrency] = useState('');
-        const [minprice, setminprice] = useState();
-        const [maxprice, setmaxprice] = useState();
-        const [multipleparts, setmultipleparts] = useState(false);
-        const [multipartarr, setmultipartarr] = useState([]);
+        const [currency, setcurrency] = useState();
+        const [minprice, setminprice] = useState(0);
+        const [maxprice, setmaxprice] = useState(0);
+        const [minstock, setminstock] = useState(0);
 
 
         const prdtpost = axios.create({
             baseURL: "https://erp-new-production.up.railway.app/api/get?model=product"
         });
 
-        const postProduct = (productname, productcode, producttype, currency, minprice, maxprice, multipleparts, multipartarr) => {
+        const postProduct = (productname, productcode, producttype, msq, currency, minprice, maxprice) => {
             prdtpost.post('', {
                 product_code: productcode,
                 product_name: productname,
                 product_type: producttype,
+                minimum_stock_quantity: msq,
                 maximum_price: maxprice,
                 minimum_price: minprice,
                 currency: currency,
-                multiple_parts: multipleparts,
-                parts: multipartarr
             })
                 .then((res) => {
                     console.log("after then", res)
@@ -108,43 +106,10 @@ function Product() {
 
         let doPost = (e) => {
             e.preventDefault();
-            postProduct(productname, productcode, producttype, currency, minprice, maxprice, multipleparts, multipartarr);
+            postProduct(productname, productcode, producttype, minstock, currency, minprice, maxprice);
             window.location.reload();
         }
 
-
-        let Dispmultipro = () => {
-            return (
-                <><br /><br /><br /><br /><br />
-                    <div className="col-lg-6 tablepadding">
-                        <label className="micardlble">Add Multiple Parts</label>
-                        <Autocomplete
-                            sx={{ backgroundColor: 'transparent' }}
-                            multiple
-                            id="tags-filled"
-                            options={dummy.map((option) => option.title)}
-                            freeSolo
-                            renderTags={(value, getTagProps) =>
-                                value.map((option, index) => (
-                                    <Chip variant="outlined" label={option} {...getTagProps({ index })} />
-                                ))
-                            }
-                            renderInput={(params) => (
-                                <TextField
-                                    {...params}
-                                    label="Multiple Parts"
-                                    multiline
-                                    rows={3}
-                                    placeholder="Type here"
-                                    variant="standard"
-                                    onChange={(e) => setmultipartarr(e.target.value)}
-                                />
-                            )}
-                        />
-                    </div><div className="col-lg-6"></div>
-                </>
-            );
-        }
         return (
             <>
                 <form>
@@ -165,16 +130,21 @@ function Product() {
                             <div className="col-lg-4">
                                 <label className="micardlble">Product Type</label><br />
                                 <select className="micardinpt" value={producttype} onChange={(e) => { setproductype(e.target.value); }} required>
-                                    <option selected='true' value='' >Select Type</option>
+                                    <option selected='true' value='' disabled='true'>Select Type</option>
                                     <option value={"finished"}>Finished</option>
                                     <option value={"semi-finished"}>Semi-Finished</option>
                                 </select>
                             </div>
 
                             <div className="col-lg-4">
+                                <label className="micardlble">Product Code</label><br />
+                                <input onChange={(e) => { setproductcode(e.target.value); }} className="micardinpt" required />
+                            </div>
+
+                            <div className="col-lg-4">
                                 <label className="micardlble">Currency</label><br />
                                 <select className="micardinpt" value={currency} onChange={(e) => { setcurrency(e.target.value); }} required>
-                                    <option value="" disabled='true' >Select Currency</option>
+                                    <option value="" disabled='true'selected='true' >Select Currency</option>
                                     {countrysdat.map(contobj => (
                                         <>
                                             <option value={contobj.pk}>{contobj.currency_name}</option>
@@ -196,15 +166,8 @@ function Product() {
                                 <label className="micardlble">Max Price</label><br />
                                 <input value={currency} disabled='true' className="micardgrpinpt" />
                                 <input type='number' min={parseInt(minprice) + 1} onChange={(e) => { setmaxprice(e.target.value); }} className="micardgrpinpt1" />
-                            </div>
-
-                            <div className="col-lg-4">
-                                <label className="micardlble">Multiple Parts</label><br />
-                                <div className="micardboxinpt">
-                                    <input type='checkbox' checked={multipleparts} onChange={() => { setmultipleparts(!multipleparts) }} style={{ height: '1em', width: '1em' }} /> &emsp;Add Multiple Parts
-                                </div>
                             </div><div className="col-lg-4"></div><div className="col-lg-4"></div>
-                            {multipleparts === true ? <Dispmultipro /> : null}
+                            
                         </div>
 
                     </div><br />
@@ -282,8 +245,6 @@ function Product() {
                                                 <TableCell variant="head" sx={{ backgroundColor: 'rgb(15, 11, 42)', color: 'white' }} >Min Price</TableCell>
                                                 <TableCell variant="head" sx={{ backgroundColor: 'rgb(15, 11, 42)', color: 'white' }} >Max Price</TableCell>
                                                 <TableCell variant="head" sx={{ backgroundColor: 'rgb(15, 11, 42)', color: 'white' }} >Currency</TableCell>
-                                                <TableCell variant="head" sx={{ backgroundColor: 'rgb(15, 11, 42)', color: 'white' }} >Multiple Parts</TableCell>
-                                                <TableCell variant="head" sx={{ backgroundColor: 'rgb(15, 11, 42)', color: 'white' }} >Parts</TableCell>
                                                 <TableCell variant="head" sx={{ backgroundColor: 'rgb(15, 11, 42)', color: 'white' }} >Action</TableCell>
                                             </TableRow>
                                         </TableHead>
@@ -298,13 +259,10 @@ function Product() {
                                                             </TableCell>
                                                             <TableCell>{rowobj.product_name === null ? "Null" : rowobj.product_name}</TableCell>
                                                             <TableCell>{rowobj.product_type === null ? "Null" : rowobj.product_type}</TableCell>
-                                                            <TableCell>{rowobj.min_stock === null ? "Null" : rowobj.min_stock}</TableCell>
+                                                            <TableCell>{rowobj.minimum_stock_quantity === null ? "Null" : rowobj.minimum_stock_quantity}</TableCell>
                                                             <TableCell>{rowobj.minimum_price === null ? "Null" : rowobj.minimum_price}</TableCell>
                                                             <TableCell>{rowobj.maximum_price === null ? "Null" : rowobj.maximum_price}</TableCell>
                                                             <TableCell>{rowobj.currency_get === null ? "Null" : rowobj.currency_get}</TableCell>
-                                                            <TableCell>{rowobj.multiple_parts ? "True" : "False"}
-                                                                {rowobj.multiple_parts === null ? "Null" : ''}</TableCell>
-                                                            <TableCell>{rowobj.parts === null ? "Null" : rowobj.parts}</TableCell>
                                                             <TableCell>
                                                                 <IconButton aria-label="expand" onClick={() => { setpk(rowobj.pk); setdelproname(rowobj.product_name); handleClickOpen(); }}
                                                                     size="small" sx={{ color: 'rgba(255, 0, 0, 0.755)', marginRight: '1em' }}>
@@ -332,7 +290,7 @@ function Product() {
                     aria-labelledby="alert-dialog-title"
                     aria-describedby="alert-dialog-description"
                 >
-                    <DialogTitle id="alert-dialog-title">
+                    <DialogTitle id="alert-dialog-title">   
                         {"Do You Want To Delete ? "}
                     </DialogTitle>
                     <DialogContent>

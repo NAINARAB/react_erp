@@ -21,7 +21,7 @@ function Sidenav() {
     // }, [])
 
     let currentUser = sessionStorage.getItem('name');
-    const [opncond, setopencond] = React.useState(false)
+    const [opncond, setopencond] = useState(false)
     const navigate = useNavigate();
     return (
         <div>

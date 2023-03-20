@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useCallback } from "react";
 import Header from "../../comp/header/header";
 import Sidenav from "../../comp/sidenav/sidenav";
-import { TableContainer, Table, TableBody, TableCell, TableHead, TableRow, Paper, IconButton } from "@mui/material";
+import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Button, 
+    TableContainer, Table, TableBody, TableCell, TableHead, TableRow, Paper, IconButton } from "@mui/material";
 import { maxWidth } from "@mui/system";
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -21,6 +22,39 @@ function Butns() {
 let PhasesRowsComp = (props) => {
     let { arr } = props;
     let count = 0;
+    const [pk, setpk] = useState();
+    const [delproname, setdelproname] = useState('');
+    const [open, setOpen] = useState(false);
+
+    const handleClickOpen = () => {
+        setOpen(true);
+    };
+
+    const handleClose = () => {
+        setOpen(false);
+    };
+
+    function doDelete() {
+        deleteRow(pk);
+    }
+
+    const deleteRow = (pkobj) => {
+        console.log(pkobj)
+        let currentpk = pkobj;
+        const deleterowurl = axios.create({ //phase
+            baseURL: `https://erp-new-production.up.railway.app/api/get?model=productionphase&pk=${currentpk}`
+        });
+
+        deleterowurl.delete('', {
+        })
+            .then((response) => {
+                console.log("after then", response);
+                window.location.reload();
+            })
+            .catch((err) => {
+                console.log(err);
+            })
+    }
     return (
         <>
             {arr.length != 0 ?
@@ -39,13 +73,39 @@ let PhasesRowsComp = (props) => {
                                     <TableRow hover='true' >
                                         <TableCell >{++count}</TableCell>
                                         <TableCell>{phrow.phase_name}</TableCell>
-                                        <TableCell align="left"><Butns /></TableCell>
+                                        <TableCell align="left">
+                                        <IconButton aria-label="expand row" size="small"  onClick={() => { setpk(phrow.pk); setdelproname(phrow.phase_name); handleClickOpen(); }}
+                                        sx={{ color: 'rgba(255, 0, 0, 0.755)', marginRight: '1em' }}><DeleteIcon /></IconButton>
+                                        </TableCell>
                                     </TableRow>
                                 ))}
                             </TableBody>
                         </Table>
                     </TableContainer>
                 </div> : <Loader />}
+                <div>
+                <Dialog
+                    open={open}
+                    onClose={handleClose}
+                    aria-labelledby="alert-dialog-title"
+                    aria-describedby="alert-dialog-description"
+                >
+                    <DialogTitle id="alert-dialog-title">   
+                        {"Do You Want To Delete ? "}
+                    </DialogTitle>
+                    <DialogContent>
+                        <DialogContentText id="alert-dialog-description">
+                            <b style={{color: 'black'}}>Phase Name: &emsp;{delproname}</b>
+                        </DialogContentText>
+                    </DialogContent>
+                    <DialogActions>
+                        <Button onClick={handleClose}>Cancel</Button>
+                        <Button onClick={doDelete} autoFocus sx={{ color: 'red' }}>
+                            Delete
+                        </Button>
+                    </DialogActions>
+                </Dialog>
+            </div>
         </>
     );
 }

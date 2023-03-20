@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
 import Header from "../../comp/header/header";
 import Sidenav from "../../comp/sidenav/sidenav";
-import { IconButton, TableContainer, Table, TableBody, TableCell, TableHead, TableRow, Paper } from "@mui/material";
+import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Button,
+     IconButton, TableContainer, Table, TableBody, TableCell, TableHead, TableRow, Paper } from "@mui/material";
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import '../common.css';
@@ -14,7 +15,7 @@ function Butns() {
     return (
         <>
             <IconButton aria-label="expand row" size="small" sx={{ marginLeft: '0.5em' }}><EditIcon /></IconButton>
-            <IconButton aria-label="expand row" size="small" sx={{ color: 'rgba(255, 0, 0, 0.755)', marginRight: '1em' }}><DeleteIcon /></IconButton>
+            
         </>
     );
 }
@@ -23,6 +24,38 @@ function Butns() {
 let Devisioncomp = (props) => {
     const { devision } = props;
     let count = 0;
+    const [pk, setpk] = useState();
+    const [delproname, setdelproname] = useState('');
+    const [open, setOpen] = useState(false);
+
+    const handleClickOpen = () => {
+        setOpen(true);
+    };
+
+    const handleClose = () => {
+        setOpen(false);
+    };
+
+    function doDelete() {
+        deleteRow(pk);
+    }
+
+    const deleteRow = (pkobj) => {
+        let currentpk = pkobj;
+        const deleterowurl = axios.create({ //subdevision
+            baseURL: `https://erp-new-production.up.railway.app/api/get?model=subdivision&pk=${currentpk}`
+        });
+
+        deleterowurl.delete('', {
+        })
+            .then((response) => {
+                console.log("after then", response);
+                window.location.reload();
+            })
+            .catch((err) => {
+                console.log(err);
+            })
+    }
     return (
         <> {devision.length != 0 ?
             <TableContainer component={Paper} sx={{ maxHeight: 640 }}>
@@ -41,7 +74,9 @@ let Devisioncomp = (props) => {
                                 <TableCell>{++count}</TableCell>
                                 <TableCell>{devdata.name}</TableCell>
                                 <TableCell>{devdata.department_get}</TableCell>
-                                <TableCell><Butns /></TableCell>
+                                <TableCell><IconButton aria-label="expand row" size="small"
+                                onClick={() => { setpk(devdata.pk); setdelproname(devdata.name); handleClickOpen(); }} 
+                                sx={{ color: 'rgba(255, 0, 0, 0.755)', marginRight: '1em' }}><DeleteIcon /></IconButton></TableCell>
                             </TableRow>
                         ))}
 
@@ -49,6 +84,29 @@ let Devisioncomp = (props) => {
                 </Table>
             </TableContainer>
             : <Loader />}
+            <div>
+                <Dialog
+                    open={open}
+                    onClose={handleClose}
+                    aria-labelledby="alert-dialog-title"
+                    aria-describedby="alert-dialog-description"
+                >
+                    <DialogTitle id="alert-dialog-title">
+                        {"Do You Want To Delete ? "}
+                    </DialogTitle>
+                    <DialogContent>
+                        <DialogContentText id="alert-dialog-description">
+                            <b style={{ color: 'black' }}>Devision Name: &emsp;{delproname}</b>
+                        </DialogContentText>
+                    </DialogContent>
+                    <DialogActions>
+                        <Button onClick={handleClose}>Cancel</Button>
+                        <Button onClick={doDelete} autoFocus sx={{ color: 'red' }}>
+                            Delete
+                        </Button>
+                    </DialogActions>
+                </Dialog>
+            </div>
         </>
     );
 }
@@ -62,8 +120,7 @@ function Devision() {
         fetch('https://erp-new-production.up.railway.app/api/get?model=subdivision')
             .then((res) => { return res.json(); })
             .then((data) => {
-                console.log(data.data);
-                setdevisiondata(data.data)
+                setdevisiondata(data.data);
             })
     }, [])
 
@@ -93,6 +150,7 @@ function Devision() {
                     console.log("after then", res)
                     if (res.data.status === 'success') {
                         alert("Devision Added");
+                        window.location.reload();
                     }
                     else {
                         if (res.data.status === 'failure') {

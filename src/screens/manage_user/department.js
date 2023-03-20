@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
 import Header from "../../comp/header/header";
 import Sidenav from "../../comp/sidenav/sidenav";
-import { TableContainer, Table, TableBody, TableCell, TableHead, TableRow, Paper, IconButton } from "@mui/material";
+import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Button,
+    TableContainer, Table, TableBody, TableCell, TableHead, TableRow, Paper, IconButton } from "@mui/material";
 import '../common.css';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -14,7 +15,7 @@ function Butns() {
     return (
         <>
             <IconButton aria-label="expand row" size="small" sx={{ marginLeft: '0.5em' }}><EditIcon /></IconButton>
-            <IconButton aria-label="expand row" size="small" sx={{ color: 'rgba(255, 0, 0, 0.755)', marginRight: '1em' }}><DeleteIcon /></IconButton>
+
         </>
     );
 }
@@ -22,6 +23,38 @@ function Butns() {
 let DepartmentComp = (props) => {
     const { deprt } = props;
     let count = 0;
+    const [pk, setpk] = useState();
+    const [delproname, setdelproname] = useState('');
+    const [open, setOpen] = useState(false);
+
+    const handleClickOpen = () => {
+        setOpen(true);
+    };
+
+    const handleClose = () => {
+        setOpen(false);
+    };
+
+    function doDelete() {
+        deleteRow(pk);
+    }
+
+    const deleteRow = (pkobj) => {
+        let currentpk = pkobj;
+        const deleterowurl = axios.create({ //department
+            baseURL: `https://erp-new-production.up.railway.app/api/get?model=department&pk=${currentpk}`
+        });
+
+        deleterowurl.delete('', {
+        })
+            .then((response) => {
+                console.log("after then", response);
+                window.location.reload();
+            })
+            .catch((err) => {
+                console.log(err);
+            })
+    }
     return (
         <>
             {deprt.length != 0 ?
@@ -42,12 +75,39 @@ let DepartmentComp = (props) => {
                                     <TableCell>{++count}</TableCell>
                                     <TableCell>{dept.name}</TableCell>
                                     <TableCell>{dept.role}</TableCell>
-                                    <TableCell><Butns /></TableCell>
+                                    <TableCell>
+                                        <IconButton aria-label="expand row" size="small"
+                                            onClick={() => { setpk(dept.pk); setdelproname(dept.name); handleClickOpen(); }}
+                                            sx={{ color: 'rgba(255, 0, 0, 0.755)', marginRight: '1em' }}><DeleteIcon /></IconButton>
+                                    </TableCell>
                                 </TableRow>
                             ))}
                         </TableBody>
                     </Table>
                 </TableContainer> : <Loader />}
+            <div>
+                <Dialog
+                    open={open}
+                    onClose={handleClose}
+                    aria-labelledby="alert-dialog-title"
+                    aria-describedby="alert-dialog-description"
+                >
+                    <DialogTitle id="alert-dialog-title">
+                        {"Do You Want To Delete ? "}
+                    </DialogTitle>
+                    <DialogContent>
+                        <DialogContentText id="alert-dialog-description">
+                            <b style={{ color: 'black' }}>Department Name: &emsp;{delproname}</b>
+                        </DialogContentText>
+                    </DialogContent>
+                    <DialogActions>
+                        <Button onClick={handleClose}>Cancel</Button>
+                        <Button onClick={doDelete} autoFocus sx={{ color: 'red' }}>
+                            Delete
+                        </Button>
+                    </DialogActions>
+                </Dialog>
+            </div>
         </>
     );
 }
@@ -60,7 +120,6 @@ function Department() {
         fetch('https://erp-new-production.up.railway.app/api/get?model=department')
             .then((res) => { return res.json(); })
             .then((data) => {
-                console.log(data.data);
                 setdepartmentdata(data.data)
             })
     }, [])
@@ -72,7 +131,7 @@ function Department() {
             baseURL: "https://erp-new-production.up.railway.app/api/get?model=department"
         });
 
-        const postdeptfun = (depart,deptrl) => {
+        const postdeptfun = (depart, deptrl) => {
             postdept.post('', {
                 name: depart,
                 role: deptrl
@@ -81,6 +140,7 @@ function Department() {
                     console.log("after then", res)
                     if (res.data.status === 'success') {
                         alert("Department Added");
+                        window.location.reload();
                     }
                     else {
                         if (res.data.status === 'failure') {
@@ -94,7 +154,7 @@ function Department() {
         };
         let doPost = (e) => {
             e.preventDefault();
-            postdeptfun(deptname,deptrole);
+            postdeptfun(deptname, deptrole);
         }
         return (
             <>

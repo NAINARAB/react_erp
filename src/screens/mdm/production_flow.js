@@ -67,7 +67,7 @@ function Row(props) {
         fetch(`https://erp-new-production.up.railway.app/api/get?model=productivity&filter_by=&{product}&filter_value=${row.pk}`)
             .then((res) => { return res.json(); })
             .then((data) => {
-                setpfdatas(data.data);console.log("PF Data",data.data)
+                setpfdatas(data.data);console.log(data.data)
             })
     }, [])
 

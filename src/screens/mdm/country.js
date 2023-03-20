@@ -1,7 +1,10 @@
 import React, { useState, useEffect } from "react";
 import Header from "../../comp/header/header";
 import Sidenav from "../../comp/sidenav/sidenav";
-import { IconButton, TableContainer, Table, TableBody, TableCell, TableHead, TableRow, Paper } from "@mui/material";
+import {
+    Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Button,
+    IconButton, TableContainer, Table, TableBody, TableCell, TableHead, TableRow, Paper
+} from "@mui/material";
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import '../common.css';
@@ -13,7 +16,7 @@ function Butns() {
     return (
         <>
             <IconButton aria-label="expand row" size="small" ><EditIcon /></IconButton>
-            <IconButton aria-label="expand row" size="small" sx={{ color: 'rgba(255, 0, 0, 0.755)', marginRight: '1em' }}><DeleteIcon /></IconButton>
+
         </>
     );
 }
@@ -21,6 +24,39 @@ function Butns() {
 let Countrycomp = (props) => {
     const { countrys } = props;
     let count = 0;
+    const [pk, setpk] = useState();
+    const [delproname, setdelproname] = useState('');
+    const [open, setOpen] = useState(false);
+
+    const handleClickOpen = () => {
+        setOpen(true);
+    };
+
+    const handleClose = () => {
+        setOpen(false);
+    };
+
+    function doDelete() {
+        deleteRow(pk);
+    }
+
+    const deleteRow = (pkobj) => {
+        console.log(pkobj)
+        let currentpk = pkobj;
+        const deleterowurl = axios.create({ //phase
+            baseURL: `https://erp-new-production.up.railway.app/api/get?model=country&pk=${currentpk}`
+        });
+
+        deleterowurl.delete('', {
+        })
+            .then((response) => {
+                console.log("after then", response);
+                window.location.reload();
+            })
+            .catch((err) => {
+                console.log(err);
+            })
+    }
     return (
         <>
             {countrys.length != 0 ?
@@ -29,7 +65,8 @@ let Countrycomp = (props) => {
                     <Table stickyHeader sx={{ minWidth: 650 }} aria-label="simple table">
                         <TableHead>
                             <TableRow>
-                                <TableCell variant="head" align="left" Width={120} sx={{ backgroundColor: 'rgb(15, 11, 42)', color: 'white', fontWeight: 'bold' }}>S.No</TableCell>
+                                <TableCell variant="head" align="left" Width={90} sx={{ backgroundColor: 'rgb(15, 11, 42)', color: 'white', fontWeight: 'bold' }}>S.No</TableCell>
+                                <TableCell variant="head" align="left" Width={120} sx={{ backgroundColor: 'rgb(15, 11, 42)', color: 'white', fontWeight: 'bold' }}>Country Code</TableCell>
                                 <TableCell variant="head" align="left" width={maxWidth} sx={{ backgroundColor: 'rgb(15, 11, 42)', color: 'white', fontWeight: 'bold' }}>Country</TableCell>
                                 <TableCell variant="head" align="left" width={200} sx={{ backgroundColor: 'rgb(15, 11, 42)', color: 'white', fontWeight: 'bold' }}>Action</TableCell>
                             </TableRow>
@@ -38,13 +75,39 @@ let Countrycomp = (props) => {
                             {countrys.map((cntry) => (
                                 <TableRow hover='true'>
                                     <TableCell >{++count}</TableCell>
+                                    <TableCell >{cntry.country_code}</TableCell>
                                     <TableCell>{cntry.country_name}</TableCell>
-                                    <TableCell align="left"><Butns /></TableCell>
+                                    <TableCell align="left"><IconButton aria-label="expand row" size="small"
+                                        onClick={() => { setpk(cntry.pk); setdelproname(cntry.country_name); handleClickOpen(); }}
+                                        sx={{ color: 'rgba(255, 0, 0, 0.755)', marginRight: '1em' }}><DeleteIcon /></IconButton></TableCell>
                                 </TableRow>
                             ))}
                         </TableBody>
                     </Table>
                 </TableContainer> : <Loader />}
+            <div>
+                <Dialog
+                    open={open}
+                    onClose={handleClose}
+                    aria-labelledby="alert-dialog-title"
+                    aria-describedby="alert-dialog-description"
+                >
+                    <DialogTitle id="alert-dialog-title">
+                        {"Do You Want To Delete ? "}
+                    </DialogTitle>
+                    <DialogContent>
+                        <DialogContentText id="alert-dialog-description">
+                            <b style={{ color: 'black' }}>Country Name: &emsp;{delproname}</b>
+                        </DialogContentText>
+                    </DialogContent>
+                    <DialogActions>
+                        <Button onClick={handleClose}>Cancel</Button>
+                        <Button onClick={doDelete} autoFocus sx={{ color: 'red' }}>
+                            Delete
+                        </Button>
+                    </DialogActions>
+                </Dialog>
+            </div>
         </>
     );
 }
@@ -66,18 +129,21 @@ function Country() {
 
     function AddCountry() {
         const [countryinpt, setcountryinpt] = useState('');
+        const [countrycode, setcountrycode] = useState('');
         const postcountryinpt = axios.create({
             baseURL: "https://erp-new-production.up.railway.app/api/get?model=country"
         });
 
-        const postcountry = (country) => {
+        const postcountry = (country,code) => {
             postcountryinpt.post('', {
-                country_name: country
+                country_name: country,
+                country_code: code
             })
                 .then((res) => {
                     console.log("after then", res)
                     if (res.data.status === 'success') {
                         alert("Country Added");
+                        window.location.reload();
                     }
                     else {
                         if (res.data.status === 'failure') {
@@ -91,7 +157,7 @@ function Country() {
         };
         let doPost = (e) => {
             e.preventDefault();
-            postcountry(countryinpt);
+            postcountry(countryinpt,countrycode);
         }
         return (
             <>
@@ -99,10 +165,15 @@ function Country() {
                     <div className="micard">
                         <h5 className="micardhdr">Add Country</h5>
                         <div className="micardbdy row">
+                        <div className="col-lg-4">
+                                <label className="micardlble" >Country Code</label><br />
+                                <input className="micardinpt" onChange={(e) => { setcountrycode(e.target.value) }} required />
+                            </div>
                             <div className="col-lg-4">
                                 <label className="micardlble" >Country</label><br />
                                 <input className="micardinpt" onChange={(e) => { setcountryinpt(e.target.value) }} required />
-                            </div><div className="col-lg-4"></div><div className="col-lg-4"></div>
+                            </div>
+                            <div className="col-lg-4"></div>
                         </div>
                     </div><br />
                     <button className="comadbtn" type="submit" onClick={doPost}>Add</button>

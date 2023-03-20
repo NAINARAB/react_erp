@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
 import Header from "../../comp/header/header";
 import Sidenav from "../../comp/sidenav/sidenav";
-import { IconButton, TableContainer, Table, TableBody, TableCell, TableHead, TableRow, Paper } from "@mui/material";
+import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Button,
+    IconButton, TableContainer, Table, TableBody, TableCell, TableHead, TableRow, Paper } from "@mui/material";
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import '../common.css';
@@ -12,7 +13,7 @@ function Butns() {
     return (
         <>
             <IconButton aria-label="expand row" size="small" sx={{ marginLeft: '0.5em' }}><EditIcon /></IconButton>
-            <IconButton aria-label="expand row" size="small" sx={{ color: 'rgba(255, 0, 0, 0.755)', marginRight: '1em' }}><DeleteIcon /></IconButton>
+
         </>
     );
 }
@@ -21,6 +22,38 @@ function Butns() {
 let UserComp = (props) => {
     const { users } = props;
     let count = 0;
+    const [pk, setpk] = useState();
+    const [delproname, setdelproname] = useState('');
+    const [open, setOpen] = useState(false);
+
+    const handleClickOpen = () => {
+        setOpen(true);
+    };
+
+    const handleClose = () => {
+        setOpen(false);
+    };
+
+    function doDelete() {
+        deleteRow(pk);
+    }
+
+    const deleteRow = (pkobj) => {
+        let currentpk = pkobj;
+        const deleterowurl = axios.create({ //user
+            baseURL: `https://erp-new-production.up.railway.app/api/get?model=user&pk=${currentpk}`
+        });
+
+        deleterowurl.delete('', {
+        })
+            .then((response) => {
+                console.log("after then", response);
+                window.location.reload();
+            })
+            .catch((err) => {
+                console.log(err);
+            })
+    }
     return (
         <>
             {users.length != 0 ? <TableContainer component={Paper} sx={{ maxHeight: 640 }}>
@@ -48,12 +81,38 @@ let UserComp = (props) => {
                                 <TableCell>{usr.phone != null ? usr.phone : "Null"}</TableCell>
                                 <TableCell>{usr.role_get != null ? usr.role_get : "Null"}</TableCell>
                                 <TableCell>{usr.branch_get != null ? usr.branch_get : "Null"}</TableCell>
-                                <TableCell><Butns /></TableCell>
+                                <TableCell><IconButton aria-label="expand row" size="small"
+                                    onClick={() => { setpk(usr.pk); setdelproname(usr.name); handleClickOpen(); }}
+                                    sx={{ color: 'rgba(255, 0, 0, 0.755)', marginRight: '1em' }}>
+                                    <DeleteIcon /></IconButton></TableCell>
                             </TableRow>
                         ))}
                     </TableBody>
                 </Table>
             </TableContainer> : <Loader />}
+            <div>
+                <Dialog
+                    open={open}
+                    onClose={handleClose}
+                    aria-labelledby="alert-dialog-title"
+                    aria-describedby="alert-dialog-description"
+                >
+                    <DialogTitle id="alert-dialog-title">
+                        {"Do You Want To Delete ? "}
+                    </DialogTitle>
+                    <DialogContent>
+                        <DialogContentText id="alert-dialog-description">
+                            <b style={{ color: 'black' }}>User Name: &emsp;{delproname}</b>
+                        </DialogContentText>
+                    </DialogContent>
+                    <DialogActions>
+                        <Button onClick={handleClose}>Cancel</Button>
+                        <Button onClick={doDelete} autoFocus sx={{ color: 'red' }}>
+                            Delete
+                        </Button>
+                    </DialogActions>
+                </Dialog>
+            </div>
         </>
     );
 }
@@ -76,15 +135,15 @@ function Users() {
     }, [])
 
     let AddUsers = () => {
-        const[branchdat, setbranchdat] = useState([]);
-        const[userroldat, setusrroldat] = useState([]);
-        const[uname, setuname]= useState('');
-        const[empid, setempid]= useState('');
-        const[emailid, setemailid]= useState('');
-        const[phone, setphone]= useState('');
-        const[branch, setbranch]= useState();
-        const[urole, seturole] = useState();
-        const[password, setpassword]= useState('');
+        const [branchdat, setbranchdat] = useState([]);
+        const [userroldat, setusrroldat] = useState([]);
+        const [uname, setuname] = useState('');
+        const [empid, setempid] = useState('');
+        const [emailid, setemailid] = useState('');
+        const [phone, setphone] = useState('');
+        const [branch, setbranch] = useState();
+        const [urole, seturole] = useState();
+        const [password, setpassword] = useState('');
         //branchdata
         useEffect(() => {
             fetch('https://erp-new-production.up.railway.app/api/get?model=branch')
@@ -112,10 +171,10 @@ function Users() {
                 employee_id: eid,
                 name: name,
                 email: email,
-                phone:phn,
-                password:pswrd,
+                phone: phn,
+                password: pswrd,
                 role: rol,
-                branch:brach
+                branch: brach
             })
                 .then((res) => {
                     console.log("after then", res)
@@ -134,7 +193,7 @@ function Users() {
         };
         let doPost = (e) => {
             e.preventDefault();
-            postnewuser(empid,uname,emailid,phone,password,urole,branch);
+            postnewuser(empid, uname, emailid, phone, password, urole, branch);
         }
         return (
             <>
