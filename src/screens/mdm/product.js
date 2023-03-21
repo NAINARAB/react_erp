@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import Header from "../../comp/header/header";
 import Sidenav from "../../comp/sidenav/sidenav";
 import {
-    Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Button,
+    Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Button, Slide,
     TableContainer, Table, TableBody, TableCell, TableHead, TableRow, Paper, IconButton, Autocomplete, TextField, Chip
 } from "@mui/material";
 import '../common.css';
@@ -11,7 +11,9 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import Loader from "../../comp/Load/loading";
 import axios from "axios";
 
-
+const Transition = React.forwardRef(function Transition(props, ref) {
+    return <Slide direction="up" ref={ref} {...props} />;
+});
 
 function Product() {
     let [rows, setrows] = useState([]);
@@ -22,6 +24,20 @@ function Product() {
     const [pk, setpk] = useState();
     const [delproname, setdelproname] = useState('');
     const [open, setOpen] = useState(false);
+    const [Uopen, setUopen] = useState(false);
+
+    {/* For update Product variables */ }
+
+    const [updtpk, setupdtpk] = useState();
+    const [prco, setco] = useState('');
+    const [prnme, setnme] = useState('');
+    const [prtyp, settyp] = useState('');
+    const [prmsq, setmsq] = useState();
+    const [prmxp, setmxp] = useState('');
+    const [prmnp, setmnp] = useState('');
+    const [prcrcy, setcrcy] = useState('');
+    const [prcrcypk, setcrcypk] = useState('');
+    const [prmp, setmp] = useState('');
 
     const handleClickOpen = () => {
         setOpen(true);
@@ -31,18 +47,51 @@ function Product() {
         setOpen(false);
     };
 
-    function Butns(props) {
-        let pkvalue = props; //&pk=${pkvalue}  http://localhost:8080/deleteimage/${id} $pkvalue ,{method:"DELETE"}
-        console.log(props);
+    const UhandleClickOpen = () => {
+        setUopen(true);
+    };
 
-        return (
-            <>
-                <IconButton aria-label="expand" size="small" sx={{ marginLeft: '0.5em' }}><EditIcon /></IconButton>
-                <IconButton aria-label="expand" size="small" sx={{ color: 'rgba(255, 0, 0, 0.755)', marginRight: '1em' }}>
-                    <DeleteIcon /></IconButton>
-            </>
-        );
+    const UhandleClose = () => {
+        setUopen(false);
+    };
+
+    const prdupdt = axios.create({ //
+        baseURL: `https://erp-new-production.up.railway.app/api/get?model=product&pk=${updtpk}`
+    });
+    console.log("Crnt updt PK",updtpk);
+
+    const pudtProduct = (prc, prn, prty, minstk, minpr, maxpr, crny, mp) => {
+        prdupdt.put('', {
+            product_code: prc,
+            product_name: prn,
+            product_type: prty,
+            minimum_stock_quantity: minstk,
+            maximum_price: minpr,
+            minimum_price: maxpr,
+            currency: crny,
+            multiple_parts:mp
+        })
+            .then((res) => {
+                console.log("Post After", res)
+                if (res.data.status === 'success') {
+                    alert("Put Success");
+                }
+                else {
+                    if (res.data.status === 'failure') {
+                        alert('Something Went Wrong Please Try Again...');
+                    }
+                }
+
+            }).catch((err) => {
+                console.log(err);
+            })
+    };
+
+    let doPUT = (e) => {
+        e.preventDefault();
+        pudtProduct(prco,prnme,prtyp,prmsq,prmnp,prmxp,prcrcypk,prmp);
     }
+
 
     useEffect(() => {
 
@@ -71,17 +120,21 @@ function Product() {
         const [minprice, setminprice] = useState(0);
         const [maxprice, setmaxprice] = useState(0);
         const [minstock, setminstock] = useState(0);
+        const [multi, setmulti] = useState(false);
+        const [parts, setparts] = useState([]);
 
 
         const prdtpost = axios.create({
             baseURL: "https://erp-new-production.up.railway.app/api/get?model=product"
         });
 
-        const postProduct = (productname, productcode, producttype, msq, currency, minprice, maxprice) => {
+        const postProduct = (productcode, productname, producttype, mult, prt, msq, currency, minprice, maxprice) => {
             prdtpost.post('', {
                 product_code: productcode,
                 product_name: productname,
                 product_type: producttype,
+                multiple_parts: mult,
+                parts: prt,
                 minimum_stock_quantity: msq,
                 maximum_price: maxprice,
                 minimum_price: minprice,
@@ -106,7 +159,7 @@ function Product() {
 
         let doPost = (e) => {
             e.preventDefault();
-            postProduct(productname, productcode, producttype, minstock, currency, minprice, maxprice);
+            postProduct(productcode, productname, producttype, multi, parts, minstock, currency, minprice, maxprice);
             window.location.reload();
         }
 
@@ -119,12 +172,12 @@ function Product() {
                         <div className="micardbdy row">
                             <div className="col-lg-4">
                                 <label className="micardlble" >Product Name</label><br />
-                                <input className="micardinpt" onChange={(e) => setproductname(e.target.value)} required />
+                                <input className="micardinpt" value={productname} onChange={(e) => setproductname(e.target.value)} required />
                             </div>
 
                             <div className="col-lg-4">
                                 <label className="micardlble">Product Code</label><br />
-                                <input onChange={(e) => { setproductcode(e.target.value); }} className="micardinpt" required />
+                                <input value={productcode} onChange={(e) => { setproductcode(e.target.value); }} className="micardinpt" required />
                             </div>
 
                             <div className="col-lg-4">
@@ -137,37 +190,71 @@ function Product() {
                             </div>
 
                             <div className="col-lg-4">
-                                <label className="micardlble">Product Code</label><br />
-                                <input onChange={(e) => { setproductcode(e.target.value); }} className="micardinpt" required />
-                            </div>
-
-                            <div className="col-lg-4">
                                 <label className="micardlble">Currency</label><br />
                                 <select className="micardinpt" value={currency} onChange={(e) => { setcurrency(e.target.value); }} required>
-                                    <option value="" disabled='true'selected='true' >Select Currency</option>
+                                    <option value="" disabled='true' selected='true' >Select Currency</option>
                                     {countrysdat.map(contobj => (
                                         <>
                                             <option value={contobj.pk}>{contobj.currency_name}</option>
                                         </>
                                     ))}
                                 </select>
-                                
+
                             </div>
 
 
                             <div className="col-lg-4">
                                 <label className="micardlble">Min Price</label><br />
                                 <input value={currency} disabled='true' className="micardgrpinpt" />
-                                <input type='number' onChange={(e) => { setminprice(e.target.value); }} className="micardgrpinpt1" />
+                                <input type='number' value={minprice} onChange={(e) => { setminprice(e.target.value); }} className="micardgrpinpt1" />
                             </div>
 
 
                             <div className="col-lg-4">
                                 <label className="micardlble">Max Price</label><br />
                                 <input value={currency} disabled='true' className="micardgrpinpt" />
-                                <input type='number' min={parseInt(minprice) + 1} onChange={(e) => { setmaxprice(e.target.value); }} className="micardgrpinpt1" />
-                            </div><div className="col-lg-4"></div><div className="col-lg-4"></div>
-                            
+                                <input type='number' value={maxprice} min={parseInt(minprice) + 1} onChange={(e) => { setmaxprice(e.target.value); }} className="micardgrpinpt1" />
+                            </div>
+
+                            <div className="col-lg-4">
+                                <label className="micardlble">Minimum Stock</label><br />
+                                <input type={'number'} value={minstock} min={0} onChange={(e) => { setminstock(e.target.value); }} className="micardinpt" required />
+                            </div>
+
+                            <div className="col-lg-4">
+                                <label className="micardlble">Multiple Parts</label><br />
+                                <div className="micardboxinpt">
+                                    <input type={'checkbox'} value={multi} checked={multi} onChange={() => { setmulti(!multi) }} className="micardboxinpt" required />
+                                    &emsp;Add Multiple Parts
+                                </div>
+                            </div><div className="col-lg-4"></div>
+
+                            {multi === true ?
+                                <>
+                                    <div className="col-lg-6"><br /><br />
+                                        <Autocomplete
+                                            multiple
+                                            id="tags-filled"
+                                            options={dummy.map((option) => option.title)}
+                                            freeSolo
+                                            onChange={(e) => { parts.push(e.target.value); console.log(parts) }}
+                                            renderTags={(value, getTagProps) =>
+                                                value.map((option, index) => (
+                                                    <Chip variant="outlined" label={option} onDelete={() => { parts.pop(parts[index]) }} {...getTagProps({ index })} />
+                                                ))
+                                            }
+                                            renderInput={(params) => (
+                                                <TextField
+                                                    {...params}
+                                                    variant="filled"
+                                                    label="Parts"
+                                                    placeholder="type here"
+                                                />
+                                            )}
+                                        />
+                                    </div><div className="col-lg-6"></div>
+                                </> : null}
+
                         </div>
 
                     </div><br />
@@ -240,11 +327,14 @@ function Product() {
                                             <TableRow>
                                                 <TableCell variant="head" sx={{ backgroundColor: 'rgb(15, 11, 42)', color: 'white' }} >S.No</TableCell>
                                                 <TableCell variant="head" sx={{ backgroundColor: 'rgb(15, 11, 42)', color: 'white' }} >Product Name</TableCell>
+                                                <TableCell variant="head" sx={{ backgroundColor: 'rgb(15, 11, 42)', color: 'white' }} >Product Code</TableCell>
                                                 <TableCell variant="head" sx={{ backgroundColor: 'rgb(15, 11, 42)', color: 'white' }} >Product Type</TableCell>
                                                 <TableCell variant="head" sx={{ backgroundColor: 'rgb(15, 11, 42)', color: 'white' }} >Min Stock</TableCell>
                                                 <TableCell variant="head" sx={{ backgroundColor: 'rgb(15, 11, 42)', color: 'white' }} >Min Price</TableCell>
                                                 <TableCell variant="head" sx={{ backgroundColor: 'rgb(15, 11, 42)', color: 'white' }} >Max Price</TableCell>
                                                 <TableCell variant="head" sx={{ backgroundColor: 'rgb(15, 11, 42)', color: 'white' }} >Currency</TableCell>
+                                                <TableCell variant="head" sx={{ backgroundColor: 'rgb(15, 11, 42)', color: 'white' }} >Multiple Parts</TableCell>
+                                                <TableCell variant="head" sx={{ backgroundColor: 'rgb(15, 11, 42)', color: 'white' }} >Parts</TableCell>
                                                 <TableCell variant="head" sx={{ backgroundColor: 'rgb(15, 11, 42)', color: 'white' }} >Action</TableCell>
                                             </TableRow>
                                         </TableHead>
@@ -258,14 +348,25 @@ function Product() {
                                                                 {count++}
                                                             </TableCell>
                                                             <TableCell>{rowobj.product_name === null ? "Null" : rowobj.product_name}</TableCell>
+                                                            <TableCell>{rowobj.product_code === null ? "Null" : rowobj.product_code}</TableCell>
                                                             <TableCell>{rowobj.product_type === null ? "Null" : rowobj.product_type}</TableCell>
                                                             <TableCell>{rowobj.minimum_stock_quantity === null ? "Null" : rowobj.minimum_stock_quantity}</TableCell>
                                                             <TableCell>{rowobj.minimum_price === null ? "Null" : rowobj.minimum_price}</TableCell>
                                                             <TableCell>{rowobj.maximum_price === null ? "Null" : rowobj.maximum_price}</TableCell>
                                                             <TableCell>{rowobj.currency_get === null ? "Null" : rowobj.currency_get}</TableCell>
+                                                            <TableCell>{rowobj.multiple_parts == null ? "Null" : rowobj.multiple_parts === true ? "True" : "False"}</TableCell>
+                                                            <TableCell>{'0'}</TableCell>
                                                             <TableCell>
+                                                                <IconButton aria-label="expand" size="small"
+                                                                    onClick={() => {
+                                                                        setco(rowobj.product_code); setnme(rowobj.product_name); settyp(rowobj.product_type);
+                                                                        setmsq(rowobj.minimum_stock_quantity); setmxp(rowobj.maximum_price); setmnp(rowobj.minimum_price);
+                                                                        setcrcy(rowobj.currency_get); setcrcypk(rowobj.currency); setmp(rowobj.multiple_parts);setupdtpk(rowobj.pk)
+                                                                        UhandleClickOpen();
+                                                                    }}
+                                                                ><EditIcon /></IconButton>
                                                                 <IconButton aria-label="expand" onClick={() => { setpk(rowobj.pk); setdelproname(rowobj.product_name); handleClickOpen(); }}
-                                                                    size="small" sx={{ color: 'rgba(255, 0, 0, 0.755)', marginRight: '1em' }}>
+                                                                    size="small" sx={{ color: 'rgba(255, 0, 0, 0.755)' }}>
                                                                     <DeleteIcon /></IconButton>
                                                             </TableCell>
                                                         </TableRow>
@@ -290,12 +391,12 @@ function Product() {
                     aria-labelledby="alert-dialog-title"
                     aria-describedby="alert-dialog-description"
                 >
-                    <DialogTitle id="alert-dialog-title">   
+                    <DialogTitle id="alert-dialog-title">
                         {"Do You Want To Delete ? "}
                     </DialogTitle>
                     <DialogContent>
                         <DialogContentText id="alert-dialog-description">
-                            <b style={{color: 'black'}}>{delproname}</b>
+                            <b style={{ color: 'black' }}>{delproname}</b>
                         </DialogContentText>
                     </DialogContent>
                     <DialogActions>
@@ -305,6 +406,74 @@ function Product() {
                         </Button>
                     </DialogActions>
                 </Dialog>
+            </div>
+            <div>
+                <Dialog
+                    open={Uopen}
+                    onClose={UhandleClose}
+                    TransitionComponent={Transition}
+                >
+                    <div className="comhed">
+                        <h5>Update Products</h5>
+                    </div>
+                    <DialogTitle id="alert-dialog-title">
+                        {"Row Details :  "}
+                    </DialogTitle>
+                    <DialogContent>
+
+                        <div className="row">
+                            <div className="col-lg-6 editscrn">
+                                <label className="micardlble" >Product Code</label><br />
+                                <input className="micardinpt" value={prco} onChange={(e) => setco(e.target.value)} required />
+                            </div>
+                            <div className="col-lg-6 editscrn">
+                                <label className="micardlble" >Product Name</label><br />
+                                <input className="micardinpt" value={prnme} onChange={(e) => setnme(e.target.value)} required />
+                            </div>
+                            <div className="col-lg-6 editscrn">
+                                <label className="micardlble">Product Type</label><br />
+                                <select className="micardinpt" onChange={(e) => { settyp(e.target.value); }} required>
+                                    <option selected='true' value={prtyp}>{prtyp}</option>
+                                    <option value={"finished"}>Finished</option>
+                                    <option value={"semi-finished"}>Semi-Finished</option>
+                                </select>
+                            </div>
+                            <div className="col-lg-6 editscrn">
+                                <label className="micardlble">Currency</label><br />
+                                <select className="micardinpt" onChange={(e) => { setcrcypk(e.target.value); }} required>
+                                    <option value={prcrcypk} selected='true' >{prcrcy}</option>
+                                    {countrysdat.map(contobj => (
+                                        <>
+                                            <option value={contobj.pk}>{contobj.currency_name}</option>
+                                        </>
+                                    ))}
+                                </select>
+                            </div>
+                            <div className="col-lg-6 editscrn">
+                                <label className="micardlble">Min Price</label><br />
+                                <input type='number' value={prmnp} onChange={(e) => { setmnp(e.target.value); }} className="micardinpt" />
+                            </div>
+                            <div className="col-lg-6 editscrn">
+                                <label className="micardlble">Max Price</label><br />
+                                <input type='number' value={prmxp} onChange={(e) => { setmxp(e.target.value); }} className="micardinpt" />
+                            </div>
+
+                            <div className="col-lg-6 editscrn">
+                                <label className="micardlble">Minimum Stock</label><br />
+                                <input type='number' value={prmsq} min={0} onChange={(e) => { setmsq(e.target.value); }} className="micardinpt" required />
+                            </div>
+                            <div className="col-lg-6">
+                                <label className="micardlble">Multiple Parts</label><br />
+                                <div className="micardboxinpt">
+                                    <input type={'checkbox'} checked={prmp} onChange={() => { setmp(!prmp) }} className="micardboxinpt" required />
+                                    &emsp;Add Multiple Parts
+                                </div>
+                            </div>
+                        </div><br />
+                        <button className="comadbtn" onClick={doPUT}>Update</button>
+                    <button className="cancelbtn" onClick={UhandleClose} >Back</button>
+                    </DialogContent>
+                </Dialog><br />
             </div>
         </>
     );

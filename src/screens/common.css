@@ -85,7 +85,6 @@
 }
 
 .micardlble {
-    margin-top: 1.5em;
     margin-bottom: 0.5em;
     margin-left: 0.3em;
     font-weight: 400;
@@ -136,13 +135,26 @@
     padding: 1em; font-weight: bold; font-size: 0.9rem; border-bottom: 0px solid transparent;
 }
 
+.col-lg-4{
+    padding: 1em !important;
+}
+
+.col-lg-6{
+    padding: 1em !important;
+}
+
+.editscrn .micardlble{
+    margin-top: 0em;
+}
 
 
 
 
 
 
-.micard .col-lg-4 {
+
+
+.micard .col-lg-6 {
     margin: 0 auto !important;
     padding: 0 1.5em !important;
 }
