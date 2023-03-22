@@ -80,16 +80,16 @@ let BranchesTble = (props) => {
                                     <TableCell>{++count}</TableCell>
                                     <TableCell>{brs.branch_name !== null ? brs.branch_name : "Null"}</TableCell>
                                     <TableCell>{brs.cityname !== null ? brs.cityname : "Null"}</TableCell>
-                                    <TableCell>{brs.state !== null ?  brs.state : "Null"}</TableCell>
+                                    <TableCell>{brs.state_get !== null ?  brs.state_get : "Null"}</TableCell>
                                     <TableCell>{brs.country_get !== null ?  brs.country_get : "Null"}</TableCell>
                                     <TableCell>{brs.pincode !== null ?  brs.pincode : "Null"}</TableCell>
-                                    <TableCell>{brs.GST_Number !== null ?  brs.GST_Number : "Null"}</TableCell>
+                                    <TableCell>{brs.gst_number !== null ?  brs.gst_number : "Null"}</TableCell>
                                     <TableCell>
                                         <IconButton aria-label="expand row" size="small"
                                             onClick={() => { setpk(brs.pk); setdelproname(brs.branch_name); handleClickOpen(); }}
                                             sx={{ color: 'rgba(255, 0, 0, 0.755)', marginRight: '1em' }}>
                                             <DeleteIcon /></IconButton>
-                                    </TableCell>
+                                    </TableCell>{/* || brs.gst_number != "" */}
                                 </TableRow>
                             ))}
                         </TableBody>

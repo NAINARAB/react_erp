@@ -1,14 +1,20 @@
 import React from "react";
 import Header from "../../comp/header/header";
 import Sidenav from "../../comp/sidenav/sidenav";
-import {Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Button,
-     TableContainer, Table, TableBody, TableCell, TableHead, TableRow, Paper, IconButton } from "@mui/material";
+import {
+    Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Button, Slide,
+    TableContainer, Table, TableBody, TableCell, TableHead, TableRow, Paper, IconButton
+} from "@mui/material";
 import '../common.css';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { useState, useEffect } from "react";
 import Loader from "../../comp/Load/loading";
 import axios from "axios";
+
+const Transition = React.forwardRef(function Transition(props, ref) {
+    return <Slide direction="up" ref={ref} {...props} />;
+});
 
 
 function Rawmaterialsaccessories() {
@@ -20,36 +26,8 @@ function Rawmaterialsaccessories() {
     const [delproname, setdelproname] = useState('');
     const [open, setOpen] = useState(false);
 
-    const handleClickOpen = () => {
-        setOpen(true);
-    };
-
-    const handleClose = () => {
-        setOpen(false);
-    };
-
-    function opnAdd() {
-        document.getElementById('adbtn').style.display = 'none';
-        document.getElementById('rma').style.display = 'none';
-        setdispaddrma(true);
-    }
-    function opnRMA() {
-        document.getElementById('rma').style.display = 'block';
-        document.getElementById('adbtn').style.display = 'block';
-        setdispaddrma(false);
-    }
-    
-
-
-    let AddRMA = () => {
-        const [rmname, setrmname] = useState('');
-        const [rmcode, setrmcode] = useState('')
-        const [units, setunits] = useState();
-        const [minstock, setminstock] = useState();
-        const [currency, setcurrency] = useState();
-        const [rmmaxprice, setrmmaxprice] = useState();
-        const [curncydat, setcurncydat] = useState([])
-        const [measurdunit, setmeasuredunit] = useState([])
+    const [curncydat, setcurncydat] = useState([]);
+    const [measurdunit, setmeasuredunit] = useState([])
 
         useEffect(() => {
             fetch('https://erp-new-production.up.railway.app/api/get?model=currency')
@@ -63,7 +41,93 @@ function Rawmaterialsaccessories() {
                     setmeasuredunit(data.data);
                 })
         }, [])
+
+    {/* Update RMA variables */ }
+    const [Uopen, setUopen] = useState(false);
+    const [updtpk, setupdtpk] = useState();
+    const [uprmnme, setuprmnme] = useState('');
+    const [uprmcod, setuprmcod] = useState('');
+    const [uprmesunt, setuprmeunt] = useState();
+    const [uprmesuntget, setuprmesuntget] = useState('');
+    const [upminstk, setupminstk] = useState();
+    const [uprmmaxpr, setuprmmaxpr] = useState();
+    const [upcrncy, setupcrncy] = useState();
+    const [upcrncyget, setupcrncyget] = useState('');
+    const [uppresup, setpresup] = useState([]);
+
+    const UhandleClickOpen = () => {
+        setUopen(true);
+    };
+
+    const UhandleClose = () => {
+        setUopen(false);
+    };
+
+    const handleClickOpen = () => {
+        setOpen(true);
+    };
+
+    const handleClose = () => {
+        setOpen(false);
+    };
+
+    const rmaupdt = axios.create({
+        baseURL: `https://erp-new-production.up.railway.app/api/get?model=rawmaterial&pk=${updtpk}`
+    });
+    console.log("Crnt updt PK", updtpk);
+
+    const updtRMA = (rmn, rmc, mu, ms, rmp, crcy) => {
+        rmaupdt.put('', {
+            rm_name: rmn,
+            rm_code: rmc,
+            measured_unit: mu,
+            min_stock: ms,
+            rm_max_price: rmp,
+            currency: crcy
+        })
+            .then((res) => {
+                console.log("Post After", res)
+                if (res.data.status === 'success') {
+                    window.location.reload();
+                }
+                else {
+                    if (res.data.status === 'failure') {
+                        alert('Something Went Wrong Please Try Again...');
+                    }
+                }
+
+            }).catch((err) => {
+                console.log(err);
+            })
+    };
+
+    let doPUT = (e) => {
+        e.preventDefault();
+        updtRMA(uprmnme,uprmcod,uprmesunt,upminstk,uprmmaxpr,upcrncy);
+    }
+
+    function opnAdd() {
+        document.getElementById('adbtn').style.display = 'none';
+        document.getElementById('rma').style.display = 'none';
+        setdispaddrma(true);
+    }
+    function opnRMA() {
+        document.getElementById('rma').style.display = 'block';
+        document.getElementById('adbtn').style.display = 'block';
+        setdispaddrma(false);
+    }
+
+
+
+    let AddRMA = () => {
+        const [rmname, setrmname] = useState('');
+        const [rmcode, setrmcode] = useState('')
+        const [units, setunits] = useState();
+        const [minstock, setminstock] = useState();
+        const [currency, setcurrency] = useState();
+        const [rmmaxprice, setrmmaxprice] = useState();
         
+
 
 
         const rmapost = axios.create({
@@ -98,7 +162,7 @@ function Rawmaterialsaccessories() {
 
         let doPost = (e) => {
             e.preventDefault();
-            postrma(rmcode,rmname,units,minstock,rmmaxprice,currency);
+            postrma(rmcode, rmname, units, minstock, rmmaxprice, currency);
             window.location.reload();
         }
 
@@ -125,7 +189,7 @@ function Rawmaterialsaccessories() {
                                 <div className="col-lg-4">
                                     <label className="micardlble">Units</label><br />
                                     <select className="micardinpt" onChange={(e) => setunits(e.target.value)}>
-                                        <option selected='true' disabled='true' value={''} required>Select Type</option>
+                                        <option defaultValue={true} value={''} required>Select Type</option>
                                         {measurdunit.map(unitobj => (
                                             <>
                                                 <option value={unitobj.pk}>{unitobj.measured_unit_name}</option>
@@ -142,7 +206,7 @@ function Rawmaterialsaccessories() {
                                 <div className="col-lg-4">
                                     <label className="micardlble">Currency</label><br />
                                     <select className="micardinpt" onChange={(e) => setcurrency(e.target.value)} >
-                                        <option selected='true' disabled='true' value={''} required>Select Currency</option>
+                                        <option defaultValue={true} value={''} required>Select Currency</option>
                                         {curncydat.map(crncyobj => (
                                             <>
                                                 <option value={crncyobj.pk}>{crncyobj.currency_name}</option>
@@ -176,7 +240,6 @@ function Rawmaterialsaccessories() {
         fetch('https://erp-new-production.up.railway.app/api/get?model=rawmaterial')
             .then((res) => { return res.json(); })
             .then((data) => {
-                console.log(data)
                 setrmadata(data.data)
             })
     }, [])
@@ -224,39 +287,45 @@ function Rawmaterialsaccessories() {
                                 <Table stickyHeader sx={{ minWidth: 650 }} >
                                     <TableHead >
                                         <TableRow sx={{ backgroundColor: 'rgb(15, 11, 42)' }}>
-                                            <TableCell variant="head" sx={{ backgroundColor: 'rgb(15, 11, 42)', color: 'white' }} >S.No</TableCell>
-                                            <TableCell variant="head" sx={{ backgroundColor: 'rgb(15, 11, 42)', color: 'white' }}>RM Name</TableCell>
-                                            <TableCell variant="head" sx={{ backgroundColor: 'rgb(15, 11, 42)', color: 'white' }}>Measured Unit</TableCell>
-                                            <TableCell variant="head" sx={{ backgroundColor: 'rgb(15, 11, 42)', color: 'white' }}>Min Stock</TableCell>
-                                            <TableCell variant="head" sx={{ backgroundColor: 'rgb(15, 11, 42)', color: 'white' }}>RM Max Price</TableCell>
-                                            <TableCell variant="head" sx={{ backgroundColor: 'rgb(15, 11, 42)', color: 'white' }}>Currency</TableCell>
-                                            <TableCell variant="head" sx={{ backgroundColor: 'rgb(15, 11, 42)', color: 'white' }}>Prefered Supplied Id</TableCell>
-                                            <TableCell variant="head" sx={{ backgroundColor: 'rgb(15, 11, 42)', color: 'white' }}>Action</TableCell>
+                                            <TableCell variant="head" sx={{ fontWeight: 'bold',backgroundColor: 'rgb(15, 11, 42)', color: 'white' }}>S.No</TableCell>
+                                            <TableCell variant="head" sx={{ fontWeight: 'bold',backgroundColor: 'rgb(15, 11, 42)', color: 'white' }}>RM code</TableCell>
+                                            <TableCell variant="head" sx={{ fontWeight: 'bold',backgroundColor: 'rgb(15, 11, 42)', color: 'white' }}>RM Name</TableCell>
+                                            <TableCell variant="head" sx={{ fontWeight: 'bold',backgroundColor: 'rgb(15, 11, 42)', color: 'white' }}>Measured Unit</TableCell>
+                                            <TableCell variant="head" sx={{ fontWeight: 'bold',backgroundColor: 'rgb(15, 11, 42)', color: 'white' }}>Min Stock</TableCell>
+                                            <TableCell variant="head" sx={{ fontWeight: 'bold',backgroundColor: 'rgb(15, 11, 42)', color: 'white' }}>RM Max Price</TableCell>
+                                            <TableCell variant="head" sx={{ fontWeight: 'bold',backgroundColor: 'rgb(15, 11, 42)', color: 'white' }}>Currency</TableCell>
+                                            <TableCell variant="head" sx={{ fontWeight: 'bold',backgroundColor: 'rgb(15, 11, 42)', color: 'white' }}>Prefered Supplier</TableCell>
+                                            <TableCell variant="head" sx={{ fontWeight: 'bold',backgroundColor: 'rgb(15, 11, 42)', color: 'white' }}>Action</TableCell>
                                         </TableRow>
                                     </TableHead>
                                     <TableBody>
                                         {rmadata.map((row) => (
                                             <TableRow
                                                 sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                                                hover='true'
+                                                hover={true}
                                             >
                                                 <TableCell component="th" scope="row">
                                                     {++count}
                                                 </TableCell>
-                                                <TableCell>{row.rm_name != null ? row.rm_name : 'Null'}</TableCell>
-                                                <TableCell>{row.measured_unit_get != null ? row.measured_unit_get : 'Null'}</TableCell>
-                                                <TableCell>{row.min_stock != null ? row.min_stock : 'Null'}</TableCell>
-                                                <TableCell>{row.rm_max_price != null ? row.rm_max_price : 'Null'}</TableCell>
-                                                <TableCell>{row.currency_get != null ? row.currency_get : 'Null'}</TableCell>
-                                                <TableCell>{row.prefered_supplier != null ? row.prefered_supplier : 'Null'}</TableCell>
+                                                <TableCell>{row.rm_code !== null ? row.rm_code : 'Null'}</TableCell>
+                                                <TableCell>{row.rm_name !== null ? row.rm_name : 'Null'}</TableCell>
+                                                <TableCell>{row.measured_unit_get !== null ? row.measured_unit_get : 'Null'}</TableCell>
+                                                <TableCell>{row.min_stock !== null ? row.min_stock : 'Null'}</TableCell>
+                                                <TableCell>{row.rm_max_price !== null ? row.rm_max_price : 'Null'}</TableCell>
+                                                <TableCell>{row.currency_get !== null ? row.currency_get : 'Null'}</TableCell>
+                                                <TableCell>{row.preferred_supplier !== null ? row.preferred_supplier.length !== 0 ? row.preferred_supplier.join(', ') : 'Null' : 'Null'}</TableCell>
                                                 <TableCell>
-                                                <IconButton aria-label="expand row" size="small">
-                                                    <EditIcon /></IconButton>
-                                                    
                                                     <IconButton aria-label="expand row" size="small" onClick={() => {
-                                                    setpk(row.pk); setdelproname(row.rm_name); handleClickOpen();
-                                                }}
-                                                sx={{ color: 'rgba(255, 0, 0, 0.755)' }}><DeleteIcon /></IconButton></TableCell>
+                                                        setupdtpk(row.pk); setuprmnme(row.rm_name); setuprmcod(row.rm_code); setuprmeunt(row.measured_unit);
+                                                        setuprmesuntget(row.measured_unit_get); setupminstk(row.min_stock); setuprmmaxpr(row.rm_max_price);
+                                                        setupcrncy(row.currency); setupcrncyget(row.currency_get); UhandleClickOpen();
+                                                    }}>
+                                                        <EditIcon /></IconButton>
+
+                                                    <IconButton aria-label="expand row" size="small" onClick={() => {
+                                                        setpk(row.pk); setdelproname(row.rm_name); handleClickOpen();
+                                                    }}
+                                                        sx={{ color: 'rgba(255, 0, 0, 0.755)' }}><DeleteIcon /></IconButton></TableCell>
                                             </TableRow>
                                         ))}
                                     </TableBody>
@@ -278,7 +347,7 @@ function Rawmaterialsaccessories() {
                     </DialogTitle>
                     <DialogContent>
                         <DialogContentText id="alert-dialog-description">
-                            <b style={{color: 'black'}}>{delproname}</b>
+                            <b style={{ color: 'black' }}>{delproname}</b>
                         </DialogContentText>
                     </DialogContent>
                     <DialogActions>
@@ -288,6 +357,72 @@ function Rawmaterialsaccessories() {
                         </Button>
                     </DialogActions>
                 </Dialog>
+            </div>
+            <div>
+                <Dialog
+                    open={Uopen}
+                    onClose={UhandleClose}
+                    TransitionComponent={Transition}
+                >
+                    <div className="comhed">
+                        <h5>Update Raw Materials</h5>
+                    </div>
+                    <DialogTitle id="alert-dialog-title">
+                        {"Row Details :  "}
+                    </DialogTitle>
+                    <DialogContent>
+
+                        <div className="row">
+                            <div className="col-lg-6 editscrn">
+                                <label className="micardlble" >RM Name</label><br />
+                                <input className="micardinpt" value={uprmnme} onChange={(e) => { setuprmnme(e.target.value) }} required />
+                            </div>
+
+                            <div className="col-lg-6 editscrn">
+                                <label className="micardlble" >RM Code</label><br />
+                                <input className="micardinpt" value={uprmcod} onChange={(e) => { setuprmcod(e.target.value) }} required />
+                            </div>
+
+                            <div className="col-lg-6">
+                                <label className="micardlble">Measured Unit</label><br />
+                                <select className="micardinpt" onChange={(e) => setuprmeunt(e.target.value)}>
+                                    <option defaultValue={true} value={uprmesunt} required>{uprmesuntget}</option>
+                                    {measurdunit.map(unitobj => (
+                                        <>
+                                            <option value={unitobj.pk}>{unitobj.measured_unit_name}</option>
+                                        </>
+                                    ))}
+                                </select>
+                            </div>
+
+                            <div className="col-lg-6">
+                                <label className="micardlble">Min Stock</label><br />
+                                <input type='number' className="micardinpt" value={upminstk} onChange={(e) => setupminstk(e.target.value)} required />
+                            </div>
+
+                            <div className="col-lg-6">
+                                <label className="micardlble">Currency</label><br />
+                                <select className="micardinpt" onChange={(e) => setupcrncy(e.target.value)} >
+                                    <option defaultValue={true} value={upcrncy} required>{upcrncyget}</option>
+                                    {curncydat.map(crncyobj => (
+                                        <>
+                                            <option value={crncyobj.pk}>{crncyobj.currency_name}</option>
+                                        </>
+                                    ))}
+                                </select>
+                            </div>
+
+                            <div className="col-lg-6">
+                                <label className="micardlble">RM Max Price</label><br />
+                                <input type='number' value={uprmmaxpr} onChange={(e) => setuprmmaxpr(e.target.value)} className="micardinpt" />
+                            </div>
+
+
+                        </div><br />
+                        <button className="comadbtn" onClick={doPUT} style={{ marginBottom: 'unset' }}>Update</button>
+                        <button className="cancelbtn" onClick={UhandleClose} >Discord</button>
+                    </DialogContent>
+                </Dialog><br />
             </div>
         </div>
     );

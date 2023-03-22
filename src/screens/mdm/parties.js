@@ -1,7 +1,10 @@
 import React, { useState, useEffect } from "react";
 import Header from "../../comp/header/header";
 import Sidenav from "../../comp/sidenav/sidenav";
-import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Button, IconButton, Box, Collapse, TableContainer, Table, TableBody, TableCell, TableHead, TableRow, Paper } from "@mui/material";
+import {
+    Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Button, IconButton,
+    Slide, Box, Collapse, TableContainer, Table, TableBody, TableCell, TableHead, TableRow, Paper
+} from "@mui/material";
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import EditIcon from '@mui/icons-material/Edit';
@@ -10,24 +13,41 @@ import '../common.css';
 import Loader from "../../comp/Load/loading";
 import axios from "axios";
 
+const Transition = React.forwardRef(function Transition(props, ref) {
+    return <Slide direction="up" ref={ref} {...props} />;
+});
+
 let count = 0;
 
 
-function Butns() {
-    return (
-        <>
-            <IconButton aria-label="expand row" size="small" sx={{ marginLeft: '0.5em' }}><EditIcon /></IconButton>
-            <IconButton aria-label="expand row" size="small" sx={{ color: 'rgba(255, 0, 0, 0.755)', marginRight: '1em' }}><DeleteIcon /></IconButton>
-        </>
-    );
-}
-
 let PartyComp = (props) => {
     const { propobj } = props;
+    const {partytypedata} = props;
+    const {statedata} = props;
+    const {countrydata} = props;
     const [open, setOpen] = useState(false);
     const [pk, setpk] = useState();
     const [delproname, setdelproname] = useState('');
     const [Dopen, setDOpen] = useState(false);
+
+    {/* Update req variables */ }
+
+    const [Uopen, setUopen] = useState(false);
+    const [updtpk, setupdtpk] = useState();
+
+    const [upprtnem, setupprtnme] = useState('');
+    const [upprtcntry, setupprtcntry] = useState();
+    const [upprtcntryget, setupprtcntryget] = useState('');
+    const [upprttyp, setupprttyp] = useState();
+    const [upprttypget, setupprttypget] = useState('');
+    const [upprtstat, setupprtstat] = useState();
+    const [upprtstatget, setupprtstatget] = useState('');
+    const [upprtadr, setupprtadr] = useState('');
+    const [upprtpin, setupupprtpin] = useState('');
+    const [upprtconno, setupupprtconno] = useState();
+    const [upprtconnme, setupupprtconnme] = useState('');
+    const [upprtemil, setupupprtemil] = useState('');
+    const [upprtgstin, setupupprtgstin] = useState('');
 
     const handleClickOpen = () => {
         setDOpen(true);
@@ -36,6 +56,53 @@ let PartyComp = (props) => {
     const handleClose = () => {
         setDOpen(false);
     };
+
+    const UhandleClickOpen = () => {
+        setUopen(true);
+    };
+
+    const UhandleClose = () => {
+        setUopen(false);
+    };
+
+    const cntryupdt = axios.create({ //party
+        baseURL: `https://erp-new-production.up.railway.app/api/get?model=parties&pk=${updtpk}`
+    });
+    console.log("Crnt updt PK", updtpk);
+
+    const updtParties = (prtnem, prtcntry, prttyp, prtstat, prtadres, prtpincod, prtconno, prtconnme, prtemil, prtgstin) => {
+        cntryupdt.put('', {
+            party_name: prtnem,
+            party_country: prtcntry,
+            party_type: prttyp,
+            party_state: prtstat,
+            party_address: prtadres,
+            party_pincode: prtpincod,
+            party_contact_no: prtconno,
+            party_contact_name: prtconnme,
+            party_email: prtemil,
+            party_gstin: prtgstin
+        })
+            .then((res) => {
+                console.log("Post After", res)
+                if (res.data.status === 'success') {
+                    window.location.reload();
+                }
+                else {
+                    if (res.data.status === 'failure') {
+                        alert('Something Went Wrong Please Try Again...');
+                    }
+                }
+
+            }).catch((err) => {
+                console.log(err);
+            })
+    };
+
+    let doPUT = (e) => {
+        e.preventDefault();
+        updtParties(upprtnem, upprtcntry, upprttyp, upprtstat, upprtadr, upprtpin, upprtconno, upprtconnme, upprtemil, upprtgstin);
+    }
 
     function doDelete() {
         deleteRow(pk);
@@ -51,7 +118,6 @@ let PartyComp = (props) => {
         deleterowurl.delete('', {
         })
             .then((response) => {
-                console.log("after then", response);
                 window.location.reload();
             })
             .catch((err) => {
@@ -66,22 +132,33 @@ let PartyComp = (props) => {
                     {++count}
                 </TableCell>
                 <TableCell align="center">{propobj.party_name == null ? "Null" : propobj.party_name}</TableCell>
-                <TableCell align="center">{propobj.party_type == null ? "Null" : propobj.party_type}</TableCell>
+                <TableCell align="center">{propobj.party_type_get == null ? "Null" : propobj.party_type_get}</TableCell>
                 <TableCell align="center">{propobj.party_contact_no == null ? "Null" : propobj.party_contact_no}</TableCell>
                 <TableCell align="center">{propobj.party_contact_name == null ? "Null" : propobj.party_contact_name}</TableCell>
                 <TableCell align="center">{propobj.party_email == null ? "Null" : propobj.party_email}</TableCell>
-                <TableCell align="center">{propobj.party_GSTIN == null ? "Null" : propobj.party_GSTIN}</TableCell>
+                <TableCell align="center">{propobj.party_gstin == null ? "Null" : propobj.party_gstin}</TableCell>
                 <TableCell align="center">{propobj.party_address == null ? "Null" : propobj.party_address}</TableCell>
-                <TableCell width={300} align="center">
+                <TableCell >
+                    <IconButton aria-label="expand row" size="small"
+                        onClick={() => {
+                            setupdtpk(propobj.pk); setupprtnme(propobj.party_name); setupprttyp(propobj.party_type); setupprttypget(propobj.party_type_get); setupupprtpin(propobj.party_pincode);
+                            setupupprtconno(propobj.party_contact_no); setupupprtconnme(propobj.party_contact_name); setupupprtemil(propobj.party_email);
+                            setupupprtgstin(propobj.party_gstin); setupprtadr(propobj.party_address); setupprtcntry(propobj.party_country);
+                            setupprtcntryget(propobj.party_country_get); setupprtstat(propobj.party_state); setupprtstatget(propobj.party_state_get);
+                            UhandleClickOpen();
+                        }}
+                    ><EditIcon /></IconButton>
+
                     <IconButton aria-label="expand" onClick={() => { setpk(propobj.pk); setdelproname(propobj.party_name); handleClickOpen(); }}
-                        size="small" sx={{ color: 'rgba(255, 0, 0, 0.755)', marginRight: '1em' }}>
+                        size="small" sx={{ color: 'rgba(255, 0, 0, 0.755)'}}>
                         <DeleteIcon /></IconButton>
+
                     <IconButton
                         aria-label="expand"
                         size="small"
                         onClick={() => setOpen(!open)}
                     >
-                        {open ? <KeyboardArrowUpIcon sx={{ fontSize: '2rem' }} /> : <KeyboardArrowDownIcon sx={{ fontSize: '2rem' }} />}
+                        {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
                     </IconButton>
                 </TableCell>
             </TableRow>
@@ -103,7 +180,7 @@ let PartyComp = (props) => {
                                     <TableBody>
                                         <TableRow>
                                             <TableCell align="center" sx={{ borderBottom: '0px solid transparent' }}>{propobj.party_country_get == null ? "Null" : propobj.party_country_get}</TableCell>
-                                            <TableCell align="center" sx={{ borderBottom: '0px solid transparent' }}>{propobj.party_state == null ? "Null" : propobj.party_state}</TableCell>
+                                            <TableCell align="center" sx={{ borderBottom: '0px solid transparent' }}>{propobj.party_state_get == null ? "Null" : propobj.party_state_get}</TableCell>
                                             <TableCell align="center" sx={{ borderBottom: '0px solid transparent' }}>{propobj.party_address == null ? "Null" : propobj.party_address}</TableCell>
                                             <TableCell align="center" sx={{ borderBottom: '0px solid transparent' }}>{propobj.party_pincode == null ? "Null" : propobj.party_pincode}</TableCell>
                                         </TableRow>
@@ -137,6 +214,93 @@ let PartyComp = (props) => {
                     </DialogActions>
                 </Dialog>
             </div>
+            <form>
+                <Dialog
+                    open={Uopen}
+                    onClose={UhandleClose}
+                    TransitionComponent={Transition}
+                >
+                    <div className="comhed">
+                        <h5>Update Parties</h5>
+                    </div>
+                    <DialogTitle id="alert-dialog-title">
+                        {"Row Details :  "}
+                    </DialogTitle>
+                    <DialogContent>
+
+                        <div className="row">
+                            <div className="col-lg-4">
+                                <label className="micardlble">Party Type</label><br />
+                                <select className="micardinpt" onChange={(e) => { setupprttyp(e.target.value) }}>
+                                    <option selected='true' value={upprttyp} disabled={true} >{upprttypget}</option>
+                                    {partytypedata.map(prtobj => (
+                                        <option>{prtobj.party_type}</option>
+                                    ))}
+                                </select>
+                            </div>
+
+                            <div className="col-lg-4">
+                                <label className="micardlble">Party Name</label><br />
+                                <input className="micardinpt" value={upprtnem} onChange={(e) => { setupprtnme(e.target.value) }} required />
+                            </div>
+
+                            <div className="col-lg-4">
+                                <label className="micardlble">Contact No</label><br />
+                                <input type='number' value={upprtconno} onChange={(e) => { setupupprtconno(e.target.value) }} className="micardinpt" />
+                            </div>
+
+                            <div className="col-lg-4">
+                                <label className="micardlble">Contact Name</label><br />
+                                <input className="micardinpt" value={upprtconnme} onChange={(e) => { setupupprtconnme(e.target.value) }} required />
+                            </div>
+
+                            <div className="col-lg-4">
+                                <label className="micardlble">Email</label><br />
+                                <input type='email' className="micardinpt" value={upprtemil} onChange={(e) => { setupupprtemil(e.target.value) }} required />
+                            </div>
+
+                            <div className="col-lg-4">
+                                <label className="micardlble">GSTIN</label><br />
+                                <input className="micardinpt" value={upprtgstin} onChange={(e) => { setupupprtgstin(e.target.value) }} required />
+                            </div>
+
+
+                            <div className="col-lg-4">
+                                <label className="micardlble">Country</label><br />
+                                <select className="micardinpt" onChange={(e) => { setupprtcntry(e.target.value) }} required>
+                                    <option disabled={true} selected={true} value={upprtcntry}>{upprtcntryget}</option>
+                                    {countrydata.map(cntryobj => (
+                                        <option value={cntryobj.pk}>{cntryobj.country_name}</option>
+                                    ))}
+                                </select>
+                            </div>
+
+                            <div className="col-lg-4">
+                                <label className="micardlble">State</label><br />
+                                <select className="micardinpt" onChange={(e) => { setupprtstat(e.target.value) }} required>
+                                    <option value={upprtstat} disabled={true} selected={true}>{upprtstatget}</option>
+                                    {statedata.map(statobj => (
+                                        <option value={statobj.pk}>{statobj.state_name}</option>
+                                    ))}
+                                </select>
+                            </div>
+
+                            <div className="col-lg-4">
+                                <label className="micardlble">Address</label><br />
+                                <input className="micardinpt" value={upprtadr} onChange={(e) => { setupprtadr(e.target.value) }} required />
+                            </div>
+
+                            <div className="col-lg-4">
+                                <label className="micardlble">Pin Code</label><br />
+                                <input type='number' value={upprtpin} className="micardinpt" onChange={(e) => { setupupprtpin(e.target.value) }} required />
+                            </div>
+
+                        </div><br />
+                        <button className="comadbtn" onClick={doPUT} type={"submit"} style={{ marginBottom: 'unset' }}>Update</button>
+                        <button className="cancelbtn" onClick={UhandleClose} >Discord</button>
+                    </DialogContent>
+                </Dialog>
+            </form>
         </React.Fragment>
     );
 }
@@ -193,15 +357,15 @@ function Parties() {
             baseURL: "https://erp-new-production.up.railway.app/api/get?model=parties"
         });
 
-        const postParties = (nme, cntry, type, state, adres, pin, cntno, cntnme, emil, gst ) => {
+        const postParties = (nme, cntry, type, state, adres, pin, cntno, cntnme, emil, gst) => {
             partypost.post('', {
-                party_name : nme,
+                party_name: nme,
                 party_country: cntry,
                 party_type: type,
                 party_state: state,
                 party_address: adres,
                 party_pincode: pin,
-                party_contact_no : cntno,
+                party_contact_no: cntno,
                 party_contact_name: cntnme,
                 party_email: emil,
                 party_gstin: gst
@@ -225,9 +389,9 @@ function Parties() {
 
         let doPost = (e) => {
             e.preventDefault();
-            postParties(partyname,partycountry,partytype,partystate, partyaddress, partypincode,
-                 partycontactno, partycontactname, partyemail, partygstin);
-                 window.location.reload();
+            postParties(partyname, partycountry, partytype, partystate, partyaddress, partypincode,
+                partycontactno, partycontactname, partyemail, partygstin);
+            window.location.reload();
         }
 
 
@@ -346,12 +510,12 @@ function Parties() {
                                             <TableCell sx={{ backgroundColor: 'rgb(15, 11, 42)', fontWeight: 'bold', color: 'white' }} align="center">Email</TableCell>
                                             <TableCell sx={{ backgroundColor: 'rgb(15, 11, 42)', fontWeight: 'bold', color: 'white' }} align="center">GSTIN</TableCell>
                                             <TableCell sx={{ backgroundColor: 'rgb(15, 11, 42)', fontWeight: 'bold', color: 'white' }} align="center">Products</TableCell>
-                                            <TableCell sx={{ backgroundColor: 'rgb(15, 11, 42)', fontWeight: 'bold', color: 'white' }} align="center">Action</TableCell>
+                                            <TableCell sx={{ backgroundColor: 'rgb(15, 11, 42)', fontWeight: 'bold', color: 'white' }}>Action</TableCell>
                                         </TableRow>
                                     </TableHead>
                                     <TableBody>
                                         {partydata.map(propobject => (
-                                            <PartyComp propobj={propobject} />
+                                            <PartyComp propobj={propobject} partytypedata={partytypedat} countrydata={countrydat} statedata={statedat}/>
                                         ))}
                                     </TableBody>
                                 </Table>

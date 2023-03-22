@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import Header from "../../comp/header/header";
 import Sidenav from "../../comp/sidenav/sidenav";
 import {
-    Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Button,
+    Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Button, Slide,
     IconButton, TableContainer, Table, TableBody, TableCell, TableHead, TableRow, Paper
 } from "@mui/material";
 import EditIcon from '@mui/icons-material/Edit';
@@ -12,14 +12,10 @@ import { maxWidth } from "@mui/system";
 import Loader from "../../comp/Load/loading";
 import axios from "axios";
 
-function Butns() {
-    return (
-        <>
-            <IconButton aria-label="expand row" size="small" ><EditIcon /></IconButton>
+const Transition = React.forwardRef(function Transition(props, ref) {
+    return <Slide direction="up" ref={ref} {...props} />;
+});
 
-        </>
-    );
-}
 
 let Countrycomp = (props) => {
     const { countrys } = props;
@@ -27,6 +23,13 @@ let Countrycomp = (props) => {
     const [pk, setpk] = useState();
     const [delproname, setdelproname] = useState('');
     const [open, setOpen] = useState(false);
+    
+
+    {/* Update variables */}
+    const [Uopen, setUopen] = useState(false);
+    const [udcnrycod, setudcnrycod] = useState('');
+    const [udcnrynme, setudcnrynme] = useState('');
+    const [updtpk, setupdtpk] = useState();
 
     const handleClickOpen = () => {
         setOpen(true);
@@ -36,8 +39,47 @@ let Countrycomp = (props) => {
         setOpen(false);
     };
 
+    const UhandleClickOpen = () => {
+        setUopen(true);
+    };
+
+    const UhandleClose = () => {
+        setUopen(false);
+    };
+
     function doDelete() {
         deleteRow(pk);
+    }
+
+    const cntryupdt = axios.create({ //country
+        baseURL: `https://erp-new-production.up.railway.app/api/get?model=country&pk=${updtpk}`
+    });
+    console.log("Crnt updt PK",updtpk);
+
+    const updtCountry = (cod, nme) => {
+        cntryupdt.put('', {
+            country_code: cod,
+            country_name:nme
+        })
+            .then((res) => {
+                console.log("Post After", res)
+                if (res.data.status === 'success') {
+                    window.location.reload();
+                }
+                else {
+                    if (res.data.status === 'failure') {
+                        alert('Something Went Wrong Please Try Again...');
+                    }
+                }
+
+            }).catch((err) => {
+                console.log(err);
+            })
+    };
+
+    let doPUT = (e) => {
+        e.preventDefault();
+        updtCountry(udcnrycod,udcnrynme);
     }
 
     const deleteRow = (pkobj) => {
@@ -66,7 +108,7 @@ let Countrycomp = (props) => {
                         <TableHead>
                             <TableRow>
                                 <TableCell variant="head" align="left" Width={90} sx={{ backgroundColor: 'rgb(15, 11, 42)', color: 'white', fontWeight: 'bold' }}>S.No</TableCell>
-                                <TableCell variant="head" align="left" Width={120} sx={{ backgroundColor: 'rgb(15, 11, 42)', color: 'white', fontWeight: 'bold' }}>Country Code</TableCell>
+                                <TableCell variant="head" align="left" Width={200} sx={{ backgroundColor: 'rgb(15, 11, 42)', color: 'white', fontWeight: 'bold' }}>Country Code</TableCell>
                                 <TableCell variant="head" align="left" width={maxWidth} sx={{ backgroundColor: 'rgb(15, 11, 42)', color: 'white', fontWeight: 'bold' }}>Country</TableCell>
                                 <TableCell variant="head" align="left" width={200} sx={{ backgroundColor: 'rgb(15, 11, 42)', color: 'white', fontWeight: 'bold' }}>Action</TableCell>
                             </TableRow>
@@ -77,7 +119,12 @@ let Countrycomp = (props) => {
                                     <TableCell >{++count}</TableCell>
                                     <TableCell >{cntry.country_code}</TableCell>
                                     <TableCell>{cntry.country_name}</TableCell>
-                                    <TableCell align="left"><IconButton aria-label="expand row" size="small"
+                                    <TableCell align="left">
+                                    <IconButton aria-label="expand row" size="small" 
+                                        onClick={() => {setudcnrycod(cntry.country_code); setudcnrynme(cntry.country_name);
+                                         setupdtpk(cntry.pk); UhandleClickOpen();}}
+                                    ><EditIcon /></IconButton>
+                                        <IconButton aria-label="expand row" size="small"
                                         onClick={() => { setpk(cntry.pk); setdelproname(cntry.country_name); handleClickOpen(); }}
                                         sx={{ color: 'rgba(255, 0, 0, 0.755)', marginRight: '1em' }}><DeleteIcon /></IconButton></TableCell>
                                 </TableRow>
@@ -108,6 +155,37 @@ let Countrycomp = (props) => {
                     </DialogActions>
                 </Dialog>
             </div>
+            <div>
+                <Dialog
+                    open={Uopen}
+                    onClose={UhandleClose}
+                    TransitionComponent={Transition}
+                >
+                    <div className="comhed">
+                        <h5>Update Country</h5>
+                    </div>
+                    <DialogTitle id="alert-dialog-title">
+                        {"Row Details :  "}
+                    </DialogTitle>
+                    <DialogContent>
+
+                        <div className="row">
+                            <div className="col-lg-6 editscrn">
+                                <label className="micardlble" >Country Code</label><br />
+                                <input className="micardinpt" value={udcnrycod} onChange={(e) => {setudcnrycod(e.target.value)}} required />
+                            </div>
+
+                            <div className="col-lg-6 editscrn">
+                                <label className="micardlble" >Country Name</label><br />
+                                <input className="micardinpt" value={udcnrynme} onChange={(e) => {setudcnrynme(e.target.value)}} required />
+                            </div>
+                            
+                        </div><br />
+                        <button className="comadbtn" onClick={doPUT} style={{marginBottom:'unset'}}>Update</button>
+                    <button className="cancelbtn" onClick={UhandleClose} >Discord</button>
+                    </DialogContent>
+                </Dialog><br />
+            </div>
         </>
     );
 }
@@ -122,7 +200,6 @@ function Country() {
         fetch('https://erp-new-production.up.railway.app/api/get?model=country')
             .then((res) => { return res.json(); })
             .then((data) => {
-                console.log(data.data);
                 setcountrydata(data.data);
             })
     }, [])

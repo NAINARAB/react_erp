@@ -1,23 +1,20 @@
 import React, { useState, useEffect } from "react";
 import Header from "../../comp/header/header";
 import Sidenav from "../../comp/sidenav/sidenav";
-import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Button, 
-    TableContainer, Table, TableBody, TableCell, TableHead, TableRow, Paper, IconButton } from "@mui/material";
+import {
+    Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Button, Slide,
+    TableContainer, Table, TableBody, TableCell, TableHead, TableRow, Paper, IconButton
+} from "@mui/material";
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { maxWidth } from "@mui/system";
 import Loader from "../../comp/Load/loading";
 import axios from "axios";
 
+const Transition = React.forwardRef(function Transition(props, ref) {
+    return <Slide direction="up" ref={ref} {...props} />;
+});
 
-function Butns() {
-    return (
-        <>
-            <IconButton aria-label="expand row" size="small"><EditIcon /></IconButton>
-
-        </>
-    );
-}
 
 let PartyTypecomp = (props) => {
     const { PartyTypeRows } = props;
@@ -26,6 +23,12 @@ let PartyTypecomp = (props) => {
     const [delproname, setdelproname] = useState('');
     const [open, setOpen] = useState(false);
 
+    {/* Update Party Variables */ }
+
+    const [Uopen, setUopen] = useState(false);
+    const [updtpk, setupdtpk] = useState();
+    const [updprttyp, setupdprttyp] = useState('');
+
     const handleClickOpen = () => {
         setOpen(true);
     };
@@ -33,6 +36,44 @@ let PartyTypecomp = (props) => {
     const handleClose = () => {
         setOpen(false);
     };
+
+    const UhandleClickOpen = () => {
+        setUopen(true);
+    };
+
+    const UhandleClose = () => {
+        setUopen(false);
+    };
+
+    const prttypupdt = axios.create({ //partytype
+        baseURL: `https://erp-new-production.up.railway.app/api/get?model=partytype&pk=${updtpk}`
+    });
+    console.log("Crnt updt PK", updtpk);
+
+    const updtPartytype = (prttyp) => {
+        prttypupdt.put('', {
+            party_type: prttyp
+        })
+            .then((res) => {
+                console.log("Post After", res)
+                if (res.data.status === 'success') {
+                    window.location.reload();
+                }
+                else {
+                    if (res.data.status === 'failure') {
+                        alert('Something Went Wrong Please Try Again...');
+                    }
+                }
+
+            }).catch((err) => {
+                console.log(err);
+            })
+    };
+
+    let doPUT = (e) => {
+        e.preventDefault();
+        updtPartytype(updprttyp);
+    }
 
     function doDelete() {
         deleteRow(pk);
@@ -74,9 +115,13 @@ let PartyTypecomp = (props) => {
                                     <TableRow hover='true'>
                                         <TableCell >{++count}</TableCell>
                                         <TableCell>{ptr.party_type}</TableCell>
-                                        <TableCell align="left"><IconButton aria-label="expand row" size="small"
-                                            onClick={() => { setpk(ptr.pk); setdelproname(ptr.party_type); handleClickOpen(); }}
-                                            sx={{ color: 'rgba(255, 0, 0, 0.755)', marginRight: '1em' }}><DeleteIcon /></IconButton>
+                                        <TableCell align="left">
+                                            <IconButton aria-label="expand row" size="small"
+                                                onClick={() => { setupdtpk(ptr.pk); setupdprttyp(ptr.party_type); UhandleClickOpen(); }}
+                                            ><EditIcon /></IconButton>
+                                            <IconButton aria-label="expand row" size="small"
+                                                onClick={() => { setpk(ptr.pk); setdelproname(ptr.party_type); handleClickOpen(); }}
+                                                sx={{ color: 'rgba(255, 0, 0, 0.755)', marginRight: '1em' }}><DeleteIcon /></IconButton>
                                         </TableCell>
                                     </TableRow>
                                 ))}
@@ -107,6 +152,28 @@ let PartyTypecomp = (props) => {
                     </DialogActions>
                 </Dialog>
             </div>
+            <div>
+                <Dialog
+                    open={Uopen}
+                    onClose={UhandleClose}
+                    TransitionComponent={Transition}
+                >
+                    <div className="comhed">
+                        <h5>Update Party Type</h5>
+                    </div>
+                    <DialogTitle id="alert-dialog-title">
+                        {"Row Details :  "}
+                    </DialogTitle>
+                    <DialogContent>
+                        <div>
+                            <label className="micardlble" >Party Type</label><br />
+                            <input className="micardinpt" value={updprttyp} onChange={(e) => { setupdprttyp(e.target.value) }} required />
+                        </div><br />
+                        <button className="comadbtn" onClick={doPUT} style={{marginBottom:'unset'}}>Update</button>
+                        <button className="cancelbtn" onClick={UhandleClose} >Discord</button>
+                    </DialogContent>
+                </Dialog>
+            </div>
         </>
     );
 }
@@ -122,7 +189,6 @@ function Partytype() {
         fetch('https://erp-new-production.up.railway.app/api/get?model=partytype')
             .then((res) => { return res.json(); })
             .then((data) => {
-                console.log(data.data);
                 setpartytypedata(data.data)
             })
 
@@ -140,9 +206,8 @@ function Partytype() {
                 party_type: prty
             })
                 .then((res) => {
-                    console.log("after then", res)
                     if (res.data.status === 'success') {
-                        alert("Party Type Added");
+                        window.location.reload();
                     }
                     else {
                         if (res.data.status === 'failure') {
@@ -162,7 +227,7 @@ function Partytype() {
             <>
                 <form>
                     <div className="micard">
-                        <h5 className="micardhdr">Add Product</h5>
+                        <h5 className="micardhdr">Add Party Type</h5>
                         <div className="micardbdy row">
                             <div className="col-lg-4">
                                 <label className="micardlble" >Party Type</label><br />

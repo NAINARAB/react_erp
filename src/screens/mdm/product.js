@@ -58,7 +58,7 @@ function Product() {
     const prdupdt = axios.create({ //
         baseURL: `https://erp-new-production.up.railway.app/api/get?model=product&pk=${updtpk}`
     });
-    console.log("Crnt updt PK",updtpk);
+    
 
     const pudtProduct = (prc, prn, prty, minstk, minpr, maxpr, crny, mp) => {
         prdupdt.put('', {
@@ -66,15 +66,15 @@ function Product() {
             product_name: prn,
             product_type: prty,
             minimum_stock_quantity: minstk,
-            maximum_price: minpr,
-            minimum_price: maxpr,
+            maximum_price: maxpr,
+            minimum_price: minpr,
             currency: crny,
             multiple_parts:mp
         })
             .then((res) => {
                 console.log("Post After", res)
                 if (res.data.status === 'success') {
-                    alert("Put Success");
+                    window.location.reload();
                 }
                 else {
                     if (res.data.status === 'failure') {
@@ -183,7 +183,7 @@ function Product() {
                             <div className="col-lg-4">
                                 <label className="micardlble">Product Type</label><br />
                                 <select className="micardinpt" value={producttype} onChange={(e) => { setproductype(e.target.value); }} required>
-                                    <option selected='true' value='' disabled='true'>Select Type</option>
+                                    <option defaultValue={true} value='' disabled='true'>Select Type</option>
                                     <option value={"finished"}>Finished</option>
                                     <option value={"semi-finished"}>Semi-Finished</option>
                                 </select>
@@ -191,8 +191,8 @@ function Product() {
 
                             <div className="col-lg-4">
                                 <label className="micardlble">Currency</label><br />
-                                <select className="micardinpt" value={currency} onChange={(e) => { setcurrency(e.target.value); }} required>
-                                    <option value="" disabled='true' selected='true' >Select Currency</option>
+                                <select className="micardinpt" onChange={(e) => { setcurrency(e.target.value); }} required>
+                                    <option value=""  defaultValue={true} >Select Currency</option>
                                     {countrysdat.map(contobj => (
                                         <>
                                             <option value={contobj.pk}>{contobj.currency_name}</option>
@@ -259,7 +259,7 @@ function Product() {
 
                     </div><br />
                     <button className="comadbtn" onClick={doPost}>Add</button>
-                    <button className="cancelbtn" onClick={opnProdt} >Back</button>
+                    <button className="cancelbtn" onClick={opnProdt} >Cancel</button>
                 </form>
             </>
         );
@@ -325,17 +325,17 @@ function Product() {
                                     <Table stickyHeader aria-label="simple table">
                                         <TableHead >
                                             <TableRow>
-                                                <TableCell variant="head" sx={{ backgroundColor: 'rgb(15, 11, 42)', color: 'white' }} >S.No</TableCell>
-                                                <TableCell variant="head" sx={{ backgroundColor: 'rgb(15, 11, 42)', color: 'white' }} >Product Name</TableCell>
-                                                <TableCell variant="head" sx={{ backgroundColor: 'rgb(15, 11, 42)', color: 'white' }} >Product Code</TableCell>
-                                                <TableCell variant="head" sx={{ backgroundColor: 'rgb(15, 11, 42)', color: 'white' }} >Product Type</TableCell>
-                                                <TableCell variant="head" sx={{ backgroundColor: 'rgb(15, 11, 42)', color: 'white' }} >Min Stock</TableCell>
-                                                <TableCell variant="head" sx={{ backgroundColor: 'rgb(15, 11, 42)', color: 'white' }} >Min Price</TableCell>
-                                                <TableCell variant="head" sx={{ backgroundColor: 'rgb(15, 11, 42)', color: 'white' }} >Max Price</TableCell>
-                                                <TableCell variant="head" sx={{ backgroundColor: 'rgb(15, 11, 42)', color: 'white' }} >Currency</TableCell>
-                                                <TableCell variant="head" sx={{ backgroundColor: 'rgb(15, 11, 42)', color: 'white' }} >Multiple Parts</TableCell>
-                                                <TableCell variant="head" sx={{ backgroundColor: 'rgb(15, 11, 42)', color: 'white' }} >Parts</TableCell>
-                                                <TableCell variant="head" sx={{ backgroundColor: 'rgb(15, 11, 42)', color: 'white' }} >Action</TableCell>
+                                                <TableCell variant="head" sx={{ fontWeight: 'bold',backgroundColor: 'rgb(15, 11, 42)', color: 'white' }} >S.No</TableCell>
+                                                <TableCell variant="head" sx={{ fontWeight: 'bold',backgroundColor: 'rgb(15, 11, 42)', color: 'white' }} >Product Name</TableCell>
+                                                <TableCell variant="head" sx={{ fontWeight: 'bold',backgroundColor: 'rgb(15, 11, 42)', color: 'white' }} >Product Code</TableCell>
+                                                <TableCell variant="head" sx={{ fontWeight: 'bold',backgroundColor: 'rgb(15, 11, 42)', color: 'white' }} >Product Type</TableCell>
+                                                <TableCell variant="head" sx={{ fontWeight: 'bold',backgroundColor: 'rgb(15, 11, 42)', color: 'white' }} >Min Stock</TableCell>
+                                                <TableCell variant="head" sx={{ fontWeight: 'bold',backgroundColor: 'rgb(15, 11, 42)', color: 'white' }} >Min Price</TableCell>
+                                                <TableCell variant="head" sx={{ fontWeight: 'bold',backgroundColor: 'rgb(15, 11, 42)', color: 'white' }} >Max Price</TableCell>
+                                                <TableCell variant="head" sx={{ fontWeight: 'bold',backgroundColor: 'rgb(15, 11, 42)', color: 'white' }} >Currency</TableCell>
+                                                <TableCell variant="head" sx={{ fontWeight: 'bold',backgroundColor: 'rgb(15, 11, 42)', color: 'white' }} >Multiple Parts</TableCell>
+                                                <TableCell variant="head" sx={{ fontWeight: 'bold',backgroundColor: 'rgb(15, 11, 42)', color: 'white' }} >Parts</TableCell>
+                                                <TableCell variant="head" sx={{ fontWeight: 'bold',backgroundColor: 'rgb(15, 11, 42)', color: 'white' }} >Action</TableCell>
                                             </TableRow>
                                         </TableHead>
                                         <TableBody>
@@ -355,7 +355,7 @@ function Product() {
                                                             <TableCell>{rowobj.maximum_price === null ? "Null" : rowobj.maximum_price}</TableCell>
                                                             <TableCell>{rowobj.currency_get === null ? "Null" : rowobj.currency_get}</TableCell>
                                                             <TableCell>{rowobj.multiple_parts == null ? "Null" : rowobj.multiple_parts === true ? "True" : "False"}</TableCell>
-                                                            <TableCell>{'0'}</TableCell>
+                                                            <TableCell>{rowobj.parts !== null ? rowobj.parts.length !==0 ? rowobj.parts.join(', ') :'Null' : "Null"}</TableCell>
                                                             <TableCell>
                                                                 <IconButton aria-label="expand" size="small"
                                                                     onClick={() => {
@@ -433,7 +433,7 @@ function Product() {
                             <div className="col-lg-6 editscrn">
                                 <label className="micardlble">Product Type</label><br />
                                 <select className="micardinpt" onChange={(e) => { settyp(e.target.value); }} required>
-                                    <option selected='true' value={prtyp}>{prtyp}</option>
+                                    <option defaultValue={true} disabled={true} value={prtyp}>{prtyp}</option>
                                     <option value={"finished"}>Finished</option>
                                     <option value={"semi-finished"}>Semi-Finished</option>
                                 </select>
@@ -441,7 +441,7 @@ function Product() {
                             <div className="col-lg-6 editscrn">
                                 <label className="micardlble">Currency</label><br />
                                 <select className="micardinpt" onChange={(e) => { setcrcypk(e.target.value); }} required>
-                                    <option value={prcrcypk} selected='true' >{prcrcy}</option>
+                                    <option value={prcrcypk} defaultValue={true} >{prcrcy}</option>
                                     {countrysdat.map(contobj => (
                                         <>
                                             <option value={contobj.pk}>{contobj.currency_name}</option>
@@ -460,7 +460,7 @@ function Product() {
 
                             <div className="col-lg-6 editscrn">
                                 <label className="micardlble">Minimum Stock</label><br />
-                                <input type='number' value={prmsq} min={0} onChange={(e) => { setmsq(e.target.value); }} className="micardinpt" required />
+                                <input type='number' value={prmsq === null ? "" : prmsq} min={0} onChange={(e) => { setmsq(e.target.value); }} className="micardinpt" required />
                             </div>
                             <div className="col-lg-6">
                                 <label className="micardlble">Multiple Parts</label><br />
@@ -471,7 +471,7 @@ function Product() {
                             </div>
                         </div><br />
                         <button className="comadbtn" onClick={doPUT}>Update</button>
-                    <button className="cancelbtn" onClick={UhandleClose} >Back</button>
+                    <button className="cancelbtn" onClick={UhandleClose} >Discord</button>
                     </DialogContent>
                 </Dialog><br />
             </div>

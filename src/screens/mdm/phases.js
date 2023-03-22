@@ -1,13 +1,20 @@
 import React, { useState, useEffect, useCallback } from "react";
 import Header from "../../comp/header/header";
 import Sidenav from "../../comp/sidenav/sidenav";
-import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Button, 
-    TableContainer, Table, TableBody, TableCell, TableHead, TableRow, Paper, IconButton } from "@mui/material";
+import {
+    Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Button, Slide,
+    TableContainer, Table, TableBody, TableCell, TableHead, TableRow, Paper, IconButton
+} from "@mui/material";
 import { maxWidth } from "@mui/system";
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import Loader from "../../comp/Load/loading";
 import axios from "axios";
+
+const Transition = React.forwardRef(function Transition(props, ref) {
+    return <Slide direction="up" ref={ref} {...props} />;
+});
+
 
 function Butns() {
     return (
@@ -25,6 +32,9 @@ let PhasesRowsComp = (props) => {
     const [pk, setpk] = useState();
     const [delproname, setdelproname] = useState('');
     const [open, setOpen] = useState(false);
+    const [Uopen, setUopen] = useState(false);
+    const [updtpk, setupdtpk] = useState();
+    const [updtphase, setupdtphase] = useState('');
 
     const handleClickOpen = () => {
         setOpen(true);
@@ -33,6 +43,44 @@ let PhasesRowsComp = (props) => {
     const handleClose = () => {
         setOpen(false);
     };
+
+    const UhandleClickOpen = () => {
+        setUopen(true);
+    };
+
+    const UhandleClose = () => {
+        setUopen(false);
+    };
+
+    const cntryupdt = axios.create({ //phases
+        baseURL: `https://erp-new-production.up.railway.app/api/get?model=productionphase&pk=${updtpk}`
+    });
+    console.log("Crnt updt PK", updtpk);
+
+    const updtCountry = (ph) => {
+        cntryupdt.put('', {
+            phase_name: ph
+        })
+            .then((res) => {
+                console.log("Post After", res)
+                if (res.data.status === 'success') {
+                    window.location.reload();
+                }
+                else {
+                    if (res.data.status === 'failure') {
+                        alert('Something Went Wrong Please Try Again...');
+                    }
+                }
+
+            }).catch((err) => {
+                console.log(err);
+            })
+    };
+
+    let doPUT = (e) => {
+        e.preventDefault();
+        updtCountry(updtphase);
+    }
 
     function doDelete() {
         deleteRow(pk);
@@ -73,9 +121,12 @@ let PhasesRowsComp = (props) => {
                                     <TableRow hover='true' >
                                         <TableCell >{++count}</TableCell>
                                         <TableCell>{phrow.phase_name}</TableCell>
-                                        <TableCell align="left">
-                                        <IconButton aria-label="expand row" size="small"  onClick={() => { setpk(phrow.pk); setdelproname(phrow.phase_name); handleClickOpen(); }}
-                                        sx={{ color: 'rgba(255, 0, 0, 0.755)', marginRight: '1em' }}><DeleteIcon /></IconButton>
+                                        <TableCell>
+                                            <IconButton aria-label="expand row" size="small"
+                                                onClick={() => { setupdtpk(phrow.pk); setupdtphase(phrow.phase_name); UhandleClickOpen(); }}
+                                            ><EditIcon /></IconButton>
+                                            <IconButton aria-label="expand row" size="small" onClick={() => { setpk(phrow.pk); setdelproname(phrow.phase_name); handleClickOpen(); }}
+                                                sx={{ color: 'rgba(255, 0, 0, 0.755)', marginRight: '1em' }}><DeleteIcon /></IconButton>
                                         </TableCell>
                                     </TableRow>
                                 ))}
@@ -83,19 +134,19 @@ let PhasesRowsComp = (props) => {
                         </Table>
                     </TableContainer>
                 </div> : <Loader />}
-                <div>
+            <div>
                 <Dialog
                     open={open}
                     onClose={handleClose}
                     aria-labelledby="alert-dialog-title"
                     aria-describedby="alert-dialog-description"
                 >
-                    <DialogTitle id="alert-dialog-title">   
+                    <DialogTitle id="alert-dialog-title">
                         {"Do You Want To Delete ? "}
                     </DialogTitle>
                     <DialogContent>
                         <DialogContentText id="alert-dialog-description">
-                            <b style={{color: 'black'}}>Phase Name: &emsp;{delproname}</b>
+                            <b style={{ color: 'black' }}>Phase Name: &emsp;{delproname}</b>
                         </DialogContentText>
                     </DialogContent>
                     <DialogActions>
@@ -105,6 +156,28 @@ let PhasesRowsComp = (props) => {
                         </Button>
                     </DialogActions>
                 </Dialog>
+            </div>
+            <div>
+                <Dialog
+                    open={Uopen}
+                    onClose={UhandleClose}
+                    TransitionComponent={Transition}
+                >
+                    <div className="comhed">
+                        <h5>Update Phases</h5>
+                    </div>
+                    <DialogTitle id="alert-dialog-title">
+                        {"Row Details :  "}
+                    </DialogTitle>
+                    <DialogContent>
+                        <div>
+                            <label className="micardlble" >Phase Name</label><br />
+                            <input className="micardinpt" value={updtphase} onChange={(e) => { setupdtphase(e.target.value) }} required />
+                        </div><br />
+                        <button className="comadbtn" onClick={doPUT} style={{ marginBottom: 'unset' }}>Update</button>
+                        <button className="cancelbtn" onClick={UhandleClose} >Discord</button>
+                    </DialogContent>
+                </Dialog><br />
             </div>
         </>
     );
@@ -116,7 +189,6 @@ function Phases() {
         fetch('https://erp-dwe8a.ondigitalocean.app/api/get?model=productionphase')
             .then((res) => { return res.json(); })
             .then((data) => {
-                console.log(data.data);
                 setphasedata(data.data)
             })
     }, [])
