@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Header from "../../comp/header/header";
 import Sidenav from "../../comp/sidenav/sidenav";
-import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Button,
+import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Button, Slide,
     TableContainer, Table, TableBody, TableCell, TableHead, TableRow, Paper, IconButton } from "@mui/material";
 import '../common.css';
 import EditIcon from '@mui/icons-material/Edit';
@@ -10,6 +10,9 @@ import { maxWidth } from "@mui/system";
 import Loader from "../../comp/Load/loading";
 import axios from "axios";
 
+const Transition = React.forwardRef(function Transition(props, ref) {
+    return <Slide direction="up" ref={ref} {...props} />;
+});
 
 function Butns() {
     return (
@@ -26,6 +29,52 @@ let DepartmentComp = (props) => {
     const [pk, setpk] = useState();
     const [delproname, setdelproname] = useState('');
     const [open, setOpen] = useState(false);
+
+    {/* Up variables */}
+
+    const [Uopen, setUopen] = useState(false);
+    const [updtpk, setupdtpk] = useState();
+    const [upnme, setupnme] = useState('');
+    const [uprol, setuprol] = useState('');
+
+    const UhandleClickOpen = () => {
+        setUopen(true);
+    };
+
+    const UhandleClose = () => {
+        setUopen(false);
+    };
+
+    const cntryupdt = axios.create({ //department
+        baseURL: `https://erp-new-production.up.railway.app/api/get?model=department&pk=${updtpk}`
+    });
+
+    const updtCountry = (nme, rol) => {
+        cntryupdt.put('', {
+            name: nme,
+            role: rol
+        })
+            .then((res) => {
+                console.log("Post After", res)
+                if (res.data.status === 'success') {
+                    window.location.reload();
+                }
+                else {
+                    if (res.data.status === 'failure') {
+                        alert('Something Went Wrong Please Try Again...');
+                    }
+                }
+
+            }).catch((err) => {
+                console.log(err);
+            })
+    };
+
+    let doPUT = (e) => {
+        e.preventDefault();
+        updtCountry(upnme, uprol);
+    }
+
 
     const handleClickOpen = () => {
         setOpen(true);
@@ -76,6 +125,12 @@ let DepartmentComp = (props) => {
                                     <TableCell>{dept.name}</TableCell>
                                     <TableCell>{dept.role}</TableCell>
                                     <TableCell>
+                                    <IconButton aria-label="expand row" size="small" 
+                                    onClick={() => {
+                                        setupdtpk(dept.pk); setupnme(dept.name); setuprol(dept.role);
+                                        UhandleClickOpen();
+                                    }}
+                                    ><EditIcon /></IconButton>
                                         <IconButton aria-label="expand row" size="small"
                                             onClick={() => { setpk(dept.pk); setdelproname(dept.name); handleClickOpen(); }}
                                             sx={{ color: 'rgba(255, 0, 0, 0.755)', marginRight: '1em' }}><DeleteIcon /></IconButton>
@@ -107,6 +162,37 @@ let DepartmentComp = (props) => {
                         </Button>
                     </DialogActions>
                 </Dialog>
+            </div>
+            <div>
+                <Dialog
+                    open={Uopen}
+                    onClose={UhandleClose}
+                    TransitionComponent={Transition}
+                >
+                    <div className="comhed">
+                        <h5>Update Department</h5>
+                    </div>
+                    <DialogTitle id="alert-dialog-title">
+                        {"Row Details :  "}
+                    </DialogTitle>
+                    <DialogContent>
+
+                        <div className="row">
+                            <div className="col-lg-6 editscrn">
+                                <label className="micardlble" >Department Name</label><br />
+                                <input className="micardinpt" value={upnme} onChange={(e) => {setupnme(e.target.value)}}  />
+                            </div>
+
+                            <div className="col-lg-6 editscrn">
+                                <label className="micardlble" >Role</label><br />
+                                <input className="micardinpt" value={uprol} onChange={(e) => {setuprol(e.target.value)}}  />
+                            </div>
+                            
+                        </div><br />
+                        <button className="comadbtn" onClick={doPUT} style={{marginBottom:'unset'}}>Update</button>
+                    <button className="cancelbtn" onClick={UhandleClose} >Discord</button>
+                    </DialogContent>
+                </Dialog><br />
             </div>
         </>
     );

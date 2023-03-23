@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, memo } from 'react';
 import './sidenav.css'
 import { useNavigate } from 'react-router-dom';
 import { IconButton } from '@mui/material';
@@ -7,7 +7,10 @@ import MenuIcon from '@mui/icons-material/Menu';
 import CloseIcon from '@mui/icons-material/Close';
 
 
-function Sidenav() {
+const Sidenav = () => {
+    const [opncond, setopencond] = useState(false)
+    const navigate = useNavigate();
+
     // const [crntusrnme, setcrntusrnme] = useState('');
     // const [usrrol, setusrrol] = useState('');
 
@@ -20,21 +23,18 @@ function Sidenav() {
     //         })
     // }, [])
 
-    let currentUser = sessionStorage.getItem('name');
-    const [opncond, setopencond] = useState(false)
-    const navigate = useNavigate();
     return (
         <div>
             <div className='menuhide'>
-                {opncond === false ? <IconButton size='small' sx={{ color: 'white', fontWeight:'bold' }} 
-                 onClick={() => {document.getElementById('sid').style.display = 'block'; setopencond(true)}}
-                ><MenuIcon /></IconButton> : 
-                
-                <IconButton size='small' sx={{ color: 'white', fontWeight:'bold' }}
-                onClick={() => {document.getElementById('sid').style.display = 'none'; setopencond(false)}}
-                ><CloseIcon /></IconButton>}
+                {opncond === false ? <IconButton size='small' sx={{ color: 'white', fontWeight: 'bold' }}
+                    onClick={() => { document.getElementById('sid').style.display = 'block'; setopencond(true) }}
+                ><MenuIcon /></IconButton> :
+
+                    <IconButton size='small' sx={{ color: 'white', fontWeight: 'bold' }}
+                        onClick={() => { document.getElementById('sid').style.display = 'none'; setopencond(false) }}
+                    ><CloseIcon /></IconButton>}
             </div>
-                <div className='hideside' id='sid'>
+            <div className='hideside' id='sid'>
                 <section className="section-content">
                     <div>
                         <aside>
@@ -172,6 +172,7 @@ function Sidenav() {
 
         </div>
     );
+
 }
 
 export default Sidenav;

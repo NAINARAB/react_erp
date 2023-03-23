@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import Header from "../../comp/header/header";
 import Sidenav from "../../comp/sidenav/sidenav";
 import {
@@ -11,11 +11,14 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import Loader from "../../comp/Load/loading";
 import axios from "axios";
 
+const trarr =['up','down','left','right'];
+var item = trarr[Math.floor(Math.random()*trarr.length)];
+
 const Transition = React.forwardRef(function Transition(props, ref) {
-    return <Slide direction="up" ref={ref} {...props} />;
+    return <Slide direction={item} ref={ref} {...props} />;
 });
 
-function Product() {
+const Product = () => {
     let [rows, setrows] = useState([]);
     const [dispaddpro, setaddpro] = useState(false);
     const [countrysdat, setcountrydat] = useState([])
@@ -303,6 +306,9 @@ function Product() {
             })
     }
 
+    const DispDidenav = React.useCallback(() => {
+        return(<><Sidenav /></>);
+    },[]);
     return (
         <>
             <div className="row">
@@ -310,7 +316,7 @@ function Product() {
                     <Header />
                 </div>
                 <div className="col-lg-2">
-                    <Sidenav />
+                    <DispDidenav />
                 </div>
                 <div className="col-lg-10">
                     <div>
@@ -470,7 +476,7 @@ function Product() {
                                 </div>
                             </div>
                         </div><br />
-                        <button className="comadbtn" onClick={doPUT}>Update</button>
+                        <button className="comadbtn" onClick={doPUT} style={{marginBottom:'unset'}}>Update</button>
                     <button className="cancelbtn" onClick={UhandleClose} >Discord</button>
                     </DialogContent>
                 </Dialog><br />

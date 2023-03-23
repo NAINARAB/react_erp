@@ -1,14 +1,20 @@
 import React, { useState, useEffect } from "react";
 import Header from "../../comp/header/header";
 import Sidenav from "../../comp/sidenav/sidenav";
-import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Button,
-    IconButton, TableContainer, Table, TableBody, TableCell, TableHead, TableRow, Paper } from "@mui/material";
+import {
+    Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Button, Slide,
+    IconButton, TableContainer, Table, TableBody, TableCell, TableHead, TableRow, Paper
+} from "@mui/material";
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import '../common.css';
 import { maxWidth } from "@mui/system";
 import Loader from "../../comp/Load/loading";
 import axios from "axios";
+
+const Transition = React.forwardRef(function Transition(props, ref) {
+    return <Slide direction="up" ref={ref} {...props} />;
+});
 
 function Butns() {
     return (
@@ -22,10 +28,29 @@ function Butns() {
 
 let UserRoleComp = (props) => {
     const { userrole } = props;
+    const { devisiondata } = props;
+    const { deptdat } = props;
     let count = 0;
     const [pk, setpk] = useState();
     const [delproname, setdelproname] = useState('');
     const [open, setOpen] = useState(false);
+
+    {/* up var */ }
+    const [Uopen, setUopen] = useState(false);
+    const [updtpk, setupdtpk] = useState();
+    const [uprol, setuprol] = useState('');
+    const [updep, setupdep] = useState();
+    const [updepget, setupdepget] = useState('');
+    const [updiv, setupdiv] = useState();
+    const [updivget, setupdivget] = useState('');
+
+    const UhandleClickOpen = () => {
+        setUopen(true);
+    };
+
+    const UhandleClose = () => {
+        setUopen(false);
+    };
 
     const handleClickOpen = () => {
         setOpen(true);
@@ -37,6 +62,38 @@ let UserRoleComp = (props) => {
 
     function doDelete() {
         deleteRow(pk);
+    }
+
+    const urolupdt = axios.create({
+        baseURL: `https://erp-new-production.up.railway.app/api/get?model=userrole&pk=${updtpk}`
+    });
+
+
+    const updtuRole = (rol, dep, div) => {
+        urolupdt.put('', {
+            role: rol,
+            department: dep,
+            division: div
+        })
+            .then((res) => {
+                console.log("Post After", res)
+                if (res.data.status === 'success') {
+                    alert('put success')
+                }
+                else {
+                    if (res.data.status === 'failure') {
+                        alert('Something Went Wrong Please Try Again...');
+                    }
+                }
+
+            }).catch((err) => {
+                console.log(err);
+            })
+    };
+
+    let doPUT = (e) => {
+        e.preventDefault();
+        updtuRole(uprol, updep, updiv);
     }
 
     const deleteRow = (pkobj) => {
@@ -76,10 +133,17 @@ let UserRoleComp = (props) => {
                                 <TableCell>{urd.role != null ? urd.role : "Null"}</TableCell>
                                 <TableCell>{urd.department_get != null ? urd.department_get : "Null"}</TableCell>
                                 <TableCell>{urd.division_get != null ? urd.division_get : "Null"}</TableCell>
-                                <TableCell align="center"><IconButton aria-label="expand row" size="small"
-                                    onClick={() => { setpk(urd.pk); setdelproname(urd.role); handleClickOpen(); }}
-                                    sx={{ color: 'rgba(255, 0, 0, 0.755)', marginRight: '1em' }}>
-                                    <DeleteIcon /></IconButton></TableCell>
+                                <TableCell align="center">
+                                    <IconButton aria-label="expand row" size="small"
+                                        onClick={() => {
+                                            setupdtpk(urd.pk); setuprol(urd.role); setupdep(urd.department); setupdepget(urd.department_get);
+                                            setupdiv(urd.division); setupdivget(urd.division_get); UhandleClickOpen();
+                                        }}
+                                    ><EditIcon /></IconButton>
+                                    <IconButton aria-label="expand row" size="small"
+                                        onClick={() => { setpk(urd.pk); setdelproname(urd.role); handleClickOpen(); }}
+                                        sx={{ color: 'rgba(255, 0, 0, 0.755)', marginRight: '1em' }}>
+                                        <DeleteIcon /></IconButton></TableCell>
                             </TableRow>
                         ))}
                     </TableBody>
@@ -108,6 +172,56 @@ let UserRoleComp = (props) => {
                     </DialogActions>
                 </Dialog>
             </div>
+            <div>
+                <Dialog
+                    open={Uopen}
+                    onClose={UhandleClose}
+                    TransitionComponent={Transition}
+                >
+                    <div className="comhed">
+                        <h5>Update User Role</h5>
+                    </div>
+                    <DialogTitle id="alert-dialog-title">
+                        {"Row Details :  "}
+                    </DialogTitle>
+                    <DialogContent>
+
+                        <div className="row">
+                            <div className="col-lg-6 editscrn">
+                                <label className="micardlble" >Role</label><br />
+                                <input className="micardinpt" value={uprol} onChange={(e) => { setuprol(e.target.value) }} />
+                            </div>
+
+                            <div className="col-lg-6 editscrn">
+                                <label className="micardlble" >Department Name</label><br />
+                                <select className="micardinpt" onChange={(e) => { setupdep(e.target.value) }}>
+                                    <option defaultValue={true} value={updep} required>{updepget}</option>
+                                    {deptdat.map(deptobj => (
+                                        <>
+                                            <option value={deptobj.pk}>{deptobj.name}</option>
+                                        </>
+                                    ))}
+                                </select>
+                            </div>
+
+                            <div className="col-lg-6 editscrn">
+                                <label className="micardlble" >Devision Name</label><br />
+                                <select className="micardinpt" onChange={(e) => { setupdiv(e.target.value) }} >
+                                    <option defaultValue={true} value={updep}>{updepget}</option>
+                                    {devisiondata.map(devobj => (
+                                        <>
+                                            <option value={devobj.pk}>{devobj.name}</option>
+                                        </>
+                                    ))}
+                                </select>
+                            </div>
+
+                        </div><br />
+                        <button className="comadbtn" onClick={doPUT} style={{ marginBottom: 'unset' }}>Update</button>
+                        <button className="cancelbtn" onClick={UhandleClose} >Discord</button>
+                    </DialogContent>
+                </Dialog><br />
+            </div>
         </>
     );
 }
@@ -117,48 +231,41 @@ function Userrole() {
 
     const [dispUserRole, setUserRole] = useState(false);
     const [userroledata, setuserroledata] = useState([]);
-
+    const [deptdat, setdeptdat] = useState([]);
+    const [devisiondata, setdevisiondata] = useState([]);
     useEffect(() => {
+        fetch('https://erp-new-production.up.railway.app/api/get?model=department')
+            .then((res) => { return res.json(); })
+            .then((data) => {
+                setdeptdat(data.data);
+            })
+        fetch('https://erp-new-production.up.railway.app/api/get?model=subdivision')
+            .then((res) => { return res.json(); })
+            .then((data) => {
+                setdevisiondata(data.data)
+            })
         fetch('https://erp-new-production.up.railway.app/api/get?model=userrole')
             .then((res) => { return res.json(); })
             .then((data) => {
-                console.log(data.data);
                 setuserroledata(data.data);
             })
     }, [])
 
     let AddUserRole = () => {
-        const [deptdat, setdeptdat] = useState([]);
-        const [devisiondata, setdevisiondata] = useState([]);
+
         const [urole, seturole] = useState('');
         const [dept, setdept] = useState();
         const [dev, setdev] = useState();
-        useEffect(() => {
-            fetch('https://erp-new-production.up.railway.app/api/get?model=department')
-                .then((res) => { return res.json(); })
-                .then((data) => {
-                    setdeptdat(data.data);
-                })
-        }, [])
-
-        useEffect(() => {
-            fetch('https://erp-new-production.up.railway.app/api/get?model=subdivision')
-                .then((res) => { return res.json(); })
-                .then((data) => {
-                    console.log(data.data);
-                    setdevisiondata(data.data)
-                })
-        }, [])
 
         const posturole = axios.create({
             baseURL: "https://erp-new-production.up.railway.app/api/get?model=userrole"
         });
 
-        const posturolefun = (rol,dep,div) => {
+        const posturolefun = (rol, dep, div) => {
             posturole.post('', {
-                role:rol,
-                department:dep,
-                division:div
+                role: rol,
+                department: dep,
+                division: div
             })
                 .then((res) => {
                     console.log("after then", res)
@@ -178,7 +285,7 @@ function Userrole() {
         };
         let doPost = (e) => {
             e.preventDefault();
-            posturolefun(urole,dept,dev);
+            posturolefun(urole, dept, dev);
         }
         return (
             <form>
@@ -214,7 +321,7 @@ function Userrole() {
                     </div>
                 </div><br />
                 <button className="comadbtn" type="submit" onClick={doPost}>Add</button>
-                <button className="cancelbtn" onClick={() => {  
+                <button className="cancelbtn" onClick={() => {
                     setUserRole(false)
                     document.getElementById("userroleadbtn").style.display = 'block';
                 }} >Back</button>
@@ -241,7 +348,7 @@ function Userrole() {
                         <h6>Manage Users / User Role </h6>
                     </div>
                     <div className="tablepadding">
-                        {dispUserRole == false ? <UserRoleComp userrole={userroledata} /> : <AddUserRole />}
+                        {dispUserRole == false ? <UserRoleComp userrole={userroledata} deptdat={deptdat} devisiondata={devisiondata}/> : <AddUserRole />}
                     </div>
                 </div>
             </div>

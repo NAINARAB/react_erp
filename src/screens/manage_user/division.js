@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from "react";
 import Header from "../../comp/header/header";
 import Sidenav from "../../comp/sidenav/sidenav";
-import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Button,
-     IconButton, TableContainer, Table, TableBody, TableCell, TableHead, TableRow, Paper } from "@mui/material";
+import {
+    Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Button, Slide,
+    IconButton, TableContainer, Table, TableBody, TableCell, TableHead, TableRow, Paper
+} from "@mui/material";
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import '../common.css';
@@ -10,12 +12,15 @@ import { maxWidth } from "@mui/system";
 import Loader from "../../comp/Load/loading";
 import axios from "axios";
 
+const Transition = React.forwardRef(function Transition(props, ref) {
+    return <Slide direction="up" ref={ref} {...props} />;
+});
 
 function Butns() {
     return (
         <>
             <IconButton aria-label="expand row" size="small" sx={{ marginLeft: '0.5em' }}><EditIcon /></IconButton>
-            
+
         </>
     );
 }
@@ -23,10 +28,27 @@ function Butns() {
 
 let Devisioncomp = (props) => {
     const { devision } = props;
+    const { deptdat } = props;
     let count = 0;
     const [pk, setpk] = useState();
     const [delproname, setdelproname] = useState('');
     const [open, setOpen] = useState(false);
+
+    {/* update var */ }
+
+    const [Uopen, setUopen] = useState(false);
+    const [updtpk, setupdtpk] = useState();
+    const [updep, setupdep] = useState();
+    const [upnme, setupnme] = useState('');
+    const [updepget, setupdepget] = useState('');
+
+    const UhandleClickOpen = () => {
+        setUopen(true);
+    };
+
+    const UhandleClose = () => {
+        setUopen(false);
+    };
 
     const handleClickOpen = () => {
         setOpen(true);
@@ -38,6 +60,37 @@ let Devisioncomp = (props) => {
 
     function doDelete() {
         deleteRow(pk);
+    }
+
+    const cntryupdt = axios.create({ //subdevision
+        baseURL: `https://erp-new-production.up.railway.app/api/get?model=subdivision&pk=${updtpk}`
+    });
+    console.log("Crnt updt PK", updtpk);
+
+    const updtCountry = (dep, nme) => {
+        cntryupdt.put('', {
+            department: dep,
+            name: nme
+        })
+            .then((res) => {
+                console.log("Post After", res)
+                if (res.data.status === 'success') {
+                    alert('put success')
+                }
+                else {
+                    if (res.data.status === 'failure') {
+                        alert('Something Went Wrong Please Try Again...');
+                    }
+                }
+
+            }).catch((err) => {
+                console.log(err);
+            })
+    };
+
+    let doPUT = (e) => {
+        e.preventDefault();
+        updtCountry(updep, upnme);
     }
 
     const deleteRow = (pkobj) => {
@@ -74,9 +127,16 @@ let Devisioncomp = (props) => {
                                 <TableCell>{++count}</TableCell>
                                 <TableCell>{devdata.name}</TableCell>
                                 <TableCell>{devdata.department_get}</TableCell>
-                                <TableCell><IconButton aria-label="expand row" size="small"
-                                onClick={() => { setpk(devdata.pk); setdelproname(devdata.name); handleClickOpen(); }} 
-                                sx={{ color: 'rgba(255, 0, 0, 0.755)', marginRight: '1em' }}><DeleteIcon /></IconButton></TableCell>
+                                <TableCell>
+                                    <IconButton aria-label="expand row" size="small"
+                                        onClick={() => {
+                                            setupdtpk(devdata.pk); setupnme(devdata.name); setupdep(devdata.department);
+                                            setupdepget(devdata.department_get); UhandleClickOpen();
+                                        }}
+                                    ><EditIcon /></IconButton>
+                                    <IconButton aria-label="expand row" size="small"
+                                        onClick={() => { setpk(devdata.pk); setdelproname(devdata.name); handleClickOpen(); }}
+                                        sx={{ color: 'rgba(255, 0, 0, 0.755)' }}><DeleteIcon /></IconButton></TableCell>
                             </TableRow>
                         ))}
 
@@ -107,6 +167,43 @@ let Devisioncomp = (props) => {
                     </DialogActions>
                 </Dialog>
             </div>
+            <div>
+                <Dialog
+                    open={Uopen}
+                    onClose={UhandleClose}
+                    TransitionComponent={Transition}
+                >
+                    <div className="comhed">
+                        <h5>Update Division</h5>
+                    </div>
+                    <DialogTitle id="alert-dialog-title">
+                        {"Row Details :  "}
+                    </DialogTitle>
+                    <DialogContent>
+
+                        <div className="row">
+                            <div className="col-lg-6 editscrn">
+                                <label className="micardlble" >Division Name</label><br />
+                                <input className="micardinpt" value={upnme} onChange={(e) => { setupnme(e.target.value) }} />
+                            </div>
+
+                            <div className="col-lg-6 editscrn">
+                                <label className="micardlble" >Department</label><br />
+                                <select className="micardinpt" onChange={(e) => { setupdep(e.target.value) }}>
+                                    <option defaultValue={true} value={updep} required>{updepget}</option>
+                                    {deptdat.map(deptobj => (
+                                        <>
+                                            <option value={deptobj.pk}>{deptobj.name}</option>
+                                        </>
+                                    ))}
+                                </select>
+                            </div>
+                        </div><br />
+                        <button className="comadbtn" onClick={doPUT} style={{ marginBottom: 'unset' }}>Update</button>
+                        <button className="cancelbtn" onClick={UhandleClose} >Discord</button>
+                    </DialogContent>
+                </Dialog><br />
+            </div>
         </>
     );
 }
@@ -116,32 +213,31 @@ let Devisioncomp = (props) => {
 function Devision() {
     const [dispDevision, setdispDevision] = useState(false);
     const [devisiondata, setdevisiondata] = useState([]);
+    const [deptdat, setdeptdat] = useState([]);
     useEffect(() => {
         fetch('https://erp-new-production.up.railway.app/api/get?model=subdivision')
             .then((res) => { return res.json(); })
             .then((data) => {
                 setdevisiondata(data.data);
             })
+        fetch('https://erp-new-production.up.railway.app/api/get?model=department')
+            .then((res) => { return res.json(); })
+            .then((data) => {
+                setdeptdat(data.data);
+            })
     }, [])
+
 
     let AddDevision = () => {
         const [devisionname, setdevisionname] = useState('');
         const [departmentname, setdepartmentname] = useState('');
-        const [deptdat, setdeptdat] = useState([]);
 
-        useEffect(() => {
-            fetch('https://erp-new-production.up.railway.app/api/get?model=department')
-                .then((res) => { return res.json(); })
-                .then((data) => {
-                    setdeptdat(data.data);
-                })
-        }, [])
 
         const postdev = axios.create({
             baseURL: "https://erp-new-production.up.railway.app/api/get?model=subdivision"
         });
 
-        const postdevfun = (dep,rol) => {
+        const postdevfun = (dep, rol) => {
             postdev.post('', {
                 department: dep,
                 name: rol
@@ -219,7 +315,7 @@ function Devision() {
                         <h6>Manage Users / Devision </h6>
                     </div>
                     <div className="tablepadding">
-                        {dispDevision == false ? <Devisioncomp devision={devisiondata} /> : <AddDevision />}
+                        {dispDevision == false ? <Devisioncomp devision={devisiondata} deptdat={deptdat} /> : <AddDevision />}
                     </div>
                 </div>
             </div>

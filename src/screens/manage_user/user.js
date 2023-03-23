@@ -1,30 +1,45 @@
 import React, { useState, useEffect } from "react";
 import Header from "../../comp/header/header";
 import Sidenav from "../../comp/sidenav/sidenav";
-import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Button,
-    IconButton, TableContainer, Table, TableBody, TableCell, TableHead, TableRow, Paper } from "@mui/material";
+import {
+    Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Button, Slide,
+    IconButton, TableContainer, Table, TableBody, TableCell, TableHead, TableRow, Paper
+} from "@mui/material";
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import '../common.css';
 import Loader from "../../comp/Load/loading";
 import axios from "axios";
 
-function Butns() {
-    return (
-        <>
-            <IconButton aria-label="expand row" size="small" sx={{ marginLeft: '0.5em' }}><EditIcon /></IconButton>
+const Transition = React.forwardRef(function Transition(props, ref) {
+    return <Slide direction="up" ref={ref} {...props} />;
+});
 
-        </>
-    );
-}
 
 
 let UserComp = (props) => {
     const { users } = props;
+    const { branchdat } = props;
+    const { userroldat } = props;
     let count = 0;
     const [pk, setpk] = useState();
     const [delproname, setdelproname] = useState('');
     const [open, setOpen] = useState(false);
+
+    {/* Update var */ }
+
+    const [Uopen, setUopen] = useState(false);
+    const [updtpk, setupdtpk] = useState();
+    const [upempid, setupempid] = useState('');
+    const [upnme, setupnme] = useState('');
+    const [upemil, setupemil] = useState('');
+    const [upphn, setupphn] = useState('');
+    const [uprol, setuprol] = useState('');
+    const [uprolget, setuprolget] = useState('');
+    const [upbrch, setupbrch] = useState('');
+    const [upbrchget, setupbrchget] = useState('');
+    const [uppswd, setuppswd] = useState('');
+
 
     const handleClickOpen = () => {
         setOpen(true);
@@ -34,8 +49,68 @@ let UserComp = (props) => {
         setOpen(false);
     };
 
+    const UhandleClickOpen = () => {
+        setUopen(true);
+    };
+
+    const UhandleClose = () => {
+        setUopen(false);
+    };
+
     function doDelete() {
         deleteRow(pk);
+    }
+    var bodydata = null;
+
+    if(uppswd == ''){
+        bodydata =  {
+            employee_id: upempid,
+            name: upnme,
+            email: upemil,
+            phone: upphn,
+            role: uprol,
+            branch: upbrch,
+        }
+    }else{
+        bodydata = {
+            employee_id: upempid,
+            name: upnme,
+            email: upemil,
+            phone: upphn,
+            role: uprol,
+            branch: upbrch,
+            password:uppswd
+        }
+    } 
+
+    const cntryupdt = axios.create({ //
+        baseURL: `https://erp-new-production.up.railway.app/api/signup?pk=${updtpk}`
+    });    
+
+    const updtuser = () => {
+
+        cntryupdt.put('', 
+            bodydata    
+        )
+            .then((res) => {
+                console.log("Post After", res)
+                if (res.data.status === 'success') {
+                    alert('put success');
+                }
+                else {
+                    if (res.data.status === 'failure') {
+                        alert('Something Went Wrong Please Try Again...');
+                    }
+                }
+
+            }).catch((err) => {
+                console.log(err);
+            })
+    };
+
+    let doPUT = (e) => {
+        e.preventDefault();
+        updtuser();
     }
 
     const deleteRow = (pkobj) => {
@@ -73,7 +148,7 @@ let UserComp = (props) => {
 
                     <TableBody>
                         {users.map((usr) => (
-                            <TableRow hover='true'>
+                            <TableRow hover={true}>
                                 <TableCell>{++count}</TableCell>
                                 <TableCell>{usr.employee_id != null ? usr.employee_id : "Null"}</TableCell>
                                 <TableCell>{usr.name != null ? usr.name : "Null"}</TableCell>
@@ -81,10 +156,18 @@ let UserComp = (props) => {
                                 <TableCell>{usr.phone != null ? usr.phone : "Null"}</TableCell>
                                 <TableCell>{usr.role_get != null ? usr.role_get : "Null"}</TableCell>
                                 <TableCell>{usr.branch_get != null ? usr.branch_get : "Null"}</TableCell>
-                                <TableCell><IconButton aria-label="expand row" size="small"
-                                    onClick={() => { setpk(usr.pk); setdelproname(usr.name); handleClickOpen(); }}
-                                    sx={{ color: 'rgba(255, 0, 0, 0.755)', marginRight: '1em' }}>
-                                    <DeleteIcon /></IconButton></TableCell>
+                                <TableCell>
+                                    <IconButton aria-label="expand row" size="small"
+                                        onClick={() => {
+                                            setupdtpk(usr.pk); setupempid(usr.employee_id); setupnme(usr.name); setupemil(usr.email);
+                                            setupphn(usr.phone); setuprol(usr.role); setuprolget(usr.role_get); setupbrch(usr.branch);
+                                            setupbrchget(usr.branch_get); UhandleClickOpen();
+                                        }}
+                                    ><EditIcon /></IconButton>
+                                    <IconButton aria-label="expand row" size="small"
+                                        onClick={() => { setpk(usr.pk); setdelproname(usr.name); handleClickOpen(); }}
+                                        sx={{ color: 'rgba(255, 0, 0, 0.755)', marginRight: '1em' }}>
+                                        <DeleteIcon /></IconButton></TableCell>
                             </TableRow>
                         ))}
                     </TableBody>
@@ -113,6 +196,72 @@ let UserComp = (props) => {
                     </DialogActions>
                 </Dialog>
             </div>
+            <div>
+                <Dialog
+                    open={Uopen}
+                    onClose={UhandleClose}
+                    TransitionComponent={Transition}
+                >
+                    <div className="comhed">
+                        <h5>Update User</h5>
+                    </div>
+                    <DialogTitle id="alert-dialog-title">
+                        {"Row Details :  "}
+                    </DialogTitle>
+                    <DialogContent>
+
+                        <div className="row">
+                            <div className="col-lg-6 editscrn">
+                                <label className="micardlble" >Employee ID</label><br />
+                                <input className="micardinpt" value={upempid} onChange={(e) => { setupempid(e.target.value) }} />
+                            </div>
+
+                            <div className="col-lg-6 editscrn">
+                                <label className="micardlble" >Name</label><br />
+                                <input className="micardinpt" value={upnme} onChange={(e) => { setupnme(e.target.value) }} />
+                            </div>
+
+                            <div className="col-lg-6">
+                                <label className="micardlble">Email</label><br />
+                                <input className="micardinpt" value={upemil} onChange={(e) => { setupemil(e.target.value) }} required />
+                            </div>
+                            <div className="col-lg-6">
+                                <label className="micardlble">Phone</label><br />
+                                <input className="micardinpt" value={upphn} onChange={(e) => { setupphn(e.target.value) }} required />
+                            </div>
+                            <div className="col-lg-6">
+                                <label className="micardlble">Branches</label><br />
+                                <select className="micardinpt" onChange={(e) => { setupbrch(e.target.value) }}>
+                                    <option defaultValue={true} value={upbrch}>{upbrchget}</option>
+                                    {branchdat.map(brnchobj => (
+                                        <>
+                                            <option value={brnchobj.pk}>{brnchobj.branch_name}</option>
+                                        </>
+                                    ))}
+                                </select>
+                            </div>
+                            <div className="col-lg-6">
+                                <label className="micardlble">Role</label><br />
+                                <select className="micardinpt" onChange={(e) => { setuprol(e.target.value) }}>
+                                    <option defaultValue={true} value={uprol} required>{uprolget}</option>
+                                    {userroldat.map(rolobj => (
+                                        <>
+                                            <option value={rolobj.pk}>{rolobj.role}</option>
+                                        </>
+                                    ))}
+                                </select>
+                            </div>
+                            <div className="col-lg-6">
+                                <label className="micardlble">Password</label><br />
+                                <input className="micardinpt" onChange={(e) => { setuppswd(e.target.value) }} placeholder={'NOT REQUIRED'}/>
+                            </div>
+
+                        </div><br />
+                        <button className="comadbtn" onClick={doPUT} style={{ marginBottom: 'unset' }}>Update</button>
+                        <button className="cancelbtn" onClick={UhandleClose} >Discord</button>
+                    </DialogContent>
+                </Dialog><br />
+            </div>
         </>
     );
 }
@@ -124,19 +273,29 @@ let UserComp = (props) => {
 function Users() {
     const [dispUser, setdispUser] = useState(false);
     const [usersdata, setusersdata] = useState([]);
-
+    const [branchdat, setbranchdat] = useState([]);
+    const [userroldat, setusrroldat] = useState([]);
     useEffect(() => {
+        fetch('https://erp-new-production.up.railway.app/api/get?model=branch')
+            .then((res) => { return res.json(); })
+            .then((data) => {
+                setbranchdat(data.data)
+            })
+        fetch('https://erp-new-production.up.railway.app/api/get?model=userrole')
+            .then((res) => { return res.json(); })
+            .then((data) => {
+                setusrroldat(data.data);
+            })
         fetch('https://erp-new-production.up.railway.app/api/get?model=user')
             .then((res) => { return res.json(); })
             .then((data) => {
-                console.log(data.data);
                 setusersdata(data.data)
             })
     }, [])
 
+
     let AddUsers = () => {
-        const [branchdat, setbranchdat] = useState([]);
-        const [userroldat, setusrroldat] = useState([]);
+
         const [uname, setuname] = useState('');
         const [empid, setempid] = useState('');
         const [emailid, setemailid] = useState('');
@@ -145,21 +304,8 @@ function Users() {
         const [urole, seturole] = useState();
         const [password, setpassword] = useState('');
         //branchdata
-        useEffect(() => {
-            fetch('https://erp-new-production.up.railway.app/api/get?model=branch')
-                .then((res) => { return res.json(); })
-                .then((data) => {
-                    setbranchdat(data.data)
-                })
-        }, [])
-        //user role data
-        useEffect(() => {
-            fetch('https://erp-new-production.up.railway.app/api/get?model=userrole')
-                .then((res) => { return res.json(); })
-                .then((data) => {
-                    setusrroldat(data.data);
-                })
-        }, [])
+
+
 
         //post url
         const postusrurl = axios.create({
@@ -273,7 +419,7 @@ function Users() {
                         <h6>Manage Users / User </h6>
                     </div>
                     <div className="tablepadding">
-                        {dispUser == false ? <UserComp users={usersdata} /> : <AddUsers />}
+                        {dispUser == false ? <UserComp users={usersdata} userroldat={userroldat} branchdat={branchdat} /> : <AddUsers />}
                     </div>
                 </div>
             </div>
