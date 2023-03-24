@@ -57,7 +57,7 @@ let BranchesTble = (props) => {
     };
 
     const brnchupdt = axios.create({ 
-        baseURL: `https://erp-new-production.up.railway.app/api/get?model=branch&pk=${updtpk}`
+        baseURL: `https://erp-test-3wqc9.ondigitalocean.app/api/get?model=branch&pk=${updtpk}`
     });
 
     const updtCountry = (bnme, cnme, stat, cntry, pin, gst, add) => {
@@ -98,7 +98,7 @@ let BranchesTble = (props) => {
     const deleteRow = (pkobj) => {
         let currentpk = pkobj;
         const deleterowurl = axios.create({ //phase
-            baseURL: `https://erp-new-production.up.railway.app/api/get?model=branch&pk=${currentpk}`
+            baseURL: `https://erp-test-3wqc9.ondigitalocean.app/api/get?model=branch&pk=${currentpk}`
         });
 
         deleterowurl.delete('', {
@@ -264,12 +264,12 @@ function Branches() {
     const [countrydat, setcountrydat] = useState([]);
     const [statedat, setstatedat] = useState([]);
     useEffect(() => {
-        fetch('https://erp-new-production.up.railway.app/api/get?model=country')
+        fetch('https://erp-test-3wqc9.ondigitalocean.app/api/get?model=country')
             .then((res) => { return res.json(); })
             .then((data) => {
                 setcountrydat(data.data);
             })
-        fetch('https://erp-new-production.up.railway.app/api/get?model=state')
+        fetch('https://erp-test-3wqc9.ondigitalocean.app/api/get?model=state')
             .then((res) => { return res.json(); })
             .then((data) => {
                 setstatedat(data.data);
@@ -289,7 +289,7 @@ function Branches() {
 
 
         const postbranchurl = axios.create({
-            baseURL: "https://erp-new-production.up.railway.app/api/get?model=branch"
+            baseURL: "https://erp-test-3wqc9.ondigitalocean.app/api/get?model=branch"
         });
 
         const postbranchfun = (branchname, cityname, state, country, pincode, gstnumbert, address) => {
@@ -391,7 +391,7 @@ function Branches() {
     }
 
     useEffect(() => {
-        fetch('https://erp-new-production.up.railway.app/api/get?model=branch')
+        fetch('https://erp-test-3wqc9.ondigitalocean.app/api/get?model=branch')
             .then((res) => { return res.json(); })
             .then((data) => {
                 setbranchdata(data.data)

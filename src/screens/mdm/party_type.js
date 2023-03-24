@@ -46,7 +46,7 @@ let PartyTypecomp = (props) => {
     };
 
     const prttypupdt = axios.create({ //partytype
-        baseURL: `https://erp-new-production.up.railway.app/api/get?model=partytype&pk=${updtpk}`
+        baseURL: `https://erp-test-3wqc9.ondigitalocean.app/api/get?model=partytype&pk=${updtpk}`
     });
     console.log("Crnt updt PK", updtpk);
 
@@ -83,7 +83,7 @@ let PartyTypecomp = (props) => {
         console.log(pkobj)
         let currentpk = pkobj;
         const deleterowurl = axios.create({ //phase
-            baseURL: `https://erp-new-production.up.railway.app/api/get?model=partytype&pk=${currentpk}`
+            baseURL: `https://erp-test-3wqc9.ondigitalocean.app/api/get?model=partytype&pk=${currentpk}`
         });
 
         deleterowurl.delete('', {
@@ -186,7 +186,7 @@ function Partytype() {
     const [partttypedata, setpartytypedata] = useState([]);
 
     useEffect(() => {
-        fetch('https://erp-new-production.up.railway.app/api/get?model=partytype')
+        fetch('https://erp-test-3wqc9.ondigitalocean.app/api/get?model=partytype')
             .then((res) => { return res.json(); })
             .then((data) => {
                 setpartytypedata(data.data)
@@ -198,7 +198,7 @@ function Partytype() {
     let AddPartyType = () => {
         const [partyinpt, setpartyinpt] = useState('');
         const postprtytype = axios.create({
-            baseURL: "https://erp-new-production.up.railway.app/api/get?model=partytype"
+            baseURL: "https://erp-test-3wqc9.ondigitalocean.app/api/get?model=partytype"
         });
 
         const postPT = (prty) => {

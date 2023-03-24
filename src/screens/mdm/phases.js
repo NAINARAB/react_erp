@@ -53,7 +53,7 @@ let PhasesRowsComp = (props) => {
     };
 
     const cntryupdt = axios.create({ //phases
-        baseURL: `https://erp-new-production.up.railway.app/api/get?model=productionphase&pk=${updtpk}`
+        baseURL: `https://erp-test-3wqc9.ondigitalocean.app/api/get?model=productionphase&pk=${updtpk}`
     });
     console.log("Crnt updt PK", updtpk);
 
@@ -90,7 +90,7 @@ let PhasesRowsComp = (props) => {
         console.log(pkobj)
         let currentpk = pkobj;
         const deleterowurl = axios.create({ //phase
-            baseURL: `https://erp-new-production.up.railway.app/api/get?model=productionphase&pk=${currentpk}`
+            baseURL: `https://erp-test-3wqc9.ondigitalocean.app/api/get?model=productionphase&pk=${currentpk}`
         });
 
         deleterowurl.delete('', {
@@ -112,16 +112,16 @@ let PhasesRowsComp = (props) => {
                             <TableHead>
                                 <TableRow>
                                     <TableCell variant="head" align="left" Width={120} sx={{ backgroundColor: 'rgb(15, 11, 42)', color: 'white', fontWeight: 'bold' }}>S.No</TableCell>
-                                    <TableCell variant="head" align="left" width={maxWidth} sx={{ backgroundColor: 'rgb(15, 11, 42)', color: 'white', fontWeight: 'bold' }}>Phases</TableCell>
-                                    <TableCell variant="head" align="left" width={200} sx={{ backgroundColor: 'rgb(15, 11, 42)', color: 'white', fontWeight: 'bold' }}>Action</TableCell>
+                                    <TableCell variant="head" align="left" sx={{ backgroundColor: 'rgb(15, 11, 42)', color: 'white', fontWeight: 'bold' }}>Phases</TableCell>
+                                    <TableCell variant="head" align="right" width={200} sx={{ backgroundColor: 'rgb(15, 11, 42)', color: 'white', fontWeight: 'bold',paddingRight:'3em' }}>Action</TableCell>
                                 </TableRow>
                             </TableHead>
                             <TableBody>
                                 {arr.map((phrow) => (
-                                    <TableRow hover='true' >
+                                    <TableRow hover={true} >
                                         <TableCell >{++count}</TableCell>
                                         <TableCell>{phrow.phase_name}</TableCell>
-                                        <TableCell>
+                                        <TableCell align="right">
                                             <IconButton aria-label="expand row" size="small"
                                                 onClick={() => { setupdtpk(phrow.pk); setupdtphase(phrow.phase_name); UhandleClickOpen(); }}
                                             ><EditIcon /></IconButton>
@@ -186,7 +186,7 @@ let PhasesRowsComp = (props) => {
 function Phases() {
     const [phasedata, setphasedata] = useState([])
     useEffect(() => {
-        fetch('https://erp-dwe8a.ondigitalocean.app/api/get?model=productionphase')
+        fetch('https://erp-test-3wqc9.ondigitalocean.app/api/get?model=productionphase')
             .then((res) => { return res.json(); })
             .then((data) => {
                 setphasedata(data.data)
@@ -227,7 +227,7 @@ function Phases() {
     function AddPhases() {
         const [phase, setphase] = useState('');
         const postphase = axios.create({
-            baseURL: "https://erp-dwe8a.ondigitalocean.app/api/get?model=productionphase"
+            baseURL: "https://erp-test-3wqc9.ondigitalocean.app/api/get?model=productionphase"
         });
 
         const postphasefun = (producphase) => {

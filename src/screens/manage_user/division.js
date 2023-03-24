@@ -63,7 +63,7 @@ let Devisioncomp = (props) => {
     }
 
     const cntryupdt = axios.create({ //subdevision
-        baseURL: `https://erp-new-production.up.railway.app/api/get?model=subdivision&pk=${updtpk}`
+        baseURL: `https://erp-test-3wqc9.ondigitalocean.app/api/get?model=subdivision&pk=${updtpk}`
     });
     console.log("Crnt updt PK", updtpk);
 
@@ -96,7 +96,7 @@ let Devisioncomp = (props) => {
     const deleteRow = (pkobj) => {
         let currentpk = pkobj;
         const deleterowurl = axios.create({ //subdevision
-            baseURL: `https://erp-new-production.up.railway.app/api/get?model=subdivision&pk=${currentpk}`
+            baseURL: `https://erp-test-3wqc9.ondigitalocean.app/api/get?model=subdivision&pk=${currentpk}`
         });
 
         deleterowurl.delete('', {
@@ -123,7 +123,7 @@ let Devisioncomp = (props) => {
                     </TableHead>
                     <TableBody>
                         {devision.map((devdata) => (
-                            <TableRow hover='true'>
+                            <TableRow hover={true}>
                                 <TableCell>{++count}</TableCell>
                                 <TableCell>{devdata.name}</TableCell>
                                 <TableCell>{devdata.department_get}</TableCell>
@@ -215,12 +215,12 @@ function Devision() {
     const [devisiondata, setdevisiondata] = useState([]);
     const [deptdat, setdeptdat] = useState([]);
     useEffect(() => {
-        fetch('https://erp-new-production.up.railway.app/api/get?model=subdivision')
+        fetch('https://erp-test-3wqc9.ondigitalocean.app/api/get?model=subdivision')
             .then((res) => { return res.json(); })
             .then((data) => {
                 setdevisiondata(data.data);
             })
-        fetch('https://erp-new-production.up.railway.app/api/get?model=department')
+        fetch('https://erp-test-3wqc9.ondigitalocean.app/api/get?model=department')
             .then((res) => { return res.json(); })
             .then((data) => {
                 setdeptdat(data.data);
@@ -234,7 +234,7 @@ function Devision() {
 
 
         const postdev = axios.create({
-            baseURL: "https://erp-new-production.up.railway.app/api/get?model=subdivision"
+            baseURL: "https://erp-test-3wqc9.ondigitalocean.app/api/get?model=subdivision"
         });
 
         const postdevfun = (dep, rol) => {

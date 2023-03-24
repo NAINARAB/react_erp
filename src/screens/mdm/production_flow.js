@@ -64,27 +64,17 @@ function Row(props) {
 
     useEffect(() => { 
 
-        fetch(`https://erp-new-production.up.railway.app/api/get?model=productivity&filter_by=&{product}&filter_value=${row.pk}`)
+        fetch(`https://erp-test-3wqc9.ondigitalocean.app/api/get?model=productivity&filter_by=&{product}&filter_value=${row.pk}`)
             .then((res) => { return res.json(); })
             .then((data) => {
                 setpfdatas(data.data);console.log(data.data)
             })
-    }, [])
-
-
-    //production-phase
-
-    useEffect(() => {
-        fetch('https://erp-new-production.up.railway.app/api/get?model=productionphase')
+        fetch('https://erp-test-3wqc9.ondigitalocean.app/api/get?model=productionphase')
             .then((res) => { return res.json(); })
             .then((data) => {
                 setproductionphasearr(data.data);
             })
-    }, [])
-
-    //parts product
-    useEffect(() => {
-        fetch('https://erp-new-production.up.railway.app/api/get?model=product')
+        fetch('https://erp-test-3wqc9.ondigitalocean.app/api/get?model=product')
             .then((res) => { return res.json(); })
             .then((data) => {
                 setparts(data.data)
@@ -204,7 +194,7 @@ function Productionflow() {
     const [productdata, setproductdata] = useState([]);
 
     useEffect(() => {
-        fetch('https://erp-new-production.up.railway.app/api/get?model=product')
+        fetch('https://erp-test-3wqc9.ondigitalocean.app/api/get?model=product')
             .then((res) => { return res.json(); })
             .then((data) => {
                 setproductdata(data.data)

@@ -52,7 +52,7 @@ let Countrycomp = (props) => {
     }
 
     const cntryupdt = axios.create({ //country
-        baseURL: `https://erp-new-production.up.railway.app/api/get?model=country&pk=${updtpk}`
+        baseURL: `https://erp-test-3wqc9.ondigitalocean.app/api/get?model=country&pk=${updtpk}`
     });
     console.log("Crnt updt PK",updtpk);
 
@@ -86,7 +86,7 @@ let Countrycomp = (props) => {
         console.log(pkobj)
         let currentpk = pkobj;
         const deleterowurl = axios.create({ //phase
-            baseURL: `https://erp-new-production.up.railway.app/api/get?model=country&pk=${currentpk}`
+            baseURL: `https://erp-test-3wqc9.ondigitalocean.app/api/get?model=country&pk=${currentpk}`
         });
 
         deleterowurl.delete('', {
@@ -197,7 +197,7 @@ function Country() {
 
 
     useEffect(() => {
-        fetch('https://erp-new-production.up.railway.app/api/get?model=country')
+        fetch('https://erp-test-3wqc9.ondigitalocean.app/api/get?model=country')
             .then((res) => { return res.json(); })
             .then((data) => {
                 setcountrydata(data.data);
@@ -208,7 +208,7 @@ function Country() {
         const [countryinpt, setcountryinpt] = useState('');
         const [countrycode, setcountrycode] = useState('');
         const postcountryinpt = axios.create({
-            baseURL: "https://erp-new-production.up.railway.app/api/get?model=country"
+            baseURL: "https://erp-test-3wqc9.ondigitalocean.app/api/get?model=country"
         });
 
         const postcountry = (country,code) => {

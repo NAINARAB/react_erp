@@ -30,12 +30,12 @@ function Rawmaterialsaccessories() {
     const [measurdunit, setmeasuredunit] = useState([])
 
         useEffect(() => {
-            fetch('https://erp-new-production.up.railway.app/api/get?model=currency')
+            fetch('https://erp-test-3wqc9.ondigitalocean.app/api/get?model=currency')
                 .then((res) => { return res.json(); })
                 .then((data) => {
                     setcurncydat(data.data);
                 })
-            fetch('https://erp-new-production.up.railway.app/api/get?model=measuredunits')
+            fetch('https://erp-test-3wqc9.ondigitalocean.app/api/get?model=measuredunits')
                 .then((res) => { return res.json(); })
                 .then((data) => {
                     setmeasuredunit(data.data);
@@ -72,7 +72,7 @@ function Rawmaterialsaccessories() {
     };
 
     const rmaupdt = axios.create({
-        baseURL: `https://erp-new-production.up.railway.app/api/get?model=rawmaterial&pk=${updtpk}`
+        baseURL: `https://erp-test-3wqc9.ondigitalocean.app/api/get?model=rawmaterial&pk=${updtpk}`
     });
     console.log("Crnt updt PK", updtpk);
 
@@ -131,7 +131,7 @@ function Rawmaterialsaccessories() {
 
 
         const rmapost = axios.create({
-            baseURL: "https://erp-new-production.up.railway.app/api/get?model=rawmaterial"
+            baseURL: "https://erp-test-3wqc9.ondigitalocean.app/api/get?model=rawmaterial"
         });
 
         const postrma = (rmcode, rmname, unit, minstock, rmmaxprice, currency,) => {
@@ -237,7 +237,7 @@ function Rawmaterialsaccessories() {
 
     useEffect(() => {
 
-        fetch('https://erp-new-production.up.railway.app/api/get?model=rawmaterial')
+        fetch('https://erp-test-3wqc9.ondigitalocean.app/api/get?model=rawmaterial')
             .then((res) => { return res.json(); })
             .then((data) => {
                 setrmadata(data.data)
@@ -251,7 +251,7 @@ function Rawmaterialsaccessories() {
     const deleteRowRM = (pkobj) => {
         let currentpk = pkobj;
         const deleterowurl = axios.create({
-            baseURL: `https://erp-new-production.up.railway.app/api/get?model=rawmaterial&pk=${currentpk}`
+            baseURL: `https://erp-test-3wqc9.ondigitalocean.app/api/get?model=rawmaterial&pk=${currentpk}`
         });
 
         deleterowurl.delete('', {

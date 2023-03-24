@@ -84,7 +84,7 @@ let UserComp = (props) => {
     } 
 
     const cntryupdt = axios.create({ //
-        baseURL: `https://erp-new-production.up.railway.app/api/signup?pk=${updtpk}`
+        baseURL: `https://erp-test-3wqc9.ondigitalocean.app/api/signup?pk=${updtpk}`
     });    
 
     const updtuser = () => {
@@ -116,7 +116,7 @@ let UserComp = (props) => {
     const deleteRow = (pkobj) => {
         let currentpk = pkobj;
         const deleterowurl = axios.create({ //user
-            baseURL: `https://erp-new-production.up.railway.app/api/get?model=user&pk=${currentpk}`
+            baseURL: `https://erp-test-3wqc9.ondigitalocean.app/api/get?model=user&pk=${currentpk}`
         });
 
         deleterowurl.delete('', {
@@ -276,17 +276,17 @@ function Users() {
     const [branchdat, setbranchdat] = useState([]);
     const [userroldat, setusrroldat] = useState([]);
     useEffect(() => {
-        fetch('https://erp-new-production.up.railway.app/api/get?model=branch')
+        fetch('https://erp-test-3wqc9.ondigitalocean.app/api/get?model=branch')
             .then((res) => { return res.json(); })
             .then((data) => {
                 setbranchdat(data.data)
             })
-        fetch('https://erp-new-production.up.railway.app/api/get?model=userrole')
+        fetch('https://erp-test-3wqc9.ondigitalocean.app/api/get?model=userrole')
             .then((res) => { return res.json(); })
             .then((data) => {
                 setusrroldat(data.data);
             })
-        fetch('https://erp-new-production.up.railway.app/api/get?model=user')
+        fetch('https://erp-test-3wqc9.ondigitalocean.app/api/get?model=user')
             .then((res) => { return res.json(); })
             .then((data) => {
                 setusersdata(data.data)
@@ -309,7 +309,7 @@ function Users() {
 
         //post url
         const postusrurl = axios.create({
-            baseURL: "https://erp-new-production.up.railway.app/api/signup   "
+            baseURL: "https://erp-test-3wqc9.ondigitalocean.app/api/signup   "
         });
 
         const postnewuser = (eid, name, email, phn, pswrd, rol, brach) => {

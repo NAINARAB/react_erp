@@ -59,7 +59,7 @@ const Product = () => {
     };
 
     const prdupdt = axios.create({ //
-        baseURL: `https://erp-new-production.up.railway.app/api/get?model=product&pk=${updtpk}`
+        baseURL: `https://erp-test-3wqc9.ondigitalocean.app/api/get?model=product&pk=${updtpk}`
     });
     
 
@@ -98,12 +98,12 @@ const Product = () => {
 
     useEffect(() => {
 
-        fetch('https://erp-new-production.up.railway.app/api/get?model=product')
+        fetch('https://erp-test-3wqc9.ondigitalocean.app/api/get?model=product')
             .then((res) => { return res.json(); })
             .then((data) => {
                 setrows(data.data)
             })
-        fetch('https://erp-new-production.up.railway.app/api/get?model=currency')
+        fetch('https://erp-test-3wqc9.ondigitalocean.app/api/get?model=currency')
             .then((res) => { return res.json(); })
             .then((data) => {
                 setcountrydat(data.data);
@@ -128,7 +128,7 @@ const Product = () => {
 
 
         const prdtpost = axios.create({
-            baseURL: "https://erp-new-production.up.railway.app/api/get?model=product"
+            baseURL: "https://erp-test-3wqc9.ondigitalocean.app/api/get?model=product"
         });
 
         const postProduct = (productcode, productname, producttype, mult, prt, msq, currency, minprice, maxprice) => {
@@ -160,6 +160,7 @@ const Product = () => {
                 })
         };
 
+        
         let doPost = (e) => {
             e.preventDefault();
             postProduct(productcode, productname, producttype, multi, parts, minstock, currency, minprice, maxprice);
@@ -175,18 +176,18 @@ const Product = () => {
                         <div className="micardbdy row">
                             <div className="col-lg-4">
                                 <label className="micardlble" >Product Name</label><br />
-                                <input className="micardinpt" value={productname} onChange={(e) => setproductname(e.target.value)} required />
+                                <input className="micardinpt" onChange={(e) => setproductname(e.target.value)} required />
                             </div>
 
                             <div className="col-lg-4">
                                 <label className="micardlble">Product Code</label><br />
-                                <input value={productcode} onChange={(e) => { setproductcode(e.target.value); }} className="micardinpt" required />
+                                <input onChange={(e) => { setproductcode(e.target.value); }} className="micardinpt" required />
                             </div>
 
                             <div className="col-lg-4">
                                 <label className="micardlble">Product Type</label><br />
-                                <select className="micardinpt" value={producttype} onChange={(e) => { setproductype(e.target.value); }} required>
-                                    <option defaultValue={true} value='' disabled='true'>Select Type</option>
+                                <select className="micardinpt" onChange={(e) => { setproductype(e.target.value); }} required>
+                                    <option defaultValue={true} value={''}>Select Type</option>
                                     <option value={"finished"}>Finished</option>
                                     <option value={"semi-finished"}>Semi-Finished</option>
                                 </select>
@@ -195,7 +196,7 @@ const Product = () => {
                             <div className="col-lg-4">
                                 <label className="micardlble">Currency</label><br />
                                 <select className="micardinpt" onChange={(e) => { setcurrency(e.target.value); }} required>
-                                    <option value=""  defaultValue={true} >Select Currency</option>
+                                    <option value={""}  defaultValue={true} >Select Currency</option>
                                     {countrysdat.map(contobj => (
                                         <>
                                             <option value={contobj.pk}>{contobj.currency_name}</option>
@@ -208,26 +209,26 @@ const Product = () => {
 
                             <div className="col-lg-4">
                                 <label className="micardlble">Min Price</label><br />
-                                <input value={currency} disabled='true' className="micardgrpinpt" />
-                                <input type='number' value={minprice} onChange={(e) => { setminprice(e.target.value); }} className="micardgrpinpt1" />
+                                <input value={currency} disabled={true} className="micardgrpinpt" />
+                                <input type='number' defaultValue={0} min={0} onChange={(e) => { setminprice(e.target.value); }} className="micardgrpinpt1" />
                             </div>
 
 
                             <div className="col-lg-4">
                                 <label className="micardlble">Max Price</label><br />
-                                <input value={currency} disabled='true' className="micardgrpinpt" />
-                                <input type='number' value={maxprice} min={parseInt(minprice) + 1} onChange={(e) => { setmaxprice(e.target.value); }} className="micardgrpinpt1" />
+                                <input value={currency} disabled={true} className="micardgrpinpt" />
+                                <input type='number' defaultValue={0} min={parseInt(minprice) + 1} onChange={(e) => { setmaxprice(e.target.value); }} className="micardgrpinpt1" />
                             </div>
 
                             <div className="col-lg-4">
                                 <label className="micardlble">Minimum Stock</label><br />
-                                <input type={'number'} value={minstock} min={0} onChange={(e) => { setminstock(e.target.value); }} className="micardinpt" required />
+                                <input type={'number'} min={0} defaultValue={0} onChange={(e) => { setminstock(e.target.value); }} className="micardinpt" required />
                             </div>
 
                             <div className="col-lg-4">
                                 <label className="micardlble">Multiple Parts</label><br />
                                 <div className="micardboxinpt">
-                                    <input type={'checkbox'} value={multi} checked={multi} onChange={() => { setmulti(!multi) }} className="micardboxinpt" required />
+                                    <input type={'checkbox'} checked={multi} onChange={() => { setmulti(!multi) }} className="micardboxinpt" required />
                                     &emsp;Add Multiple Parts
                                 </div>
                             </div><div className="col-lg-4"></div>
@@ -252,10 +253,13 @@ const Product = () => {
                                                     variant="filled"
                                                     label="Parts"
                                                     placeholder="type here"
+                                                    id="tagval"
                                                 />
                                             )}
                                         />
-                                    </div><div className="col-lg-6"></div>
+                                    </div><div className="col-lg-6">
+                                        {/* <p>{parts}</p> */}
+                                    </div>
                                 </> : null}
 
                         </div>
@@ -292,7 +296,7 @@ const Product = () => {
         console.log(pkobj)
         let currentpk = pkobj;
         const deleterowurl = axios.create({
-            baseURL: `https://erp-new-production.up.railway.app/api/get?model=product&pk=${currentpk}`
+            baseURL: `https://erp-test-3wqc9.ondigitalocean.app/api/get?model=product&pk=${currentpk}`
         });
 
         deleterowurl.delete('', {
@@ -402,7 +406,7 @@ const Product = () => {
                     </DialogTitle>
                     <DialogContent>
                         <DialogContentText id="alert-dialog-description">
-                            <b style={{ color: 'black' }}>{delproname}</b>
+                            <b style={{ color: 'black' }}>Product Name : &emsp;{delproname}</b>
                         </DialogContentText>
                     </DialogContent>
                     <DialogActions>

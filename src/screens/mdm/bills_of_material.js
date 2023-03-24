@@ -11,8 +11,6 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import Draggable from 'react-draggable';
 import { Dialog, DialogContent, DialogTitle, Slide, DialogActions } from '@mui/material/';
 import Loader from '../../comp/Load/loading';
-//https://erp-new-production.up.railway.app/api/get?model=billofmaterial&filter_by=product_code&filter_value={primary_key}
-// https://erp-dwe8a.ondigitalocean.app/api/get?model=billofmaterial
 
 const Transition = React.forwardRef(function Transition(props, ref) {
     return <Slide direction="left" ref={ref} {...props} />;
@@ -55,7 +53,7 @@ function BomComp(props) {
 
     useEffect(() => {
 
-        fetch(`https://erp-new-production.up.railway.app/api/get?model=billofmaterial&filter_by=&{product_code}&filter_value&{row.pk}`)
+        fetch(`https://erp-test-3wqc9.ondigitalocean.app/api/get?model=billofmaterial&filter_by=&{product_code}&filter_value&{row.pk}`)
             .then((res) => { return res.json(); })
             .then((data) => {
                 setbomdata(data.data);
@@ -173,7 +171,7 @@ function Billsofmaterials() {
     let count = 0;
     useEffect(() => {
 
-        fetch('https://erp-new-production.up.railway.app/api/get?model=product')
+        fetch('https://erp-test-3wqc9.ondigitalocean.app/api/get?model=product')
             .then((res) => { return res.json(); })
             .then((data) => {
                 setproductdata(data.data); 

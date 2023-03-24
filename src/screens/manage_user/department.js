@@ -46,7 +46,7 @@ let DepartmentComp = (props) => {
     };
 
     const cntryupdt = axios.create({ //department
-        baseURL: `https://erp-new-production.up.railway.app/api/get?model=department&pk=${updtpk}`
+        baseURL: `https://erp-test-3wqc9.ondigitalocean.app/api/get?model=department&pk=${updtpk}`
     });
 
     const updtCountry = (nme, rol) => {
@@ -91,7 +91,7 @@ let DepartmentComp = (props) => {
     const deleteRow = (pkobj) => {
         let currentpk = pkobj;
         const deleterowurl = axios.create({ //department
-            baseURL: `https://erp-new-production.up.railway.app/api/get?model=department&pk=${currentpk}`
+            baseURL: `https://erp-test-3wqc9.ondigitalocean.app/api/get?model=department&pk=${currentpk}`
         });
 
         deleterowurl.delete('', {
@@ -203,7 +203,7 @@ function Department() {
     const [departmentdata, setdepartmentdata] = useState([]);
 
     useEffect(() => {
-        fetch('https://erp-new-production.up.railway.app/api/get?model=department')
+        fetch('https://erp-test-3wqc9.ondigitalocean.app/api/get?model=department')
             .then((res) => { return res.json(); })
             .then((data) => {
                 setdepartmentdata(data.data)
@@ -214,7 +214,7 @@ function Department() {
         const [deptname, setdeptname] = useState('');
         const [deptrole, setdeptrole] = useState('');
         const postdept = axios.create({
-            baseURL: "https://erp-new-production.up.railway.app/api/get?model=department"
+            baseURL: "https://erp-test-3wqc9.ondigitalocean.app/api/get?model=department"
         });
 
         const postdeptfun = (depart, deptrl) => {
