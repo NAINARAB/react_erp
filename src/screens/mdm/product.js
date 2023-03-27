@@ -11,8 +11,8 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import Loader from "../../comp/Load/loading";
 import axios from "axios";
 
-const trarr =['up','down','left','right'];
-var item = trarr[Math.floor(Math.random()*trarr.length)];
+const trarr = ['up', 'down', 'left', 'right'];
+var item = trarr[Math.floor(Math.random() * trarr.length)];
 
 const Transition = React.forwardRef(function Transition(props, ref) {
     return <Slide direction={item} ref={ref} {...props} />;
@@ -41,6 +41,7 @@ const Product = () => {
     const [prcrcy, setcrcy] = useState('');
     const [prcrcypk, setcrcypk] = useState('');
     const [prmp, setmp] = useState('');
+    const [prmparr, setprmparr] = useState([]);
 
     const handleClickOpen = () => {
         setOpen(true);
@@ -61,9 +62,9 @@ const Product = () => {
     const prdupdt = axios.create({ //
         baseURL: `https://erp-test-3wqc9.ondigitalocean.app/api/get?model=product&pk=${updtpk}`
     });
-    
 
-    const pudtProduct = (prc, prn, prty, minstk, minpr, maxpr, crny, mp) => {
+
+    const pudtProduct = (prc, prn, prty, minstk, minpr, maxpr, crny, mp, mpar) => {
         prdupdt.put('', {
             product_code: prc,
             product_name: prn,
@@ -72,7 +73,8 @@ const Product = () => {
             maximum_price: maxpr,
             minimum_price: minpr,
             currency: crny,
-            multiple_parts:mp
+            multiple_parts: mp,
+            parts: mpar
         })
             .then((res) => {
                 console.log("Post After", res)
@@ -92,7 +94,7 @@ const Product = () => {
 
     let doPUT = (e) => {
         e.preventDefault();
-        pudtProduct(prco,prnme,prtyp,prmsq,prmnp,prmxp,prcrcypk,prmp);
+        pudtProduct(prco, prnme, prtyp, prmsq, prmnp, prmxp, prcrcypk, prmp, prmparr);
     }
 
 
@@ -115,7 +117,7 @@ const Product = () => {
 
 
 
-    let Addproduct = () => {
+    const Addproduct = () => {
         const [productname, setproductname] = useState('');
         const [productcode, setproductcode] = useState('');
         const [producttype, setproductype] = useState('');
@@ -146,8 +148,9 @@ const Product = () => {
                 .then((res) => {
                     console.log("after then", res)
                     if (res.data.status === 'success') {
-                        alert("Post Successfully");
-                        console.log("Posted the data")
+                        console.log(res.data);
+                        // alert("Post Successfully");
+                        // console.log("Posted the data")
                     }
                     else {
                         if (res.data.status === 'failure') {
@@ -160,11 +163,10 @@ const Product = () => {
                 })
         };
 
-        
-        let doPost = (e) => {
+
+        const doPost = (e) => {
             e.preventDefault();
             postProduct(productcode, productname, producttype, multi, parts, minstock, currency, minprice, maxprice);
-            window.location.reload();
         }
 
         return (
@@ -196,7 +198,7 @@ const Product = () => {
                             <div className="col-lg-4">
                                 <label className="micardlble">Currency</label><br />
                                 <select className="micardinpt" onChange={(e) => { setcurrency(e.target.value); }} required>
-                                    <option value={""}  defaultValue={true} >Select Currency</option>
+                                    <option value={""} defaultValue={true} >Select Currency</option>
                                     {countrysdat.map(contobj => (
                                         <>
                                             <option value={contobj.pk}>{contobj.currency_name}</option>
@@ -210,19 +212,19 @@ const Product = () => {
                             <div className="col-lg-4">
                                 <label className="micardlble">Min Price</label><br />
                                 <input value={currency} disabled={true} className="micardgrpinpt" />
-                                <input type='number' defaultValue={0} min={0} onChange={(e) => { setminprice(e.target.value); }} className="micardgrpinpt1" />
+                                <input type='number' min={0} onChange={(e) => { setminprice(e.target.value); }} className="micardgrpinpt1" placeholder="Minimum Value : 0" />
                             </div>
 
 
                             <div className="col-lg-4">
                                 <label className="micardlble">Max Price</label><br />
                                 <input value={currency} disabled={true} className="micardgrpinpt" />
-                                <input type='number' defaultValue={0} min={parseInt(minprice) + 1} onChange={(e) => { setmaxprice(e.target.value); }} className="micardgrpinpt1" />
+                                <input type='number' min={parseInt(minprice) + 1} onChange={(e) => { setmaxprice(e.target.value); }} placeholder="Grater Then Minimum Price" className="micardgrpinpt1" />
                             </div>
 
                             <div className="col-lg-4">
                                 <label className="micardlble">Minimum Stock</label><br />
-                                <input type={'number'} min={0} defaultValue={0} onChange={(e) => { setminstock(e.target.value); }} className="micardinpt" required />
+                                <input type={'number'} min={0} onChange={(e) => { setminstock(e.target.value); console.log('values in prr', parts); }} className="micardinpt" placeholder="Minimum Value : 0" required />
                             </div>
 
                             <div className="col-lg-4">
@@ -241,7 +243,9 @@ const Product = () => {
                                             id="tags-filled"
                                             options={dummy.map((option) => option.title)}
                                             freeSolo
-                                            onChange={(e) => { parts.push(e.target.value); console.log(parts) }}
+                                            onChange={(item, index) => {
+                                                setparts(index);
+                                            }}
                                             renderTags={(value, getTagProps) =>
                                                 value.map((option, index) => (
                                                     <Chip variant="outlined" label={option} onDelete={() => { parts.pop(parts[index]) }} {...getTagProps({ index })} />
@@ -257,8 +261,8 @@ const Product = () => {
                                                 />
                                             )}
                                         />
-                                    </div><div className="col-lg-6">
-                                        {/* <p>{parts}</p> */}
+                                    </div><div className="col-lg-6" >
+
                                     </div>
                                 </> : null}
 
@@ -311,8 +315,8 @@ const Product = () => {
     }
 
     const DispDidenav = React.useCallback(() => {
-        return(<><Sidenav /></>);
-    },[]);
+        return (<><Sidenav /></>);
+    }, []);
     return (
         <>
             <div className="row">
@@ -335,17 +339,17 @@ const Product = () => {
                                     <Table stickyHeader aria-label="simple table">
                                         <TableHead >
                                             <TableRow>
-                                                <TableCell variant="head" sx={{ fontWeight: 'bold',backgroundColor: 'rgb(15, 11, 42)', color: 'white' }} >S.No</TableCell>
-                                                <TableCell variant="head" sx={{ fontWeight: 'bold',backgroundColor: 'rgb(15, 11, 42)', color: 'white' }} >Product Name</TableCell>
-                                                <TableCell variant="head" sx={{ fontWeight: 'bold',backgroundColor: 'rgb(15, 11, 42)', color: 'white' }} >Product Code</TableCell>
-                                                <TableCell variant="head" sx={{ fontWeight: 'bold',backgroundColor: 'rgb(15, 11, 42)', color: 'white' }} >Product Type</TableCell>
-                                                <TableCell variant="head" sx={{ fontWeight: 'bold',backgroundColor: 'rgb(15, 11, 42)', color: 'white' }} >Min Stock</TableCell>
-                                                <TableCell variant="head" sx={{ fontWeight: 'bold',backgroundColor: 'rgb(15, 11, 42)', color: 'white' }} >Min Price</TableCell>
-                                                <TableCell variant="head" sx={{ fontWeight: 'bold',backgroundColor: 'rgb(15, 11, 42)', color: 'white' }} >Max Price</TableCell>
-                                                <TableCell variant="head" sx={{ fontWeight: 'bold',backgroundColor: 'rgb(15, 11, 42)', color: 'white' }} >Currency</TableCell>
-                                                <TableCell variant="head" sx={{ fontWeight: 'bold',backgroundColor: 'rgb(15, 11, 42)', color: 'white' }} >Multiple Parts</TableCell>
-                                                <TableCell variant="head" sx={{ fontWeight: 'bold',backgroundColor: 'rgb(15, 11, 42)', color: 'white' }} >Parts</TableCell>
-                                                <TableCell variant="head" sx={{ fontWeight: 'bold',backgroundColor: 'rgb(15, 11, 42)', color: 'white' }} >Action</TableCell>
+                                                <TableCell variant="head" sx={{ fontWeight: 'bold', backgroundColor: 'rgb(15, 11, 42)', color: 'white' }} >S.No</TableCell>
+                                                <TableCell variant="head" sx={{ fontWeight: 'bold', backgroundColor: 'rgb(15, 11, 42)', color: 'white' }} >Product Name</TableCell>
+                                                <TableCell variant="head" sx={{ fontWeight: 'bold', backgroundColor: 'rgb(15, 11, 42)', color: 'white' }} >Product Code</TableCell>
+                                                <TableCell variant="head" sx={{ fontWeight: 'bold', backgroundColor: 'rgb(15, 11, 42)', color: 'white' }} >Product Type</TableCell>
+                                                <TableCell variant="head" sx={{ fontWeight: 'bold', backgroundColor: 'rgb(15, 11, 42)', color: 'white' }} >Min Stock</TableCell>
+                                                <TableCell variant="head" sx={{ fontWeight: 'bold', backgroundColor: 'rgb(15, 11, 42)', color: 'white' }} >Min Price</TableCell>
+                                                <TableCell variant="head" sx={{ fontWeight: 'bold', backgroundColor: 'rgb(15, 11, 42)', color: 'white' }} >Max Price</TableCell>
+                                                <TableCell variant="head" sx={{ fontWeight: 'bold', backgroundColor: 'rgb(15, 11, 42)', color: 'white' }} >Currency</TableCell>
+                                                <TableCell variant="head" sx={{ fontWeight: 'bold', backgroundColor: 'rgb(15, 11, 42)', color: 'white' }} >Multiple Parts</TableCell>
+                                                <TableCell variant="head" sx={{ fontWeight: 'bold', backgroundColor: 'rgb(15, 11, 42)', color: 'white' }} >Parts</TableCell>
+                                                <TableCell variant="head" sx={{ fontWeight: 'bold', backgroundColor: 'rgb(15, 11, 42)', color: 'white' }} >Action</TableCell>
                                             </TableRow>
                                         </TableHead>
                                         <TableBody>
@@ -365,13 +369,14 @@ const Product = () => {
                                                             <TableCell>{rowobj.maximum_price === null ? "Null" : rowobj.maximum_price}</TableCell>
                                                             <TableCell>{rowobj.currency_get === null ? "Null" : rowobj.currency_get}</TableCell>
                                                             <TableCell>{rowobj.multiple_parts == null ? "Null" : rowobj.multiple_parts === true ? "True" : "False"}</TableCell>
-                                                            <TableCell>{rowobj.parts !== null ? rowobj.parts.length !==0 ? rowobj.parts.join(', ') :'Null' : "Null"}</TableCell>
+                                                            <TableCell>{rowobj.parts !== null ? rowobj.parts.length !== 0 ? rowobj.parts.join(', ') : 'Null' : "Null"}</TableCell>
                                                             <TableCell>
                                                                 <IconButton aria-label="expand" size="small"
                                                                     onClick={() => {
                                                                         setco(rowobj.product_code); setnme(rowobj.product_name); settyp(rowobj.product_type);
                                                                         setmsq(rowobj.minimum_stock_quantity); setmxp(rowobj.maximum_price); setmnp(rowobj.minimum_price);
-                                                                        setcrcy(rowobj.currency_get); setcrcypk(rowobj.currency); setmp(rowobj.multiple_parts);setupdtpk(rowobj.pk)
+                                                                        setcrcy(rowobj.currency_get); setcrcypk(rowobj.currency); setmp(rowobj.multiple_parts); setupdtpk(rowobj.pk);
+                                                                        setprmparr(rowobj.parts);
                                                                         UhandleClickOpen();
                                                                     }}
                                                                 ><EditIcon /></IconButton>
@@ -479,9 +484,41 @@ const Product = () => {
                                     &emsp;Add Multiple Parts
                                 </div>
                             </div>
+                            {prmp === true ?
+                                <>
+                                    <div className="col-lg-12" style={{padding:'1em'}}>
+                                        <Autocomplete
+                                            sx={{backgroundColor:'transparent'}}
+                                            multiple
+                                            id="tags-filled"
+                                            options={dummy.map((option) => option.title)}
+                                            freeSolo
+                                            value={prmparr}
+                                            onChange={(item, index) => {
+                                                setprmparr(index);
+                                            }}
+                                            renderTags={(value, getTagProps) =>
+                                                value.map((option, index) => (
+                                                    <Chip variant="outlined" label={option} onDelete={() => { prmparr.pop(prmparr[index]) }} {...getTagProps({ index })} />
+                                                ))
+                                            }
+                                            renderInput={(params) => (
+                                                <TextField
+                                                    sx={{backgroundColor:'transparent'}}
+                                                    {...params}
+                                                    variant="filled"
+                                                    label="Parts"
+                                                    id="tagval"
+                                                />
+                                            )}
+                                        />
+                                    </div><div className="col-lg-6" >
+
+                                    </div>
+                                </> : null}
                         </div><br />
-                        <button className="comadbtn" onClick={doPUT} style={{marginBottom:'unset'}}>Update</button>
-                    <button className="cancelbtn" onClick={UhandleClose} >Discord</button>
+                        <button className="comadbtn" onClick={doPUT} style={{ marginBottom: 'unset' }}>Update</button>
+                        <button className="cancelbtn" onClick={UhandleClose} >Discord</button>
                     </DialogContent>
                 </Dialog><br />
             </div>

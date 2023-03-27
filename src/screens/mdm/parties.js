@@ -25,6 +25,7 @@ let PartyComp = (props) => {
     const { partytypedata } = props;
     const { statedata } = props;
     const { countrydata } = props;
+    const { rowcount } = props;
     const [open, setOpen] = useState(false);
     const [pk, setpk] = useState();
     const [delproname, setdelproname] = useState('');
@@ -130,7 +131,7 @@ let PartyComp = (props) => {
             <React.Fragment>
                 <TableRow sx={{ '& > *': { borderBottom: 'unset' } }} hover={true} onClick={() => setOpen(!open)} key={count}>
                     <TableCell align="center" component="th" scope="row">
-                        {++count}
+                        {rowcount}
                     </TableCell>
                     <TableCell align="center">{propobj.party_name == null ? "Null" : propobj.party_name}</TableCell>
                     <TableCell align="center">{propobj.party_type_get == null ? "Null" : propobj.party_type_get}</TableCell>
@@ -138,7 +139,14 @@ let PartyComp = (props) => {
                     <TableCell align="center">{propobj.party_contact_name == null ? "Null" : propobj.party_contact_name}</TableCell>
                     <TableCell align="center">{propobj.party_email == null ? "Null" : propobj.party_email}</TableCell>
                     <TableCell align="center">{propobj.party_gstin == null ? "Null" : propobj.party_gstin}</TableCell>
-                    <TableCell align="center">{propobj.party_address == null ? "Null" : propobj.party_address}</TableCell>
+                    <TableCell >{Object.entries(propobj.party_products).map(([prtprokey, prtprovalue]) => {
+                        return(
+                            <li>
+                                {prtprovalue.product}
+                            </li>   
+                        );
+                        
+                    })}</TableCell>
                     <TableCell >
                         <IconButton aria-label="expand row" size="small"
                             onClick={() => {
@@ -234,7 +242,7 @@ let PartyComp = (props) => {
                             <div className="col-lg-4">
                                 <label className="micardlble">Party Type</label><br />
                                 <select className="micardinpt" onChange={(e) => { setupprttyp(e.target.value) }}>
-                                    <option selected='true' value={upprttyp} disabled={true} >{upprttypget}</option>
+                                    <option defaultValue={true} value={upprttyp} >{upprttypget}</option>
                                     {partytypedata.map(prtobj => (
                                         <option>{prtobj.party_type}</option>
                                     ))}
@@ -270,7 +278,7 @@ let PartyComp = (props) => {
                             <div className="col-lg-4">
                                 <label className="micardlble">Country</label><br />
                                 <select className="micardinpt" onChange={(e) => { setupprtcntry(e.target.value) }} required>
-                                    <option disabled={true} selected={true} value={upprtcntry}>{upprtcntryget}</option>
+                                    <option defaultValue={true} value={upprtcntry}>{upprtcntryget}</option>
                                     {countrydata.map(cntryobj => (
                                         <option value={cntryobj.pk}>{cntryobj.country_name}</option>
                                     ))}
@@ -280,7 +288,7 @@ let PartyComp = (props) => {
                             <div className="col-lg-4">
                                 <label className="micardlble">State</label><br />
                                 <select className="micardinpt" onChange={(e) => { setupprtstat(e.target.value) }} required>
-                                    <option value={upprtstat} disabled={true} selected={true}>{upprtstatget}</option>
+                                    <option value={upprtstat} defaultValue={true}>{upprtstatget}</option>
                                     {statedata.map(statobj => (
                                         <option value={statobj.pk}>{statobj.state_name}</option>
                                     ))}
@@ -511,13 +519,16 @@ function Parties() {
                                             <TableCell sx={{ backgroundColor: 'rgb(15, 11, 42)', fontWeight: 'bold', color: 'white' }} align="center">Contact Name</TableCell>
                                             <TableCell sx={{ backgroundColor: 'rgb(15, 11, 42)', fontWeight: 'bold', color: 'white' }} align="center">Email</TableCell>
                                             <TableCell sx={{ backgroundColor: 'rgb(15, 11, 42)', fontWeight: 'bold', color: 'white' }} align="center">GSTIN</TableCell>
-                                            <TableCell sx={{ backgroundColor: 'rgb(15, 11, 42)', fontWeight: 'bold', color: 'white' }} align="center">Products</TableCell>
+                                            <TableCell sx={{ backgroundColor: 'rgb(15, 11, 42)', fontWeight: 'bold', color: 'white' }}  >Products</TableCell>
                                             <TableCell sx={{ backgroundColor: 'rgb(15, 11, 42)', fontWeight: 'bold', color: 'white' }}>Action</TableCell>
                                         </TableRow>
                                     </TableHead>
                                     <TableBody>
                                         {partydata.map(propobject => (
-                                            <PartyComp propobj={propobject} partytypedata={partytypedat} countrydata={countrydat} statedata={statedat} />
+                                            <PartyComp propobj={propobject} partytypedata={partytypedat} countrydata={countrydat} statedata={statedat} 
+                                            rowcount={
+                                                (partydata.length +1 ) - (partydata.length  - count++)
+                                            } />
                                         ))}
                                     </TableBody>
                                 </Table>

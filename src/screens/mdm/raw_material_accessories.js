@@ -2,7 +2,7 @@ import React from "react";
 import Header from "../../comp/header/header";
 import Sidenav from "../../comp/sidenav/sidenav";
 import {
-    Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Button, Slide,
+    Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Button, Slide, Autocomplete, Chip, TextField,
     TableContainer, Table, TableBody, TableCell, TableHead, TableRow, Paper, IconButton
 } from "@mui/material";
 import '../common.css';
@@ -20,6 +20,8 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 function Rawmaterialsaccessories() {
 
     const [dispaddrma, setdispaddrma] = useState(false);
+    const [partydat, setpartydat] = useState([]);
+    const [prty, setprty] = useState([]);
     const [rmadata, setrmadata] = useState([]);
     let count = 0;
     const [pk, setpk] = useState();
@@ -27,20 +29,32 @@ function Rawmaterialsaccessories() {
     const [open, setOpen] = useState(false);
 
     const [curncydat, setcurncydat] = useState([]);
-    const [measurdunit, setmeasuredunit] = useState([])
+    const [measurdunit, setmeasuredunit] = useState([]);
 
-        useEffect(() => {
-            fetch('https://erp-test-3wqc9.ondigitalocean.app/api/get?model=currency')
-                .then((res) => { return res.json(); })
-                .then((data) => {
-                    setcurncydat(data.data);
-                })
-            fetch('https://erp-test-3wqc9.ondigitalocean.app/api/get?model=measuredunits')
-                .then((res) => { return res.json(); })
-                .then((data) => {
-                    setmeasuredunit(data.data);
-                })
-        }, [])
+    // let optsub=[];
+    // partydat.map(tryobj => {
+    //     let ob = {"pks": tryobj.pk,"partyname" : tryobj.party_name};
+    //     optsub.push(ob);
+    // })
+    // console.log(optsub);
+
+    useEffect(() => {
+        fetch('https://erp-test-3wqc9.ondigitalocean.app/api/get?model=currency')
+            .then((res) => { return res.json(); })
+            .then((data) => {
+                setcurncydat(data.data);
+            })
+        fetch('https://erp-test-3wqc9.ondigitalocean.app/api/get?model=measuredunits')
+            .then((res) => { return res.json(); })
+            .then((data) => {
+                setmeasuredunit(data.data);
+            })
+        fetch('https://erp-test-3wqc9.ondigitalocean.app/api/get?model=parties')
+            .then((res) => { return res.json(); })
+            .then((resdata) => {
+                setpartydat(resdata.data);
+            })
+    }, [])
 
     {/* Update RMA variables */ }
     const [Uopen, setUopen] = useState(false);
@@ -53,7 +67,7 @@ function Rawmaterialsaccessories() {
     const [uprmmaxpr, setuprmmaxpr] = useState();
     const [upcrncy, setupcrncy] = useState();
     const [upcrncyget, setupcrncyget] = useState('');
-    const [uppresup, setpresup] = useState([]);
+    // const [uppresup, setpresup] = useState([]);
 
     const UhandleClickOpen = () => {
         setUopen(true);
@@ -74,7 +88,6 @@ function Rawmaterialsaccessories() {
     const rmaupdt = axios.create({
         baseURL: `https://erp-test-3wqc9.ondigitalocean.app/api/get?model=rawmaterial&pk=${updtpk}`
     });
-    console.log("Crnt updt PK", updtpk);
 
     const updtRMA = (rmn, rmc, mu, ms, rmp, crcy) => {
         rmaupdt.put('', {
@@ -103,7 +116,7 @@ function Rawmaterialsaccessories() {
 
     let doPUT = (e) => {
         e.preventDefault();
-        updtRMA(uprmnme,uprmcod,uprmesunt,upminstk,uprmmaxpr,upcrncy);
+        updtRMA(uprmnme, uprmcod, uprmesunt, upminstk, uprmmaxpr, upcrncy);
     }
 
     function opnAdd() {
@@ -126,8 +139,8 @@ function Rawmaterialsaccessories() {
         const [minstock, setminstock] = useState();
         const [currency, setcurrency] = useState();
         const [rmmaxprice, setrmmaxprice] = useState();
-        
-
+        const [presubid, setpresubid] = useState([]);
+        const [presubpk, setpresubpk] = useState([]);
 
 
         const rmapost = axios.create({
@@ -159,6 +172,8 @@ function Rawmaterialsaccessories() {
                     console.log(err);
                 })
         };
+
+        
 
         let doPost = (e) => {
             e.preventDefault();
@@ -217,13 +232,37 @@ function Rawmaterialsaccessories() {
 
                                 <div className="col-lg-4">
                                     <label className="micardlble">RM Max Price</label><br />
-                                    <input className="micardgrpinpt" value={currency} disabled='true' />
+                                    <input className="micardgrpinpt" value={currency} disabled={true} />
                                     <input type='number' onChange={(e) => setrmmaxprice(e.target.value)} className="micardgrpinpt1" />
                                 </div>
 
-                                <div className="col-lg-4">
-                                    {/* for Alignment */}
-                                </div>
+                                {/* <div className="col-lg-4">
+                                    <label className="micardlble">RM Max Price</label><br />
+                                    <Autocomplete
+                                        multiple
+                                        id="tags-filled"
+                                        options={Object.entries(optsub).map(([prtkey, prtval]) => (prtval.partyname))}
+                                        freeSolo
+                                        onChange={(item, index) => {
+                                            setpresubid(index);
+                                            console.log(presubid);
+                                        }}
+                                        renderTags={(value, getTagProps) =>
+                                            value.map((option, index) => (
+                                                <Chip variant="outlined" label={option} onDelete={() => { presubid.pop(presubid[index]) }} {...getTagProps({ index })} />
+                                            ))
+                                        }
+                                        renderInput={(params) => (
+                                            <TextField
+                                                sx={{ backgroundColor: 'transparent' }}
+                                                {...params}
+                                                variant="filled"
+                                                label="Suppliers"
+                                                id="tagval"
+                                            />
+                                        )}
+                                    /><button>TEST</button>
+                                </div> */}
                             </div>
                         </div><br />
                         <button className="comadbtn" onClick={doPost}>Add</button>
@@ -288,15 +327,15 @@ function Rawmaterialsaccessories() {
                                 <Table stickyHeader sx={{ minWidth: 650 }} >
                                     <TableHead >
                                         <TableRow sx={{ backgroundColor: 'rgb(15, 11, 42)' }}>
-                                            <TableCell variant="head" sx={{ fontWeight: 'bold',backgroundColor: 'rgb(15, 11, 42)', color: 'white' }}>S.No</TableCell>
-                                            <TableCell variant="head" sx={{ fontWeight: 'bold',backgroundColor: 'rgb(15, 11, 42)', color: 'white' }}>RM code</TableCell>
-                                            <TableCell variant="head" sx={{ fontWeight: 'bold',backgroundColor: 'rgb(15, 11, 42)', color: 'white' }}>RM Name</TableCell>
-                                            <TableCell variant="head" sx={{ fontWeight: 'bold',backgroundColor: 'rgb(15, 11, 42)', color: 'white' }}>Measured Unit</TableCell>
-                                            <TableCell variant="head" sx={{ fontWeight: 'bold',backgroundColor: 'rgb(15, 11, 42)', color: 'white' }}>Min Stock</TableCell>
-                                            <TableCell variant="head" sx={{ fontWeight: 'bold',backgroundColor: 'rgb(15, 11, 42)', color: 'white' }}>RM Max Price</TableCell>
-                                            <TableCell variant="head" sx={{ fontWeight: 'bold',backgroundColor: 'rgb(15, 11, 42)', color: 'white' }}>Currency</TableCell>
-                                            <TableCell variant="head" sx={{ fontWeight: 'bold',backgroundColor: 'rgb(15, 11, 42)', color: 'white' }}>Prefered Supplier</TableCell>
-                                            <TableCell variant="head" sx={{ fontWeight: 'bold',backgroundColor: 'rgb(15, 11, 42)', color: 'white' }}>Action</TableCell>
+                                            <TableCell variant="head" sx={{ fontWeight: 'bold', backgroundColor: 'rgb(15, 11, 42)', color: 'white' }}>S.No</TableCell>
+                                            <TableCell variant="head" sx={{ fontWeight: 'bold', backgroundColor: 'rgb(15, 11, 42)', color: 'white' }}>RM code</TableCell>
+                                            <TableCell variant="head" sx={{ fontWeight: 'bold', backgroundColor: 'rgb(15, 11, 42)', color: 'white' }}>RM Name</TableCell>
+                                            <TableCell variant="head" sx={{ fontWeight: 'bold', backgroundColor: 'rgb(15, 11, 42)', color: 'white' }}>Measured Unit</TableCell>
+                                            <TableCell variant="head" sx={{ fontWeight: 'bold', backgroundColor: 'rgb(15, 11, 42)', color: 'white' }}>Min Stock</TableCell>
+                                            <TableCell variant="head" sx={{ fontWeight: 'bold', backgroundColor: 'rgb(15, 11, 42)', color: 'white' }}>RM Max Price</TableCell>
+                                            <TableCell variant="head" sx={{ fontWeight: 'bold', backgroundColor: 'rgb(15, 11, 42)', color: 'white' }}>Currency</TableCell>
+                                            <TableCell variant="head" sx={{ fontWeight: 'bold', backgroundColor: 'rgb(15, 11, 42)', color: 'white' }}>Prefered Supplier</TableCell>
+                                            <TableCell variant="head" sx={{ fontWeight: 'bold', backgroundColor: 'rgb(15, 11, 42)', color: 'white' }}>Action</TableCell>
                                         </TableRow>
                                     </TableHead>
                                     <TableBody>

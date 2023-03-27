@@ -40,6 +40,7 @@ let count = 0;
 
 function BomComp(props) {
     const { row } = props;
+    const { rowcount } = props;
     const [open, setOpen] = useState(false);
     const [dispDilog, setDispDilog] = useState(false);
     const [bomdata, setbomdata] = useState([]);
@@ -51,20 +52,21 @@ function BomComp(props) {
         setDispDilog(false);
     };
 
-    useEffect(() => {
+    useEffect(() => {//&filter_by=&{product_code}&filter_value=   &pk=    &pk=${row.pk}
 
-        fetch(`https://erp-test-3wqc9.ondigitalocean.app/api/get?model=billofmaterial&filter_by=&{product_code}&filter_value&{row.pk}`)
+        fetch(`https://erp-test-3wqc9.ondigitalocean.app/api/get?model=billofmaterial&filter_by=product_code&filter_value=${row.pk}`)
             .then((res) => { return res.json(); })
             .then((data) => {
                 setbomdata(data.data);
+                console.log(data.data);
             })
     }, [])
     return (
         <>
             <React.Fragment>
-                <TableRow sx={{ '& > *': { borderBottom: 'unset' } }} hover='true' onClick={() => setOpen(!open)}>
+                <TableRow sx={{ '& > *': { borderBottom: 'unset' } }} hover={true} onClick={() => setOpen(!open)}>
                     <TableCell component="th" scope="row">
-                        {++count}
+                        {rowcount}
                     </TableCell>
                     <TableCell>{row.product_code}</TableCell>
                     <TableCell>{row.product_name}</TableCell>
@@ -106,7 +108,7 @@ function BomComp(props) {
                                                     {bomdata.map(bomobj => (
                                                         <>
                                                             <TableRow hover='true'>
-                                                                <TableCell align='center' component="th" scope="row">{bomobj.part_name}</TableCell>
+                                                                <TableCell align='center'>{bomobj.part_name == null ? "Null" : null}</TableCell>
                                                                 <TableCell align='center'>{bomobj.rm_code}</TableCell>
                                                                 <TableCell align='center'>{bomobj.rm_name}</TableCell>
                                                                 <TableCell align='center'>{bomobj.measured_unit_get}</TableCell>
@@ -209,7 +211,9 @@ function Billsofmaterials() {
                                         </TableHead>
                                         <TableBody>
                                             {productdata.map(propobj => (
-                                                <BomComp row={propobj} />
+                                                <BomComp row={propobj} rowcount={
+                                                    (productdata.length +1 ) - (productdata.length  - count++)
+                                                } />
                                             ))}
                                         </TableBody>
                                     </Table>

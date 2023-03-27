@@ -44,6 +44,7 @@ let count = 0;
 
 function Row(props) {
     const { row } = props;
+    const { rowcount } = props;
     const [open, setOpen] = useState(false);
     const [dispDilog, setDispDilog] = useState(false);
     const [pfdatas, setpfdatas] = useState([]);
@@ -64,7 +65,7 @@ function Row(props) {
 
     useEffect(() => { 
 
-        fetch(`https://erp-test-3wqc9.ondigitalocean.app/api/get?model=productivity&filter_by=&{product}&filter_value=${row.pk}`)
+        fetch(`https://erp-test-3wqc9.ondigitalocean.app/api/get?model=productivity&filter_by=product&filter_value=${row.pk}`)
             .then((res) => { return res.json(); })
             .then((data) => {
                 setpfdatas(data.data);console.log(data.data)
@@ -88,7 +89,7 @@ function Row(props) {
             <React.Fragment>
                 <TableRow sx={{ '& > *': { borderBottom: 'unset' } }} hover='true' onClick={() => setOpen(!open)}>
                     <TableCell component="th" scope="row">
-                        {++count}
+                        {rowcount}
                     </TableCell>
                     <TableCell>{row.product_code}</TableCell>
                     <TableCell>{row.product_name}</TableCell>
@@ -231,7 +232,9 @@ function Productionflow() {
                                         </TableHead>
                                         <TableBody>
                                             {productdata.map((row) => (
-                                                <Row row={row} />
+                                                <Row row={row} rowcount={
+                                                    (productdata.length +1 ) - (productdata.length  - count++)
+                                                } />
                                             ))}
                                         </TableBody>
                                     </Table>
