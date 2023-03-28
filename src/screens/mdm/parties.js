@@ -2,16 +2,18 @@ import React, { useState, useEffect } from "react";
 import Header from "../../comp/header/header";
 import Sidenav from "../../comp/sidenav/sidenav";
 import {
-    Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Button, IconButton,
+    Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Button, IconButton, Chip,
     Slide, Box, Collapse, TableContainer, Table, TableBody, TableCell, TableHead, TableRow, Paper
 } from "@mui/material";
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
+import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import '../common.css';
 import Loader from "../../comp/Load/loading";
 import axios from "axios";
+
 
 const Transition = React.forwardRef(function Transition(props, ref) {
     return <Slide direction="up" ref={ref} {...props} />;
@@ -140,12 +142,12 @@ let PartyComp = (props) => {
                     <TableCell align="center">{propobj.party_email == null ? "Null" : propobj.party_email}</TableCell>
                     <TableCell align="center">{propobj.party_gstin == null ? "Null" : propobj.party_gstin}</TableCell>
                     <TableCell >{Object.entries(propobj.party_products).map(([prtprokey, prtprovalue]) => {
-                        return(
+                        return (
                             <li>
                                 {prtprovalue.product}
-                            </li>   
+                            </li>
                         );
-                        
+
                     })}</TableCell>
                     <TableCell >
                         <IconButton aria-label="expand row" size="small"
@@ -305,6 +307,8 @@ let PartyComp = (props) => {
                                 <input type='number' value={upprtpin} className="micardinpt" onChange={(e) => { setupupprtpin(e.target.value) }} required />
                             </div>
 
+                            
+
                         </div><br />
                         <button className="comadbtn" onClick={doPUT} type={"submit"} style={{ marginBottom: 'unset' }}>Update</button>
                         <button className="cancelbtn" onClick={UhandleClose} >Discord</button>
@@ -322,6 +326,8 @@ function Parties() {
     const [partytypedat, setpartytypedat] = useState([]);
     const [countrydat, setcountrydat] = useState([]);
     const [statedat, setstatedat] = useState([]);
+    const [productdat, setproductdat] = useState([]);
+    const [rawmatdat, setrawmatdat] = useState([]);
 
     useEffect(() => {
 
@@ -343,7 +349,17 @@ function Parties() {
         fetch('https://erp-test-3wqc9.ondigitalocean.app/api/get?model=state')
             .then((res) => { return res.json(); })
             .then((data) => {
-                setstatedat(data.data);
+                setstatedat(data.data);//product
+            })
+        fetch('https://erp-test-3wqc9.ondigitalocean.app/api/get?model=product')
+            .then((res) => { return res.json(); })
+            .then((data) => {
+                setproductdat(data.data);
+            })
+        fetch('https://erp-test-3wqc9.ondigitalocean.app/api/get?model=rawmaterial')
+            .then((res) => { return res.json(); })
+            .then((data) => {
+                setrawmatdat(data.data);
             })
 
     }, [])
@@ -354,7 +370,7 @@ function Parties() {
 
         const [partyname, setpartyname] = useState('');
         const [partycountry, setpartycountry] = useState();
-        const [partytype, setpartytype] = useState('');
+        const [partytype, setpartytype] = useState(0);
         const [partystate, setpartystate] = useState();
         const [partyaddress, setpartyaddress] = useState('');
         const [partypincode, setpartypincode] = useState('');
@@ -362,12 +378,19 @@ function Parties() {
         const [partycontactname, setpartycontactname] = useState('');
         const [partyemail, setpartyemail] = useState('');
         const [partygstin, setpartygstin] = useState('');
+        const [partyproducts, setpartyproducts] = useState([]);
+        const [unt, setunt] = useState();
+        const [totproarr, settotproarr] = useState([]);
+
+        let prtpro = null;
+
+
 
         const partypost = axios.create({
             baseURL: "https://erp-test-3wqc9.ondigitalocean.app/api/get?model=parties"
         });
 
-        const postParties = (nme, cntry, type, state, adres, pin, cntno, cntnme, emil, gst) => {
+        const postParties = (nme, cntry, type, state, adres, pin, cntno, cntnme, emil, gst,totpro) => {
             partypost.post('', {
                 party_name: nme,
                 party_country: cntry,
@@ -378,7 +401,8 @@ function Parties() {
                 party_contact_no: cntno,
                 party_contact_name: cntnme,
                 party_email: emil,
-                party_gstin: gst
+                party_gstin: gst,
+                party_products: totpro
             })
                 .then((res) => {
                     console.log("after then", res)
@@ -400,10 +424,8 @@ function Parties() {
         let doPost = (e) => {
             e.preventDefault();
             postParties(partyname, partycountry, partytype, partystate, partyaddress, partypincode,
-                partycontactno, partycontactname, partyemail, partygstin);
-            window.location.reload();
+                partycontactno, partycontactname, partyemail, partygstin, totproarr);
         }
-
 
         return (
             <form>
@@ -413,10 +435,10 @@ function Parties() {
 
                         <div className="col-lg-4">
                             <label className="micardlble">Party Type</label><br />
-                            <select className="micardinpt" onChange={(e) => { setpartytype(e.target.value) }}>
+                            <select className="micardinpt" onChange={(e) => { setpartytype(e.target.value) }} required>
                                 <option selected='true' disabled='true' value={''} >Select Type</option>
                                 {partytypedat.map(prtobj => (
-                                    <option>{prtobj.party_type}</option>
+                                    <option value={prtobj.pk}>{prtobj.party_type}</option>
                                 ))}
                             </select>
                         </div>
@@ -428,7 +450,7 @@ function Parties() {
 
                         <div className="col-lg-4">
                             <label className="micardlble">Contact No</label><br />
-                            <input type='number' onChange={(e) => { setpartycontactno(e.target.value) }} className="micardinpt" />
+                            <input type='number' onChange={(e) => { setpartycontactno(e.target.value) }} className="micardinpt" required />
                         </div>
 
                         <div className="col-lg-4">
@@ -475,11 +497,72 @@ function Parties() {
                         <div className="col-lg-4">
                             <label className="micardlble">Pin Code</label><br />
                             <input type='number' className="micardinpt" onChange={(e) => { setpartypincode(e.target.value) }} required />
+                        </div><div className="col-lg-4 padzero"></div><div className="col-lg-4 padzero"></div>
+
+                        <div className="col-lg-4">
+                            <label className="micardlble">Products</label><br />
+                            <select className="micardinpt" onChange={(e) => { setpartyproducts(e.target.value) }} required>
+                                <option value="" disabled={true} selected={true}>Select Products</option>
+
+                                {partytype == 8 ? productdat.map(prob => {//customer
+                                    return (
+                                        <>
+                                            {prob.product_type === 'finished' ? <option>{prob.product_name}</option> : null}
+                                        </>
+                                    );
+                                }) : null}
+
+                                {partytype == 10 ? productdat.map(prob => {//supplier
+                                    return (
+                                        <>
+                                            {prob.product_type === 'semi-finished' ? <option>{prob.product_name}</option> : null}
+                                        </>
+                                    );
+                                }) : null}
+
+                                {partytype == 10 ? rawmatdat.map(rmob => (//supplier
+                                    <option>{rmob.rm_name}</option>
+                                )) : null}
+
+                                {partytype != 10 && partytype != 8 && partytype != 0 ? productdat.map(proobj => (//not customer and supplier
+                                    <option>{proobj.product_name}</option>
+                                )) : null}
+
+                                {partytype != 10 && partytype != 8 && partytype != 0 ? rawmatdat.map(proobj => (
+                                    <option>{proobj.rm_name}</option>
+                                )) : null}
+                            </select><br /><br />
+
+                            <label className="micardlble">Unit Price</label>
+                            <input type='number' className="micardinpt" onChange={(e) => { setunt(e.target.value); }} required />
+
+                            <button className="comadbtn" style={{ float: 'unset', marginTop: '1em', marginBottom: 'unset' }}
+                                onClick={(e) => { 
+                                    e.preventDefault();
+                                    settotproarr(obj => [...obj, {"product":partyproducts,"unit_price":unt}]);
+                                console.log(totproarr); }}
+                            >Add <ArrowForwardIcon sx={{ fontSize: '1em' }} />
+                            </button>
                         </div>
-                        <div className="col-lg-4"></div><div className="col-lg-4"></div>
+
+                        <div className="col-lg-8" style={{padding:'1em'}}>
+                            <label className="micardlble">Products</label>
+                            <div style={{ border: '1px solid #d9d7d7', height: '10em', borderRadius: '6px', padding: '10px' }}>
+                                {totproarr.map((arob,index) => {
+                                    return (
+                                        <>
+                                            <Chip label={arob.product + " - " + arob.unit_price} sx={{margin:'2px'}} onDelete={
+                                                () => {settotproarr([])}
+                                            } />
+                                        </>
+                                    );
+                                })}
+                            </div>
+                        </div>
+
                     </div>
                 </div><br />
-                <button className="comadbtn" type="submit" onClick={doPost}>Add</button>
+                <button className="comadbtn" onClick={doPost}>Add</button>
                 <button className="cancelbtn" onClick={() => {
                     setdispparties(false);
                     document.getElementById("prtyadbtn").style.display = 'block';
@@ -525,10 +608,10 @@ function Parties() {
                                     </TableHead>
                                     <TableBody>
                                         {partydata.map(propobject => (
-                                            <PartyComp propobj={propobject} partytypedata={partytypedat} countrydata={countrydat} statedata={statedat} 
-                                            rowcount={
-                                                (partydata.length +1 ) - (partydata.length  - count++)
-                                            } />
+                                            <PartyComp propobj={propobject} partytypedata={partytypedat} countrydata={countrydat} statedata={statedat}
+                                                rowcount={
+                                                    (partydata.length + 1) - (partydata.length - count++)
+                                                } />
                                         ))}
                                     </TableBody>
                                 </Table>

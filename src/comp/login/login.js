@@ -3,14 +3,14 @@ import { useNavigate } from "react-router-dom";
 import { useState } from 'react';
 import axios from 'axios';
 import './login.css';
-import jQuery from 'jquery'; 
+import jQuery from 'jquery';
 
 // function getCookie(name) {
 //     var cookieValue = null;
 //     if (document.cookie && document.cookie !== '') {
 //         var cookies = document.cookie.split(';');
 //         for (var i = 0; i < cookies.length; i++) {
-            
+
 //             var cookie = jQuery.trim(cookies[i]);
 //             if (cookie.substring(0, name.length + 1) === (name + '=')) {
 //                 cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
@@ -35,25 +35,29 @@ function Login() {
 
 
     const getLogin = (employee_id, password) => {
-        client1.post('',{
+        client1.post('', {
             employee_id: employee_id,
             password: password,
         })
-            .then((res) => {
-                console.log("after then", res)
-                if (res.data.code = 200) {
-                    let id = JSON.parse(res.data.data.id)
-                    console.log("before navigate", id)
-                    sessionStorage.setItem("id", id)
-                    console.log(id);
+
+            .then((data) => {
+                console.log(data);
+                if (data.data.code = 200) {
+                    // let id = JSON.parse(data.data.data.id)
+                    // console.log("before navigate", id)
+                    // sessionStorage.setItem("id", id)
+                    // console.log(id);
                     navigate('/admin/mdm/product');
                 }
 
-                else {
-                    if (res.data.status === 'failure') {
-                        alert('Invalid User Id Or Password');
-                    }
-                }
+                // else{console.log('Invalid username or password')}
+
+
+                // if (res.data.status === 'failure') {
+                //     alert('Invalid User Id Or Password');
+                //     console.log('failure data', res)
+                // }
+
 
             }).catch((err) => {
                 console.log(err);
@@ -78,7 +82,7 @@ function Login() {
 
                             <br /><br />
                             <form>
-                            Employee ID
+                                Employee ID
                                 <input type='text' className='loginpt' onChange={(e) => { setEmployeeid(e.target.value) }} required autoFocus='ture' />
                                 Password
                                 <input type='password' className='loginpt' onChange={(e) => { setpassword(e.target.value) }} required /><br />
