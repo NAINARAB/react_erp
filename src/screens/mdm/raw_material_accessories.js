@@ -8,6 +8,7 @@ import {
 import '../common.css';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
+import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import { useState, useEffect } from "react";
 import Loader from "../../comp/Load/loading";
 import axios from "axios";
@@ -54,6 +55,11 @@ function Rawmaterialsaccessories() {
             .then((resdata) => {
                 setpartydat(resdata.data);
             })
+        // fetch('https://erp-test-3wqc9.ondigitalocean.app/api/dropdown/?model=parties')
+        //     .then((res) => { return res.json(); })
+        //     .then((resdata) => {
+        //         console.log(resdata);
+        //     })
     }, [])
 
     {/* Update RMA variables */ }
@@ -67,6 +73,8 @@ function Rawmaterialsaccessories() {
     const [uprmmaxpr, setuprmmaxpr] = useState();
     const [upcrncy, setupcrncy] = useState();
     const [upcrncyget, setupcrncyget] = useState('');
+    const [uppresubid,setuppresubid] = useState();
+    const [ uptotsubid,setuptotsubid] = useState([]);
     // const [uppresup, setpresup] = useState([]);
 
     const UhandleClickOpen = () => {
@@ -89,14 +97,15 @@ function Rawmaterialsaccessories() {
         baseURL: `https://erp-test-3wqc9.ondigitalocean.app/api/get?model=rawmaterial&pk=${updtpk}`
     });
 
-    const updtRMA = (rmn, rmc, mu, ms, rmp, crcy) => {
+    const updtRMA = (rmn, rmc, mu, ms, rmp, crcy, upsup) => {
         rmaupdt.put('', {
             rm_name: rmn,
             rm_code: rmc,
             measured_unit: mu,
             min_stock: ms,
             rm_max_price: rmp,
-            currency: crcy
+            currency: crcy,
+            preferred_supplier: upsup
         })
             .then((res) => {
                 console.log("Post After", res)
@@ -116,7 +125,7 @@ function Rawmaterialsaccessories() {
 
     let doPUT = (e) => {
         e.preventDefault();
-        updtRMA(uprmnme, uprmcod, uprmesunt, upminstk, uprmmaxpr, upcrncy);
+        updtRMA(uprmnme, uprmcod, uprmesunt, upminstk, uprmmaxpr, upcrncy, uptotsubid);
     }
 
     function opnAdd() {
@@ -140,14 +149,15 @@ function Rawmaterialsaccessories() {
         const [currency, setcurrency] = useState();
         const [rmmaxprice, setrmmaxprice] = useState();
         const [presubid, setpresubid] = useState([]);
-        const [presubpk, setpresubpk] = useState([]);
+        const [presubpk, setpresubpk] = useState();
+        const [totsubid, settotsubid] = useState([]);
 
 
         const rmapost = axios.create({
             baseURL: "https://erp-test-3wqc9.ondigitalocean.app/api/get?model=rawmaterial"
         });
 
-        const postrma = (rmcode, rmname, unit, minstock, rmmaxprice, currency,) => {
+        const postrma = (rmcode, rmname, unit, minstock, rmmaxprice, currency, psu) => {
             rmapost.post('', {
                 rm_code: rmcode,
                 rm_name: rmname,
@@ -155,6 +165,8 @@ function Rawmaterialsaccessories() {
                 min_stock: minstock,
                 rm_max_price: rmmaxprice,
                 currency: currency,
+                preferred_supplier: psu
+
             })
                 .then((res) => {
                     console.log("after then", res)
@@ -173,11 +185,11 @@ function Rawmaterialsaccessories() {
                 })
         };
 
-        
+
 
         let doPost = (e) => {
             e.preventDefault();
-            postrma(rmcode, rmname, units, minstock, rmmaxprice, currency);
+            postrma(rmcode, rmname, units, minstock, rmmaxprice, currency, totsubid);
             window.location.reload();
         }
 
@@ -215,7 +227,7 @@ function Rawmaterialsaccessories() {
 
                                 <div className="col-lg-4">
                                     <label className="micardlble">Min Stock</label><br />
-                                    <input type='number' className="micardinpt" onChange={(e) => setminstock(e.target.value)} required />
+                                    <input type='number' min={0} className="micardinpt" onChange={(e) => setminstock(e.target.value)} required />
                                 </div>
 
                                 <div className="col-lg-4">
@@ -233,7 +245,39 @@ function Rawmaterialsaccessories() {
                                 <div className="col-lg-4">
                                     <label className="micardlble">RM Max Price</label><br />
                                     <input className="micardgrpinpt" value={currency} disabled={true} />
-                                    <input type='number' onChange={(e) => setrmmaxprice(e.target.value)} className="micardgrpinpt1" />
+                                    <input type='number' min={0} onChange={(e) => setrmmaxprice(e.target.value)} className="micardgrpinpt1" />
+                                </div>
+
+                                <div className="col-lg-4">
+                                    <label className="micardlble">Prefered Suppliers</label><br />
+                                    <select className="micardinpt" onChange={(e) => { setpresubid(e.target.value) }}>
+                                        <option selected={true} disabled={true} value={''} defaultValue={true}>Choose Supplier</option>
+                                        {partydat.map(prtob => (
+                                            <option>{prtob.party_name}</option>
+                                        ))}
+                                    </select>
+                                    <button className="comadbtn" style={{ float: 'unset', marginTop: '1em', marginBottom: 'unset' }}
+                                        onClick={(e) => {
+                                            e.preventDefault();
+                                            settotsubid(obj => [...obj, presubid]);
+                                        }}
+                                    >Add <ArrowForwardIcon sx={{ fontSize: '1em' }} />
+                                    </button>
+                                </div>
+
+                                <div className="col-lg-4" style={{ padding: '1em' }}>
+                                    <label className="micardlble">Suppliers</label>
+                                    <div style={{ border: '1px solid #d9d7d7', minHeight: '10em', borderRadius: '6px', padding: '10px' }}>
+                                        {totsubid.map((arob, index) => {
+                                            return (
+                                                <>
+                                                    <Chip label={arob} sx={{ margin: '2px' }} onDelete={
+                                                        () => { settotsubid([]) }
+                                                    } />
+                                                </>
+                                            );
+                                        })}
+                                    </div>
                                 </div>
 
                                 {/* <div className="col-lg-4">
@@ -358,7 +402,7 @@ function Rawmaterialsaccessories() {
                                                     <IconButton aria-label="expand row" size="small" onClick={() => {
                                                         setupdtpk(row.pk); setuprmnme(row.rm_name); setuprmcod(row.rm_code); setuprmeunt(row.measured_unit);
                                                         setuprmesuntget(row.measured_unit_get); setupminstk(row.min_stock); setuprmmaxpr(row.rm_max_price);
-                                                        setupcrncy(row.currency); setupcrncyget(row.currency_get); UhandleClickOpen();
+                                                        setupcrncy(row.currency); setupcrncyget(row.currency_get); setuptotsubid(row.preferred_supplier); UhandleClickOpen();
                                                     }}>
                                                         <EditIcon /></IconButton>
 
@@ -455,6 +499,38 @@ function Rawmaterialsaccessories() {
                             <div className="col-lg-6">
                                 <label className="micardlble">RM Max Price</label><br />
                                 <input type='number' value={uprmmaxpr} onChange={(e) => setuprmmaxpr(e.target.value)} className="micardinpt" />
+                            </div>
+
+                            <div className="col-lg-4">
+                                <label className="micardlble">Prefered Suppliers</label><br />
+                                <select className="micardinpt" onChange={(e) => { setuppresubid(e.target.value) }}>
+                                    <option selected={true} disabled={true} value={''} defaultValue={true}>Choose Supplier</option>
+                                    {partydat.map(prtob => (
+                                        <option>{prtob.party_name}</option>
+                                    ))}
+                                </select>
+                                <button className="comadbtn" style={{ float: 'unset', marginTop: '1em', marginBottom: 'unset' }}
+                                    onClick={(e) => {
+                                        e.preventDefault();
+                                        setuptotsubid(obj => [...obj, uppresubid]);
+                                    }}
+                                >Add <ArrowForwardIcon sx={{ fontSize: '1em' }} />
+                                </button>
+                            </div>
+
+                            <div className="col-lg-4" style={{ padding: '1em' }}>
+                                <label className="micardlble">Suppliers</label>
+                                <div style={{ border: '1px solid #d9d7d7', minHeight: '10em', borderRadius: '6px', padding: '10px' }}>
+                                    {uptotsubid.map((arob, index) => {
+                                        return (
+                                            <>
+                                                <Chip label={arob} sx={{ margin: '2px' }} onDelete={
+                                                    () => { setuptotsubid([]) }
+                                                } />
+                                            </>
+                                        );
+                                    })}
+                                </div>
                             </div>
 
 

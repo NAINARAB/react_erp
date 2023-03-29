@@ -540,14 +540,14 @@ function Parties() {
                                 onClick={(e) => { 
                                     e.preventDefault();
                                     settotproarr(obj => [...obj, {"product":partyproducts,"unit_price":unt}]);
-                                console.log(totproarr); }}
+                                 }}
                             >Add <ArrowForwardIcon sx={{ fontSize: '1em' }} />
                             </button>
                         </div>
 
                         <div className="col-lg-8" style={{padding:'1em'}}>
                             <label className="micardlble">Products</label>
-                            <div style={{ border: '1px solid #d9d7d7', height: '10em', borderRadius: '6px', padding: '10px' }}>
+                            <div style={{ border: '1px solid #d9d7d7', minHeight: '10em', borderRadius: '6px', padding: '10px' }}>
                                 {totproarr.map((arob,index) => {
                                     return (
                                         <>
