@@ -48,6 +48,7 @@ function Row(props) {
     const [open, setOpen] = useState(false);
     const [dispDilog, setDispDilog] = useState(false);
     const [pfdatas, setpfdatas] = useState([]);
+    const [propk, setpropk] = useState([]);
     const [partname, setpartname] = useState('');
     const [productionphase, setproductionphase] = useState('');
     const [productivityperday, setproductivityperday] = useState();
@@ -113,7 +114,7 @@ function Row(props) {
                                 <div>
                                         <h5>{row.product_name} ( Product-Code : {row.product_code})</h5>
                                     </div>
-                                {row.pk == pfdatas.map(chek => (chek.product)) ?
+                                {Object.values(pfdatas).length != 0 ?
                                     <>
                                         <TableContainer component={Paper}>
                                             <Table stickyHeader size="small" aria-label="purchases">
@@ -141,7 +142,9 @@ function Row(props) {
                                             </Table>
                                         </TableContainer>
                                     </> : <h3>No Data </h3>}
-                                <IconButton aria-label="expand row" onClick={openDialogue} size="small" sx={{ float: 'right', backgroundColor: 'white', margin: '0.5em', color: '#e3242b' }}>{<AddIcon />}</IconButton>
+                                <IconButton aria-label="expand row" onClick={() => {openDialogue(); setpropk(row.pk);}} size="small" 
+                                sx={{ float: 'right', backgroundColor: 'white', margin: '0.5em', color: '#e3242b' }}
+                                >{<AddIcon />}</IconButton>
                             </Box>
                         </Collapse>
                     </TableCell>

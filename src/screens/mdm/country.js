@@ -102,7 +102,6 @@ let Countrycomp = (props) => {
     return (
         <>
             {countrys.length != 0 ?
-
                 <TableContainer component={Paper} sx={{ maxHeight: 650 }}>
                     <Table stickyHeader sx={{ minWidth: 650 }} aria-label="simple table">
                         <TableHead>
