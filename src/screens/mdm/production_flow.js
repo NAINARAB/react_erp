@@ -11,6 +11,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import Draggable from 'react-draggable';
 import { Dialog, DialogContent, DialogTitle, Slide, DialogActions } from '@mui/material/';
 import Loader from '../../comp/Load/loading';
+import axios from 'axios';
 
 
 
@@ -53,8 +54,7 @@ function Row(props) {
     const [productionphase, setproductionphase] = useState('');
     const [productivityperday, setproductivityperday] = useState();
     const [scrap, setscrap] = useState('');
-    const [productionphasearr, setproductionphasearr] = useState([]);
-    const [parts, setparts] = useState([])
+    const {productionphasearr} = props;
 
     const openDialogue = () => {
         setDispDilog(true);
@@ -64,26 +64,73 @@ function Row(props) {
     };
     //Production flow
 
-    useEffect(() => { 
+    useEffect(() => {
 
         fetch(`https://erp-test-3wqc9.ondigitalocean.app/api/get?model=productivity&filter_by=product&filter_value=${row.pk}`)
             .then((res) => { return res.json(); })
             .then((data) => {
-                setpfdatas(data.data);console.log(data.data)
+                setpfdatas(data.data);
             })
-        fetch('https://erp-test-3wqc9.ondigitalocean.app/api/get?model=productionphase')
-            .then((res) => { return res.json(); })
-            .then((data) => {
-                setproductionphasearr(data.data);
-            })
-        fetch('https://erp-test-3wqc9.ondigitalocean.app/api/get?model=product')
-            .then((res) => { return res.json(); })
-            .then((data) => {
-                setparts(data.data)
-            })
+        
     }, [])
 
-    
+    const postPF = axios.create({
+        baseURL: "https://erp-test-3wqc9.ondigitalocean.app/api/get?model=productivity"
+    });
+
+    const postproductivity = (ppk, pnme, phs, qpd, sq) => {
+        postPF.post('', {
+            product: ppk,
+            part_name: pnme,
+            phase: phs,
+            quantity_perday: qpd,
+            scrap_quantity: sq
+        })
+            .then((res) => {
+                console.log("after then", res)
+                if (res.data.status === 'success') {
+
+                    const pfpost = axios.create({
+                        baseURL: "https://erp-test-3wqc9.ondigitalocean.app/api/pf"
+                    });
+                    const pf = () => {
+                        pfpost.post('', {
+                            product_code: ppk,
+                            part_name: pnme,
+                        })
+                        .then((pres) => {
+                            if (pres.data.status === 'success'){
+                                alert('post Success');
+                            }
+                            else if (pres.data.status === 'failure') {
+                                alert('pf error...');
+                            }
+                            else {
+                                alert('something..')
+                            }
+                        })
+                        .catch((err) => {
+                            console.log(err);
+                        })
+                    }
+                    pf(ppk,pnme)
+                }
+                else {
+                    if (res.data.status === 'failure') {
+                        alert('Something Went Wrong Please Try Again...');
+                    }
+                }
+
+            }).catch((err) => {
+                console.log(err);
+            })
+    };
+    let doPost = (e) => {
+        e.preventDefault();
+        postproductivity(propk, partname, productionphase, productivityperday, scrap);
+    }
+
+
 
     return (
         <>
@@ -112,8 +159,8 @@ function Row(props) {
                         <Collapse in={open} timeout="auto" unmountOnExit>
                             <Box sx={{ margin: '7em 5em' }}>
                                 <div>
-                                        <h5>{row.product_name} ( Product-Code : {row.product_code})</h5>
-                                    </div>
+                                    <h5>{row.product_name} ( Product-Code : {row.product_code})</h5>
+                                </div>
                                 {Object.values(pfdatas).length != 0 ?
                                     <>
                                         <TableContainer component={Paper}>
@@ -142,8 +189,11 @@ function Row(props) {
                                             </Table>
                                         </TableContainer>
                                     </> : <h3>No Data </h3>}
-                                <IconButton aria-label="expand row" onClick={() => {openDialogue(); setpropk(row.pk);}} size="small" 
-                                sx={{ float: 'right', backgroundColor: 'white', margin: '0.5em', color: '#e3242b' }}
+                                <IconButton aria-label="expand row" onClick={() => {
+                                    openDialogue(); setpropk(row.pk);
+                                }}
+                                    size="small"
+                                    sx={{ float: 'right', backgroundColor: 'white', margin: '0.5em', color: '#e3242b' }}
                                 >{<AddIcon />}</IconButton>
                             </Box>
                         </Collapse>
@@ -162,30 +212,42 @@ function Row(props) {
                     aria-labelledby="draggable-dialog-title"
                     aria-describedby="alert-dialog-slide-description"
                 >
-                    <DialogTitle>{"Add Bills of Materials"}</DialogTitle>
+                    <DialogTitle style={{ cursor: 'move', padding: '0px' }} id="draggable-dialog-title">
+                        <div className="comhed">
+                            <h5>Add Production Flow</h5>
+                        </div>
+                    </DialogTitle>
 
                     <DialogContent>
-                        <label className="micardlble">Part Name</label><br />
-                        <select className="micardinpt" onChange={(e) => { setpartname(e.target.value) }} required>
-                            {parts.map(prtobj => (
-                                <option value="">{'lid'}</option>
-                            ))}
-                        </select>
-                        <label className="micardlble">Production Phase</label><br />
-                        <select className="micardinpt" onChange={(e) => { setproductionphase(e.target.value) }} required>
-                            {productionphasearr.map(ppa => (
-                                <option value={ppa.pk}>{ppa.phase_name}</option>
-                            ))}
-                        </select>
-                        <label className="micardlble">Productivity Per Day</label><br />
-                        <input className="micardinpt" type='number' onChange={(e) => { setproductivityperday(e.target.value) }} required />
-                        <label className="micardlble">Scrap</label><br />
-                        <input className="micardinpt" onChange={(e) => { setscrap(e.target.value) }} required />
+                        <div className='setsp'>
+                            <form>
+                                <label className="micardlble">Part Name</label><br />
+                                <select className="micardinpt" onChange={(e) => { setpartname(e.target.value) }} required>
+                                    <option value={''} selected={true} disabled={true}>Select Part</option>
+                                    {row.parts.map(item => (
+                                        <option value={item}>{item}</option>
+                                    ))}
+                                </select>
+                                <label className="micardlble">Production Phase</label><br />
+                                <select className="micardinpt" onChange={(e) => { setproductionphase(e.target.value) }} required>
+                                <option value={''} selected={true} disabled={true}>Select Phase</option>
+                                    {productionphasearr.map(ppa => (
+                                        <option value={ppa.pk}>{ppa.phase_name}</option>
+                                    ))}
+                                </select>
+                                <label className="micardlble">Productivity Per Day</label><br />
+                                <input className="micardinpt" type='number' onChange={(e) => { setproductivityperday(e.target.value) }} required />
+                                <label className="micardlble">Scrap Quantity</label><br />
+                                <input className="micardinpt" type='number' onChange={(e) => { setscrap(e.target.value) }} required />
+                            </form>
+                        </div>
                     </DialogContent>
 
                     <DialogActions>
-                        <Button onClick={handleClose}>Cancel</Button>
-                        <Button onClick={handleClose}>Add</Button>
+                        <div className='tablepadding'>
+                            <button className='comadbtn' onClick={doPost} style={{ marginBottom: 'unset' }}>Add</button>
+                            <button className='cancelbtn' onClick={handleClose} >Cancel</button>
+                        </div>
                     </DialogActions>
                 </Dialog>
             </div>
@@ -196,12 +258,18 @@ function Row(props) {
 function Productionflow() {
 
     const [productdata, setproductdata] = useState([]);
+    const [productionphasearr,setproductionphasearr] = useState([]);
 
     useEffect(() => {
         fetch('https://erp-test-3wqc9.ondigitalocean.app/api/get?model=product')
             .then((res) => { return res.json(); })
             .then((data) => {
                 setproductdata(data.data)
+            })
+        fetch('https://erp-test-3wqc9.ondigitalocean.app/api/get?model=productionphase')
+            .then((res) => { return res.json(); })
+            .then((data) => {
+                setproductionphasearr(data.data);
             })
     }, [])
 
@@ -236,8 +304,9 @@ function Productionflow() {
                                         <TableBody>
                                             {productdata.map((row) => (
                                                 <Row row={row} rowcount={
-                                                    (productdata.length +1 ) - (productdata.length  - count++)
-                                                } />
+                                                    (productdata.length + 1) - (productdata.length - count++)
+                                                }
+                                                productionphasearr={productionphasearr} />
                                             ))}
                                         </TableBody>
                                     </Table>

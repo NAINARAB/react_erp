@@ -64,6 +64,8 @@ function BomComp(props) {
 
     {/* Update variables */ }
 
+    const [Uopen, setUopen] = useState(false);
+
     const [upropk, setupropk] = useState();
     const [uproget, setuproget] = useState('');
     const [uprtnme, setuprtnme] = useState('');
@@ -72,8 +74,16 @@ function BomComp(props) {
     const [urmnme, seturmnme] = useState('');
     const [urmtype, seturmtype] = useState('');
     const [uphse, setuphse] = useState();
-    const [uphseget, setuphseget ] = useState('');
+    const [uphseget, setuphseget] = useState('');
 
+
+    const UhandleClose = () => { //row.pk 
+        setUopen(false);
+    };
+
+    const UhandleOpen = () => { //row.pk 
+        setUopen(true);
+    };
 
     const openDialogue = () => {
         setDispDilog(true);
@@ -102,7 +112,6 @@ function BomComp(props) {
 
 
     function get_rm(probs) {
-        console.log(probs, "1")
         let current_element = null
         let rm_type = null
         setsfmname(probs.text);
@@ -126,6 +135,7 @@ function BomComp(props) {
         }
         setrmtype(rm_type)
     }
+
 
     {/* Posting DATA */ }
 
@@ -240,15 +250,17 @@ function BomComp(props) {
                                                             <TableCell align='center'>{bomobj.rm_quantity}</TableCell>
                                                             <TableCell align='center'>{bomobj.production_phase_get}</TableCell>
                                                             <TableCell align='center'>
-                                                                <IconButton aria-label="expand row" size="small"
+                                                                {/* <IconButton aria-label="expand row" size="small"
                                                                     onClick={() => {
-                                                                        setupropk(row.pk);setuproget(row.product_name);setuprtnme(bomobj.part_name);seturmcod(bomobj.rm_code);seturmqty(bomobj.rm_quantity);
+                                                                        setupropk(row.pk); setuproget(row.product_name); setuprtnme(bomobj.part_name);
+                                                                        seturmcod(bomobj.rm_code); seturmqty(bomobj.rm_quantity); //uproget
                                                                         seturmnme(bomobj.rm_name);
                                                                         seturmtype(bomobj.rm_type);
                                                                         setuphse(bomobj.production_phase);
                                                                         setuphseget(bomobj.production_phase_get);
+                                                                        UhandleOpen();
                                                                     }}
-                                                                ><EditIcon /></IconButton>
+                                                                ><EditIcon /></IconButton> */}
 
                                                                 <IconButton aria-label="expand row" size="small"
                                                                     onClick={() => { setdeletepk(bomobj.pk); DopenDialogue(); }}
@@ -302,7 +314,7 @@ function BomComp(props) {
                     open={dispDilog}
                     TransitionComponent={Transition}
                     keepMounted
-                    onClose={handleClose}
+                    onClose={UhandleClose}
                     PaperComponent={PaperComponent}
                     aria-labelledby="draggable-dialog-title"
                     aria-describedby="alert-dialog-slide-description"
@@ -379,6 +391,61 @@ function BomComp(props) {
 
                 </Dialog>
             </div>
+            <div>
+                <Dialog
+                    open={Uopen}
+                    onClose={UhandleClose}
+                    TransitionComponent={Transition}
+                >
+                    <div className="comhed">
+                        <h5>Update Bill of Material</h5>
+                    </div>
+                    <DialogTitle id="alert-dialog-title">
+                        {"Row Details :  "}
+                    </DialogTitle>
+                    <DialogContent>
+
+                        <div className='row'>
+                            <label className="micardlble" >Part Name</label><br />
+                            <select className="micardinpt" style={{ padding: '0.5em' }} value={uprtnme} onChange={(e) => { setprt(e.target.value) }} required >
+                                <option value={''} selected={true} disabled={true}>Select Part</option>
+                                {row.parts.map(item => (
+                                    <option value={item}>{item}</option>
+                                ))}
+                            </select>
+
+                            <label className="micardlble" >SFG/RM Code</label><br />
+                            <select className="micardinpt" value={uproget} style={{ padding: '0.5em' }} onChange={(e) => {
+                                get_rm({
+                                    id: e.target.value,
+                                    text: e.nativeEvent.target[e.target.selectedIndex].text
+                                })
+                            }} required >
+                                <option value={''} selected={true} disabled={true}>Select Product</option>
+                                <optgroup label="Semi-Finished Products">
+                                    {prodat.map(probj => (
+                                        probj.product_type == 'semi-finished' ?
+                                            <option value={probj.product_code}>{probj.product_name}</option> : null
+                                    ))}
+                                </optgroup>
+                                <optgroup label="Raw Materials">
+                                    {rawmatdat.map(rmob => (
+                                        <option value={rmob.rm_code}>{rmob.rm_name}</option>
+                                    ))}
+                                </optgroup>
+                            </select>
+
+                            <label className="micardlble">SFG/RM Name</label><br />
+                            <input className="micardinpt" disabled={true} value={uproget} required />
+                        </div>
+
+                        <div style={{ marginTop: '1em' }}>
+                            <button className="comadbtn" style={{ marginBottom: 'unset' }}>Update</button>
+                            <button className="cancelbtn" onClick={UhandleClose} >Discord</button>
+                        </div>
+                    </DialogContent>
+                </Dialog>
+            </div>
         </>
     );
 }
@@ -387,8 +454,8 @@ function BomComp(props) {
 
 function Billsofmaterials() {
 
-    const [productdata, setproductdata] = React.useState([]);
-    const [rawmatdat, setrawmatdat] = React.useState([]);
+    const [productdata, setproductdata] = useState([]);
+    const [rawmatdat, setrawmatdat] = useState([]);
     const [pfdat, setpfdat] = useState([]);
     let count = 0;
     useEffect(() => {
