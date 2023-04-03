@@ -128,6 +128,15 @@ let PartyComp = (props) => {
             })
     }
 
+    {/* Object.entries(propobj.party_products).map(([prtprokey, prtprovalue]) => {
+                        return (
+                            <li>
+                                {prtprovalue.product}
+                            </li>
+                        );
+
+                    }) */}
+
     return (
         <>
             <React.Fragment>
@@ -141,14 +150,14 @@ let PartyComp = (props) => {
                     <TableCell align="center">{propobj.party_contact_name == null ? "Null" : propobj.party_contact_name}</TableCell>
                     <TableCell align="center">{propobj.party_email == null ? "Null" : propobj.party_email}</TableCell>
                     <TableCell align="center">{propobj.party_gstin == null ? "Null" : propobj.party_gstin}</TableCell>
-                    <TableCell >{Object.entries(propobj.party_products).map(([prtprokey, prtprovalue]) => {
+                    <TableCell >{propobj.party_products != null ? Object.entries(propobj.party_products).map(([prtprokey, prtprovalue]) => {
                         return (
                             <li>
                                 {prtprovalue.product}
                             </li>
                         );
 
-                    })}</TableCell>
+                    }) : "Null"}</TableCell>
                     <TableCell >
                         <IconButton aria-label="expand row" size="small"
                             onClick={() => {

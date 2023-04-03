@@ -11,6 +11,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import { useState, useEffect } from "react";
 import Loader from "../../comp/Load/loading";
+import SearchIcon from '@mui/icons-material/Search';
 import axios from "axios";
 
 const Transition = React.forwardRef(function Transition(props, ref) {
@@ -73,8 +74,8 @@ function Rawmaterialsaccessories() {
     const [uprmmaxpr, setuprmmaxpr] = useState();
     const [upcrncy, setupcrncy] = useState();
     const [upcrncyget, setupcrncyget] = useState('');
-    const [uppresubid,setuppresubid] = useState();
-    const [ uptotsubid,setuptotsubid] = useState([]);
+    const [uppresubid, setuppresubid] = useState();
+    const [uptotsubid, setuptotsubid] = useState([]);
     // const [uppresup, setpresup] = useState([]);
 
     const UhandleClickOpen = () => {
@@ -348,6 +349,7 @@ function Rawmaterialsaccessories() {
             })
     }
 
+    const [searchdata, setsearchdata] = useState('');
 
     return (
 
@@ -366,6 +368,16 @@ function Rawmaterialsaccessories() {
                         <h6>Master Data Management / Raw Material & Accessories</h6>
                     </div>
                     <div className="tablepadding" id="rma">
+                        <div className="search" style={{ marginBottom: 'unset' }}>
+                            <input type={'search'} className='micardinpt'
+                                placeholder="Search Here...."
+                                onChange={(e) => {
+                                    setsearchdata(e.target.value);
+                                }} style={{ paddingLeft: '3em' }} />
+                            <div className="sIcon">
+                                <SearchIcon sx={{ fontSize: '2em' }} />
+                            </div>
+                        </div>
                         {rmadata.length != 0 ?
                             <TableContainer component={Paper} sx={{ maxHeight: 650 }}>
                                 <Table stickyHeader sx={{ minWidth: 650 }} >
@@ -383,7 +395,8 @@ function Rawmaterialsaccessories() {
                                         </TableRow>
                                     </TableHead>
                                     <TableBody>
-                                        {rmadata.map((row) => (
+                                        {searchdata == '' ? 
+                                        rmadata.map((row) => (
                                             <TableRow
                                                 sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                                                 hover={true}
@@ -411,7 +424,43 @@ function Rawmaterialsaccessories() {
                                                     }}
                                                         sx={{ color: 'rgba(255, 0, 0, 0.755)' }}><DeleteIcon /></IconButton></TableCell>
                                             </TableRow>
-                                        ))}
+                                        ))
+                                        : 
+                                        rmadata.map((row) => (
+                                            <>
+                                            {row.rm_name.match(searchdata) == searchdata || row.rm_code.match(searchdata) == searchdata || row.measured_unit_get.match(searchdata) == searchdata
+                                            || (row.min_stock.toString()).match(searchdata) == searchdata || (row.rm_max_price.toString()).match(searchdata) == searchdata 
+                                            || row.currency_get.match(searchdata) == searchdata ? 
+                                            <TableRow
+                                                sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                                                hover={true}
+                                            >
+                                                <TableCell component="th" scope="row">
+                                                    {++count}
+                                                </TableCell>
+                                                <TableCell>{row.rm_code !== null ? row.rm_code : 'Null'}</TableCell>
+                                                <TableCell>{row.rm_name !== null ? row.rm_name : 'Null'}</TableCell>
+                                                <TableCell>{row.measured_unit_get !== null ? row.measured_unit_get : 'Null'}</TableCell>
+                                                <TableCell>{row.min_stock !== null ? row.min_stock : 'Null'}</TableCell>
+                                                <TableCell>{row.rm_max_price !== null ? row.rm_max_price : 'Null'}</TableCell>
+                                                <TableCell>{row.currency_get !== null ? row.currency_get : 'Null'}</TableCell>
+                                                <TableCell>{row.preferred_supplier !== null ? row.preferred_supplier.length !== 0 ? row.preferred_supplier.join(', ') : 'Null' : 'Null'}</TableCell>
+                                                <TableCell>
+                                                    <IconButton aria-label="expand row" size="small" onClick={() => {
+                                                        setupdtpk(row.pk); setuprmnme(row.rm_name); setuprmcod(row.rm_code); setuprmeunt(row.measured_unit);
+                                                        setuprmesuntget(row.measured_unit_get); setupminstk(row.min_stock); setuprmmaxpr(row.rm_max_price);
+                                                        setupcrncy(row.currency); setupcrncyget(row.currency_get); setuptotsubid(row.preferred_supplier); UhandleClickOpen();
+                                                    }}>
+                                                        <EditIcon /></IconButton>
+
+                                                    <IconButton aria-label="expand row" size="small" onClick={() => {
+                                                        setpk(row.pk); setdelproname(row.rm_name); handleClickOpen();
+                                                    }}
+                                                        sx={{ color: 'rgba(255, 0, 0, 0.755)' }}><DeleteIcon /></IconButton></TableCell>
+                                            </TableRow> : null}
+                                            </>
+                                        ))
+                                        }
                                     </TableBody>
                                 </Table>
                             </TableContainer> : <Loader />}

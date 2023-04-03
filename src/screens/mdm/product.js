@@ -10,6 +10,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import Loader from "../../comp/Load/loading";
 import axios from "axios";
+import SearchIcon from '@mui/icons-material/Search';
 
 const trarr = ['up', 'down', 'left', 'right'];
 var item = trarr[Math.floor(Math.random() * trarr.length)];
@@ -317,6 +318,8 @@ const Product = () => {
     const DispDidenav = React.useCallback(() => {
         return (<><Sidenav /></>);
     }, []);
+
+    const [searchdata, setsearchdata] = useState('');
     return (
         <>
             <div className="row">
@@ -335,59 +338,108 @@ const Product = () => {
                         </div>
                         <div className="tablepadding">
                             <div id="dispproduct">
+                                <div className="search" style={{ marginBottom: 'unset' }}>
+                                    <input type={'search'} className='micardinpt'
+                                        placeholder="Search Here...."
+                                        onChange={(e) => {
+                                            setsearchdata(e.target.value);
+                                        }} style={{ paddingLeft: '3em' }} />
+                                    <div className="sIcon">
+                                        <SearchIcon sx={{ fontSize: '2em' }} />
+                                    </div>
+                                </div>
                                 {rows.length !== 0 ? <TableContainer component={Paper} sx={{ maxHeight: 650 }}>
-                                    <Table stickyHeader aria-label="simple table">
+                                    <Table stickyHeader aria-label="simple table" sx={{fontFamily:'prosans'}}>
                                         <TableHead >
                                             <TableRow>
-                                                <TableCell variant="head" sx={{ fontWeight: 'bold', backgroundColor: 'rgb(15, 11, 42)', color: 'white' }} >S.No</TableCell>
-                                                <TableCell variant="head" sx={{ fontWeight: 'bold', backgroundColor: 'rgb(15, 11, 42)', color: 'white' }} >Product Name</TableCell>
-                                                <TableCell variant="head" sx={{ fontWeight: 'bold', backgroundColor: 'rgb(15, 11, 42)', color: 'white' }} >Product Code</TableCell>
-                                                <TableCell variant="head" sx={{ fontWeight: 'bold', backgroundColor: 'rgb(15, 11, 42)', color: 'white' }} >Product Type</TableCell>
-                                                <TableCell variant="head" sx={{ fontWeight: 'bold', backgroundColor: 'rgb(15, 11, 42)', color: 'white' }} >Min Stock</TableCell>
-                                                <TableCell variant="head" sx={{ fontWeight: 'bold', backgroundColor: 'rgb(15, 11, 42)', color: 'white' }} >Min Price</TableCell>
-                                                <TableCell variant="head" sx={{ fontWeight: 'bold', backgroundColor: 'rgb(15, 11, 42)', color: 'white' }} >Max Price</TableCell>
-                                                <TableCell variant="head" sx={{ fontWeight: 'bold', backgroundColor: 'rgb(15, 11, 42)', color: 'white' }} >Currency</TableCell>
-                                                <TableCell variant="head" sx={{ fontWeight: 'bold', backgroundColor: 'rgb(15, 11, 42)', color: 'white' }} >Multiple Parts</TableCell>
-                                                <TableCell variant="head" sx={{ fontWeight: 'bold', backgroundColor: 'rgb(15, 11, 42)', color: 'white' }} >Parts</TableCell>
-                                                <TableCell variant="head" sx={{ fontWeight: 'bold', backgroundColor: 'rgb(15, 11, 42)', color: 'white' }} >Action</TableCell>
+                                                <TableCell variant="head" sx={{ backgroundColor: 'rgb(15, 11, 42)', color: 'white', fontFamily:'prosans' }} >S.No</TableCell>
+                                                <TableCell variant="head" sx={{ backgroundColor: 'rgb(15, 11, 42)', color: 'white', fontFamily:'prosans' }} >Product Name</TableCell>
+                                                <TableCell variant="head" sx={{ backgroundColor: 'rgb(15, 11, 42)', color: 'white', fontFamily:'prosans' }} >Product Code</TableCell>
+                                                <TableCell variant="head" sx={{ backgroundColor: 'rgb(15, 11, 42)', color: 'white', fontFamily:'prosans' }} >Product Type</TableCell>
+                                                <TableCell variant="head" sx={{ backgroundColor: 'rgb(15, 11, 42)', color: 'white', fontFamily:'prosans' }} >Min Stock</TableCell>
+                                                <TableCell variant="head" sx={{ backgroundColor: 'rgb(15, 11, 42)', color: 'white', fontFamily:'prosans' }} >Min Price</TableCell>
+                                                <TableCell variant="head" sx={{ backgroundColor: 'rgb(15, 11, 42)', color: 'white', fontFamily:'prosans' }} >Max Price</TableCell>
+                                                <TableCell variant="head" sx={{ backgroundColor: 'rgb(15, 11, 42)', color: 'white', fontFamily:'prosans' }} >Currency</TableCell>
+                                                <TableCell variant="head" sx={{ backgroundColor: 'rgb(15, 11, 42)', color: 'white', fontFamily:'prosans' }} >Multiple Parts</TableCell>
+                                                <TableCell variant="head" sx={{ backgroundColor: 'rgb(15, 11, 42)', color: 'white', fontFamily:'prosans' }} >Parts</TableCell>
+                                                <TableCell variant="head" sx={{ backgroundColor: 'rgb(15, 11, 42)', color: 'white', fontFamily:'prosans' }} >Action</TableCell>
                                             </TableRow>
                                         </TableHead>
                                         <TableBody>
-                                            {rows.map((rowobj) => {
-
-                                                return (
+                                            {searchdata == '' ?
+                                                rows.map((rowobj) => {
+                                                    return (
+                                                        <>
+                                                            <TableRow sx={{ '&:last-child td, &:last-child th': { border: 0 }, fontFamily:'prosans' }} hover={true}>
+                                                                <TableCell component="th" scope="row" sx={{fontFamily:'prosans'}}>
+                                                                    {count++}
+                                                                </TableCell>
+                                                                <TableCell sx={{fontFamily:'prosans'}}>{rowobj.product_name === null ? "Null" : rowobj.product_name}</TableCell>
+                                                                <TableCell sx={{fontFamily:'prosans'}}>{rowobj.product_code === null ? "Null" : rowobj.product_code}</TableCell>
+                                                                <TableCell sx={{fontFamily:'prosans'}}>{rowobj.product_type === null ? "Null" : rowobj.product_type}</TableCell>
+                                                                <TableCell sx={{fontFamily:'prosans'}}>{rowobj.minimum_stock_quantity === null ? "Null" : rowobj.minimum_stock_quantity}</TableCell>
+                                                                <TableCell sx={{fontFamily:'prosans'}}>{rowobj.minimum_price === null ? "Null" : rowobj.minimum_price}</TableCell>
+                                                                <TableCell sx={{fontFamily:'prosans'}}>{rowobj.maximum_price === null ? "Null" : rowobj.maximum_price}</TableCell>
+                                                                <TableCell sx={{fontFamily:'prosans'}}>{rowobj.currency_get === null ? "Null" : rowobj.currency_get}</TableCell>
+                                                                <TableCell sx={{fontFamily:'prosans'}}>{rowobj.multiple_parts == null ? "Null" : rowobj.multiple_parts === true ? "true" : "false"}</TableCell>
+                                                                <TableCell sx={{fontFamily:'prosans'}}>{rowobj.parts !== null ? rowobj.parts.length !== 0 ? rowobj.parts.join(', ') : 'Null' : "Null"}</TableCell>
+                                                                <TableCell>
+                                                                    <IconButton aria-label="expand" size="small"
+                                                                        onClick={() => {
+                                                                            setco(rowobj.product_code); setnme(rowobj.product_name); settyp(rowobj.product_type);
+                                                                            setmsq(rowobj.minimum_stock_quantity); setmxp(rowobj.maximum_price); setmnp(rowobj.minimum_price);
+                                                                            setcrcy(rowobj.currency_get); setcrcypk(rowobj.currency); setmp(rowobj.multiple_parts); setupdtpk(rowobj.pk);
+                                                                            setprmparr(rowobj.parts);
+                                                                            UhandleClickOpen();
+                                                                        }}
+                                                                    ><EditIcon /></IconButton>
+                                                                    <IconButton aria-label="expand" onClick={() => { setpk(rowobj.pk); setdelproname(rowobj.product_name); handleClickOpen(); }}
+                                                                        size="small" sx={{ color: 'rgba(255, 0, 0, 0.755)' }}>
+                                                                        <DeleteIcon /></IconButton>
+                                                                </TableCell>
+                                                            </TableRow>
+                                                        </>
+                                                    )
+                                                })
+                                                :
+                                                rows.map((rowobj) => ( //|| rowobj.parts.map(ob => (<>{ob.match(searchdata) == searchdata}</>))  ||  || rowobj.parts.map((ob,ind) => ((ob.toString()).match(searchdata) == searchdata))
                                                     <>
-                                                        <TableRow sx={{ '&:last-child td, &:last-child th': { border: 0 } }} hover={true}>
-                                                            <TableCell component="th" scope="row">
-                                                                {count++}
-                                                            </TableCell>
-                                                            <TableCell>{rowobj.product_name === null ? "Null" : rowobj.product_name}</TableCell>
-                                                            <TableCell>{rowobj.product_code === null ? "Null" : rowobj.product_code}</TableCell>
-                                                            <TableCell>{rowobj.product_type === null ? "Null" : rowobj.product_type}</TableCell>
-                                                            <TableCell>{rowobj.minimum_stock_quantity === null ? "Null" : rowobj.minimum_stock_quantity}</TableCell>
-                                                            <TableCell>{rowobj.minimum_price === null ? "Null" : rowobj.minimum_price}</TableCell>
-                                                            <TableCell>{rowobj.maximum_price === null ? "Null" : rowobj.maximum_price}</TableCell>
-                                                            <TableCell>{rowobj.currency_get === null ? "Null" : rowobj.currency_get}</TableCell>
-                                                            <TableCell>{rowobj.multiple_parts == null ? "Null" : rowobj.multiple_parts === true ? "True" : "False"}</TableCell>
-                                                            <TableCell>{rowobj.parts !== null ? rowobj.parts.length !== 0 ? rowobj.parts.join(', ') : 'Null' : "Null"}</TableCell>
-                                                            <TableCell>
-                                                                <IconButton aria-label="expand" size="small"
-                                                                    onClick={() => {
-                                                                        setco(rowobj.product_code); setnme(rowobj.product_name); settyp(rowobj.product_type);
-                                                                        setmsq(rowobj.minimum_stock_quantity); setmxp(rowobj.maximum_price); setmnp(rowobj.minimum_price);
-                                                                        setcrcy(rowobj.currency_get); setcrcypk(rowobj.currency); setmp(rowobj.multiple_parts); setupdtpk(rowobj.pk);
-                                                                        setprmparr(rowobj.parts);
-                                                                        UhandleClickOpen();
-                                                                    }}
-                                                                ><EditIcon /></IconButton>
-                                                                <IconButton aria-label="expand" onClick={() => { setpk(rowobj.pk); setdelproname(rowobj.product_name); handleClickOpen(); }}
-                                                                    size="small" sx={{ color: 'rgba(255, 0, 0, 0.755)' }}>
-                                                                    <DeleteIcon /></IconButton>
-                                                            </TableCell>
-                                                        </TableRow>
+                                                        {rowobj.product_name.match(searchdata) == searchdata || rowobj.product_code.match(searchdata) == searchdata || rowobj.product_type.match(searchdata) == searchdata 
+                                                         || (rowobj.multiple_parts.toString()).match(searchdata) == searchdata || (rowobj.minimum_stock_quantity.toString()).match(searchdata) == searchdata || (rowobj.maximum_price.toString()).match(searchdata) == searchdata 
+                                                         || rowobj.minimum_price == searchdata || rowobj.currency_get.match(searchdata) == searchdata ?
+                                                         
+                                                            <TableRow sx={{ '&:last-child td, &:last-child th': { border: 0 } }} hover={true}>
+                                                                <TableCell component="th" scope="row" sx={{fontFamily:'prosans'}}>
+                                                                    {count++}
+                                                                </TableCell>
+                                                                <TableCell sx={{fontFamily:'prosans'}}>{rowobj.product_name === null ? "Null" : rowobj.product_name}</TableCell>
+                                                                <TableCell sx={{fontFamily:'prosans'}}>{rowobj.product_code === null ? "Null" : rowobj.product_code}</TableCell>
+                                                                <TableCell sx={{fontFamily:'prosans'}}>{rowobj.product_type === null ? "Null" : rowobj.product_type}</TableCell>
+                                                                <TableCell sx={{fontFamily:'prosans'}}>{rowobj.minimum_stock_quantity === null ? "Null" : rowobj.minimum_stock_quantity}</TableCell>
+                                                                <TableCell sx={{fontFamily:'prosans'}}>{rowobj.minimum_price === null ? "Null" : rowobj.minimum_price}</TableCell>
+                                                                <TableCell sx={{fontFamily:'prosans'}}>{rowobj.maximum_price === null ? "Null" : rowobj.maximum_price}</TableCell>
+                                                                <TableCell sx={{fontFamily:'prosans'}}>{rowobj.currency_get === null ? "Null" : rowobj.currency_get}</TableCell>
+                                                                <TableCell sx={{fontFamily:'prosans'}}>{rowobj.multiple_parts == null ? "Null" : rowobj.multiple_parts === true ? "true" : "false"}</TableCell>
+                                                                <TableCell sx={{fontFamily:'prosans'}}>{rowobj.parts !== null ? rowobj.parts.length !== 0 ? rowobj.parts.join(', ') : 'Null' : "Null"}</TableCell>
+                                                                <TableCell>
+                                                                    <IconButton aria-label="expand" size="small"
+                                                                        onClick={() => {
+                                                                            setco(rowobj.product_code); setnme(rowobj.product_name); settyp(rowobj.product_type);
+                                                                            setmsq(rowobj.minimum_stock_quantity); setmxp(rowobj.maximum_price); setmnp(rowobj.minimum_price);
+                                                                            setcrcy(rowobj.currency_get); setcrcypk(rowobj.currency); setmp(rowobj.multiple_parts); setupdtpk(rowobj.pk);
+                                                                            setprmparr(rowobj.parts);
+                                                                            UhandleClickOpen();
+                                                                        }}
+                                                                    ><EditIcon /></IconButton>
+                                                                    <IconButton aria-label="expand" onClick={() => { setpk(rowobj.pk); setdelproname(rowobj.product_name); handleClickOpen(); }}
+                                                                        size="small" sx={{ color: 'rgba(255, 0, 0, 0.755)' }}>
+                                                                        <DeleteIcon /></IconButton>
+                                                                </TableCell>
+                                                            </TableRow>
+                                                            : null}
                                                     </>
-                                                )
-                                            })}
+                                                ))
+                                            }
                                         </TableBody>
                                     </Table>
                                 </TableContainer> : <Loader />}
@@ -486,9 +538,9 @@ const Product = () => {
                             </div>
                             {prmp === true ?
                                 <>
-                                    <div className="col-lg-12" style={{padding:'1em'}}>
+                                    <div className="col-lg-12" style={{ padding: '1em' }}>
                                         <Autocomplete
-                                            sx={{backgroundColor:'transparent'}}
+                                            sx={{ backgroundColor: 'transparent' }}
                                             multiple
                                             id="tags-filled"
                                             options={dummy.map((option) => option.title)}
@@ -504,7 +556,7 @@ const Product = () => {
                                             }
                                             renderInput={(params) => (
                                                 <TextField
-                                                    sx={{backgroundColor:'transparent'}}
+                                                    sx={{ backgroundColor: 'transparent' }}
                                                     {...params}
                                                     variant="filled"
                                                     label="Parts"

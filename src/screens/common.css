@@ -106,6 +106,11 @@
 
 .micardbdy select {
     background-color: transparent;
+    padding:0.68em;
+}
+
+select {
+    padding: 0.68em;
 }
 
 .micardgrpinpt {
@@ -158,6 +163,20 @@
     margin-top: 1em;
 }
 
+
+.search{
+    float: right;
+    margin-bottom: 2em;
+    width: 100%;
+    max-width: 450px;
+}
+.sIcon{
+    position: relative;
+    top: -37px;
+    left: 10px;
+    padding: 0px;
+    display: inline;
+}
 
 
 

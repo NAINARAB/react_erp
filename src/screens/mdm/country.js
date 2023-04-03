@@ -23,9 +23,9 @@ let Countrycomp = (props) => {
     const [pk, setpk] = useState();
     const [delproname, setdelproname] = useState('');
     const [open, setOpen] = useState(false);
-    
 
-    {/* Update variables */}
+
+    {/* Update variables */ }
     const [Uopen, setUopen] = useState(false);
     const [udcnrycod, setudcnrycod] = useState('');
     const [udcnrynme, setudcnrynme] = useState('');
@@ -54,12 +54,12 @@ let Countrycomp = (props) => {
     const cntryupdt = axios.create({ //country
         baseURL: `https://erp-test-3wqc9.ondigitalocean.app/api/get?model=country&pk=${updtpk}`
     });
-    console.log("Crnt updt PK",updtpk);
+    console.log("Crnt updt PK", updtpk);
 
     const updtCountry = (cod, nme) => {
         cntryupdt.put('', {
             country_code: cod,
-            country_name:nme
+            country_name: nme
         })
             .then((res) => {
                 console.log("Post After", res)
@@ -79,7 +79,7 @@ let Countrycomp = (props) => {
 
     let doPUT = (e) => {
         e.preventDefault();
-        updtCountry(udcnrycod,udcnrynme);
+        updtCountry(udcnrycod, udcnrynme);
     }
 
     const deleteRow = (pkobj) => {
@@ -99,8 +99,40 @@ let Countrycomp = (props) => {
                 console.log(err);
             })
     }
+    const [searchoption, setsearchoption] = useState('');
+    const [searchdata, setsearchdata] = useState('');
     return (
         <>
+            <div className="search">
+                <select className='micardgrpinpt' style={{ padding: '0.58em', width: '50%' }} onChange={(e) => {
+                    setsearchoption(e.target.value);
+                    setsearchdata('');
+                }} placeholder="Search Options..">
+                    <option value="" defaultValue={true} disabled={true} selected={true} >Search By.. </option>
+                    <option value={'country_code'}>Country Code</option>
+                    <option value={'country_name'}>Country Name</option>
+                </select>
+                <input type={'search'} className='micardgrpinpt1' value={searchdata} disabled={searchoption == '' ? true : false} 
+                placeholder="Type Here...."
+                onChange={(e) => {
+                    setsearchdata(e.target.value);
+                }} style={{ width: '50%' }} list="serchopt" />
+                <datalist id="serchopt">
+                    {searchoption == 'country_code' ?
+                        <>
+                            {countrys.map(cob => (
+                                <option>{cob.country_code}</option>
+                            ))}
+                        </> : null
+                    }
+                    {searchoption == 'country_name' ?
+                        <>
+                            {countrys.map(cob => (
+                                <option>{cob.country_name}</option>
+                            ))}
+                        </> : null}
+                </datalist>
+            </div>
             {countrys.length != 0 ?
                 <TableContainer component={Paper} sx={{ maxHeight: 650 }}>
                     <Table stickyHeader sx={{ minWidth: 650 }} aria-label="simple table">
@@ -113,21 +145,47 @@ let Countrycomp = (props) => {
                             </TableRow>
                         </TableHead>
                         <TableBody>
-                            {countrys.map((cntry) => (
-                                <TableRow hover='true'>
-                                    <TableCell >{++count}</TableCell>
-                                    <TableCell >{cntry.country_code}</TableCell>
-                                    <TableCell>{cntry.country_name}</TableCell>
-                                    <TableCell align="left">
-                                    <IconButton aria-label="expand row" size="small" 
-                                        onClick={() => {setudcnrycod(cntry.country_code); setudcnrynme(cntry.country_name);
-                                         setupdtpk(cntry.pk); UhandleClickOpen();}}
-                                    ><EditIcon /></IconButton>
-                                        <IconButton aria-label="expand row" size="small"
-                                        onClick={() => { setpk(cntry.pk); setdelproname(cntry.country_name); handleClickOpen(); }}
-                                        sx={{ color: 'rgba(255, 0, 0, 0.755)', marginRight: '1em' }}><DeleteIcon /></IconButton></TableCell>
-                                </TableRow>
-                            ))}
+                            {searchdata == '' ?
+                                <>
+                                    {countrys.map((cntry) => (
+                                        <TableRow hover={true}>
+                                            <TableCell >{++count}</TableCell>
+                                            <TableCell >{cntry.country_code}</TableCell>
+                                            <TableCell>{cntry.country_name}</TableCell>
+                                            <TableCell align="left">
+                                                <IconButton aria-label="expand row" size="small"
+                                                    onClick={() => {
+                                                        setudcnrycod(cntry.country_code); setudcnrynme(cntry.country_name);
+                                                        setupdtpk(cntry.pk); UhandleClickOpen();
+                                                    }}
+                                                ><EditIcon /></IconButton>
+                                                <IconButton aria-label="expand row" size="small"
+                                                    onClick={() => { setpk(cntry.pk); setdelproname(cntry.country_name); handleClickOpen(); }}
+                                                    sx={{ color: 'rgba(255, 0, 0, 0.755)', marginRight: '1em' }}><DeleteIcon /></IconButton></TableCell>
+                                        </TableRow>
+                                    ))}</> :
+                                <>
+                                    {countrys.map((cntry) => (
+                                        <>
+                                            {cntry.country_code.match(searchdata) == searchdata || cntry.country_name.match(searchdata) == searchdata ? 
+                                                <TableRow hover={true}>
+                                                    <TableCell >{++count}</TableCell>
+                                                    <TableCell >{cntry.country_code}</TableCell>
+                                                    <TableCell>{cntry.country_name}</TableCell>
+                                                    <TableCell align="left">
+                                                        <IconButton aria-label="expand row" size="small"
+                                                            onClick={() => {
+                                                                setudcnrycod(cntry.country_code); setudcnrynme(cntry.country_name);
+                                                                setupdtpk(cntry.pk); UhandleClickOpen();
+                                                            }}
+                                                        ><EditIcon /></IconButton>
+                                                        <IconButton aria-label="expand row" size="small"
+                                                            onClick={() => { setpk(cntry.pk); setdelproname(cntry.country_name); handleClickOpen(); }}
+                                                            sx={{ color: 'rgba(255, 0, 0, 0.755)', marginRight: '1em' }}><DeleteIcon /></IconButton></TableCell>
+                                                </TableRow> : null}
+                                        </>
+                                    ))}
+                                </>}
                         </TableBody>
                     </Table>
                 </TableContainer> : <Loader />}
@@ -171,17 +229,17 @@ let Countrycomp = (props) => {
                         <div className="row">
                             <div className="col-lg-6 editscrn">
                                 <label className="micardlble" >Country Code</label><br />
-                                <input className="micardinpt" value={udcnrycod} onChange={(e) => {setudcnrycod(e.target.value)}} required />
+                                <input className="micardinpt" value={udcnrycod} onChange={(e) => { setudcnrycod(e.target.value) }} required />
                             </div>
 
                             <div className="col-lg-6 editscrn">
                                 <label className="micardlble" >Country Name</label><br />
-                                <input className="micardinpt" value={udcnrynme} onChange={(e) => {setudcnrynme(e.target.value)}} required />
+                                <input className="micardinpt" value={udcnrynme} onChange={(e) => { setudcnrynme(e.target.value) }} required />
                             </div>
-                            
+
                         </div><br />
-                        <button className="comadbtn" onClick={doPUT} style={{marginBottom:'unset'}}>Update</button>
-                    <button className="cancelbtn" onClick={UhandleClose} >Discord</button>
+                        <button className="comadbtn" onClick={doPUT} style={{ marginBottom: 'unset' }}>Update</button>
+                        <button className="cancelbtn" onClick={UhandleClose} >Discord</button>
                     </DialogContent>
                 </Dialog><br />
             </div>
@@ -210,7 +268,7 @@ function Country() {
             baseURL: "https://erp-test-3wqc9.ondigitalocean.app/api/get?model=country"
         });
 
-        const postcountry = (country,code) => {
+        const postcountry = (country, code) => {
             postcountryinpt.post('', {
                 country_name: country,
                 country_code: code
@@ -233,7 +291,7 @@ function Country() {
         };
         let doPost = (e) => {
             e.preventDefault();
-            postcountry(countryinpt,countrycode);
+            postcountry(countryinpt, countrycode);
         }
         return (
             <>
@@ -241,7 +299,7 @@ function Country() {
                     <div className="micard">
                         <h5 className="micardhdr">Add Country</h5>
                         <div className="micardbdy row">
-                        <div className="col-lg-4">
+                            <div className="col-lg-4">
                                 <label className="micardlble" >Country Code</label><br />
                                 <input className="micardinpt" onChange={(e) => { setcountrycode(e.target.value) }} required />
                             </div>
