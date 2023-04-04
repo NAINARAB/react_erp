@@ -9,6 +9,7 @@ import { maxWidth } from "@mui/system";
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import Loader from "../../comp/Load/loading";
+import SearchIcon from '@mui/icons-material/Search';
 import axios from "axios";
 
 const Transition = React.forwardRef(function Transition(props, ref) {
@@ -28,6 +29,7 @@ function Butns() {
 
 let PhasesRowsComp = (props) => {
     let { arr } = props;
+    let { searchdata } = props;
     let count = 0;
     const [pk, setpk] = useState();
     const [delproname, setdelproname] = useState('');
@@ -113,23 +115,47 @@ let PhasesRowsComp = (props) => {
                                 <TableRow>
                                     <TableCell variant="head" align="left" Width={120} sx={{ backgroundColor: 'rgb(15, 11, 42)', color: 'white', fontWeight: 'bold' }}>S.No</TableCell>
                                     <TableCell variant="head" align="left" sx={{ backgroundColor: 'rgb(15, 11, 42)', color: 'white', fontWeight: 'bold' }}>Phases</TableCell>
-                                    <TableCell variant="head" align="right" width={200} sx={{ backgroundColor: 'rgb(15, 11, 42)', color: 'white', fontWeight: 'bold',paddingRight:'3em' }}>Action</TableCell>
+                                    <TableCell variant="head" align="right" width={200} sx={{ backgroundColor: 'rgb(15, 11, 42)', color: 'white', fontWeight: 'bold', paddingRight: '3em' }}>Action</TableCell>
                                 </TableRow>
                             </TableHead>
                             <TableBody>
-                                {arr.map((phrow) => (
-                                    <TableRow hover={true} >
-                                        <TableCell >{++count}</TableCell>
-                                        <TableCell>{phrow.phase_name}</TableCell>
-                                        <TableCell align="right">
-                                            <IconButton aria-label="expand row" size="small"
-                                                onClick={() => { setupdtpk(phrow.pk); setupdtphase(phrow.phase_name); UhandleClickOpen(); }}
-                                            ><EditIcon /></IconButton>
-                                            <IconButton aria-label="expand row" size="small" onClick={() => { setpk(phrow.pk); setdelproname(phrow.phase_name); handleClickOpen(); }}
-                                                sx={{ color: 'rgba(255, 0, 0, 0.755)', marginRight: '1em' }}><DeleteIcon /></IconButton>
-                                        </TableCell>
-                                    </TableRow>
-                                ))}
+                                {searchdata == '' ?
+                                    <>
+                                        {arr.map((phrow) => (
+                                            <TableRow hover={true} >
+                                                <TableCell >{++count}</TableCell>
+                                                <TableCell>{phrow.phase_name}</TableCell>
+                                                <TableCell align="right">
+                                                    <IconButton aria-label="expand row" size="small"
+                                                        onClick={() => { setupdtpk(phrow.pk); setupdtphase(phrow.phase_name); UhandleClickOpen(); }}
+                                                    ><EditIcon /></IconButton>
+                                                    <IconButton aria-label="expand row" size="small" onClick={() => { setpk(phrow.pk); setdelproname(phrow.phase_name); handleClickOpen(); }}
+                                                        sx={{ color: 'rgba(255, 0, 0, 0.755)', marginRight: '1em' }}><DeleteIcon /></IconButton>
+                                                </TableCell>
+                                            </TableRow>
+                                        ))}
+                                    </>
+                                    :
+                                    <>
+                                        {arr.map((phrow) => (
+                                            <>
+                                                {(phrow.phase_name.toLowerCase()).match(searchdata) == searchdata ?
+                                                    <TableRow hover={true} >
+                                                        <TableCell >{++count}</TableCell>
+                                                        <TableCell>{phrow.phase_name}</TableCell>
+                                                        <TableCell align="right">
+                                                            <IconButton aria-label="expand row" size="small"
+                                                                onClick={() => { setupdtpk(phrow.pk); setupdtphase(phrow.phase_name); UhandleClickOpen(); }}
+                                                            ><EditIcon /></IconButton>
+                                                            <IconButton aria-label="expand row" size="small" onClick={() => { setpk(phrow.pk); setdelproname(phrow.phase_name); handleClickOpen(); }}
+                                                                sx={{ color: 'rgba(255, 0, 0, 0.755)', marginRight: '1em' }}><DeleteIcon /></IconButton>
+                                                        </TableCell>
+                                                    </TableRow>
+                                                    : null}
+                                            </>
+                                        ))}
+                                    </>
+                                }
                             </TableBody>
                         </Table>
                     </TableContainer>
@@ -193,6 +219,7 @@ function Phases() {
             })
     }, [])
     const [dispPhases, setDispPhases] = useState(false);
+    const [searchdata, setsearchdata] = useState('');
     return (
         <>
             <div className="row">
@@ -216,7 +243,17 @@ function Phases() {
                         </div>
 
                         <div className="tablepadding">
-                            {dispPhases === false ? <PhasesRowsComp arr={phasedata} /> : <AddPhases />}
+                            <div className="search" style={{ marginBottom: 'unset' }}>
+                                <input type={'search'} className='micardinpt'
+                                    placeholder="Search Here...."
+                                    onChange={(e) => {
+                                        setsearchdata((e.target.value).toLowerCase());
+                                    }} style={{ paddingLeft: '3em' }} />
+                                <div className="sIcon">
+                                    <SearchIcon sx={{ fontSize: '2em' }} />
+                                </div>
+                            </div>
+                            {dispPhases === false ? <PhasesRowsComp arr={phasedata} searchdata={searchdata} /> : <AddPhases />}
                         </div>
                     </div>
                 </div>

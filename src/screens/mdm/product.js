@@ -342,7 +342,7 @@ const Product = () => {
                                     <input type={'search'} className='micardinpt'
                                         placeholder="Search Here...."
                                         onChange={(e) => {
-                                            setsearchdata(e.target.value);
+                                            setsearchdata((e.target.value).toLowerCase());
                                         }} style={{ paddingLeft: '3em' }} />
                                     <div className="sIcon">
                                         <SearchIcon sx={{ fontSize: '2em' }} />
@@ -404,9 +404,10 @@ const Product = () => {
                                                 :
                                                 rows.map((rowobj) => ( //|| rowobj.parts.map(ob => (<>{ob.match(searchdata) == searchdata}</>))  ||  || rowobj.parts.map((ob,ind) => ((ob.toString()).match(searchdata) == searchdata))
                                                     <>
-                                                        {rowobj.product_name.match(searchdata) == searchdata || rowobj.product_code.match(searchdata) == searchdata || rowobj.product_type.match(searchdata) == searchdata 
-                                                         || (rowobj.multiple_parts.toString()).match(searchdata) == searchdata || (rowobj.minimum_stock_quantity.toString()).match(searchdata) == searchdata || (rowobj.maximum_price.toString()).match(searchdata) == searchdata 
-                                                         || rowobj.minimum_price == searchdata || rowobj.currency_get.match(searchdata) == searchdata ?
+                                                        {(rowobj.product_name.toLowerCase()).match(searchdata) == searchdata || (rowobj.product_code.toLowerCase()).match(searchdata) == searchdata || (rowobj.product_type.toLowerCase()).match(searchdata) == searchdata 
+                                                         || ((rowobj.multiple_parts.toString()).toLowerCase()).match(searchdata) == searchdata || (rowobj.minimum_stock_quantity.toString()).match(searchdata) == searchdata || (rowobj.maximum_price.toString()).match(searchdata) == searchdata 
+                                                         || rowobj.minimum_price == searchdata || (rowobj.currency_get.toLowerCase()).match(searchdata) == searchdata || 
+                                                         ((rowobj.parts.toString()).toLowerCase()).match(searchdata) == searchdata ?
                                                          
                                                             <TableRow sx={{ '&:last-child td, &:last-child th': { border: 0 } }} hover={true}>
                                                                 <TableCell component="th" scope="row" sx={{fontFamily:'prosans'}}>

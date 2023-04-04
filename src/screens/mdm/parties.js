@@ -12,6 +12,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import '../common.css';
 import Loader from "../../comp/Load/loading";
+import SearchIcon from '@mui/icons-material/Search';
 import axios from "axios";
 
 
@@ -316,7 +317,7 @@ let PartyComp = (props) => {
                                 <input type='number' value={upprtpin} className="micardinpt" onChange={(e) => { setupupprtpin(e.target.value) }} required />
                             </div>
 
-                            
+
 
                         </div><br />
                         <button className="comadbtn" onClick={doPUT} type={"submit"} style={{ marginBottom: 'unset' }}>Update</button>
@@ -399,7 +400,7 @@ function Parties() {
             baseURL: "https://erp-test-3wqc9.ondigitalocean.app/api/get?model=parties"
         });
 
-        const postParties = (nme, cntry, type, state, adres, pin, cntno, cntnme, emil, gst,totpro) => {
+        const postParties = (nme, cntry, type, state, adres, pin, cntno, cntnme, emil, gst, totpro) => {
             partypost.post('', {
                 party_name: nme,
                 party_country: cntry,
@@ -546,22 +547,22 @@ function Parties() {
                             <input type='number' className="micardinpt" onChange={(e) => { setunt(e.target.value); }} required />
 
                             <button className="comadbtn" style={{ float: 'unset', marginTop: '1em', marginBottom: 'unset' }}
-                                onClick={(e) => { 
+                                onClick={(e) => {
                                     e.preventDefault();
-                                    settotproarr(obj => [...obj, {"product":partyproducts,"unit_price":unt}]);
-                                 }}
+                                    settotproarr(obj => [...obj, { "product": partyproducts, "unit_price": unt }]);
+                                }}
                             >Add <ArrowForwardIcon sx={{ fontSize: '1em' }} />
                             </button>
                         </div>
 
-                        <div className="col-lg-8" style={{padding:'1em'}}>
+                        <div className="col-lg-8" style={{ padding: '1em' }}>
                             <label className="micardlble">Products</label>
                             <div style={{ border: '1px solid #d9d7d7', minHeight: '10em', borderRadius: '6px', padding: '10px' }}>
-                                {totproarr.map((arob,index) => {
+                                {totproarr.map((arob, index) => {
                                     return (
                                         <>
-                                            <Chip label={arob.product + " - " + arob.unit_price} sx={{margin:'2px'}} onDelete={
-                                                () => {settotproarr([])}
+                                            <Chip label={arob.product + " - " + arob.unit_price} sx={{ margin: '2px' }} onDelete={
+                                                () => { settotproarr([]) }
                                             } />
                                         </>
                                     );
@@ -579,6 +580,8 @@ function Parties() {
             </form>
         );
     }
+
+    const [searchdata, setsearchdata] = useState('');
 
     return (
         <>
@@ -599,6 +602,16 @@ function Parties() {
                         <h6>Master Data Management / Parties </h6>
                     </div>
                     <div className="tablepadding">
+                        <div className="search" style={{ marginBottom: 'unset' }}>
+                            <input type={'search'} className='micardinpt'
+                                placeholder="Search Here...."
+                                onChange={(e) => {
+                                    setsearchdata((e.target.value).toLowerCase());
+                                }} style={{ paddingLeft: '3em' }} />
+                            <div className="sIcon">
+                                <SearchIcon sx={{ fontSize: '2em' }} />
+                            </div>
+                        </div>
                         {dispparties === false ? <>
                             {partydata.length !== 0 ? <TableContainer component={Paper} sx={{ maxHeight: 640 }}>
                                 <Table stickyHeader aria-label="collapsible table">
@@ -616,12 +629,31 @@ function Parties() {
                                         </TableRow>
                                     </TableHead>
                                     <TableBody>
-                                        {partydata.map(propobject => (
-                                            <PartyComp propobj={propobject} partytypedata={partytypedat} countrydata={countrydat} statedata={statedat}
-                                                rowcount={
-                                                    (partydata.length + 1) - (partydata.length - count++)
-                                                } />
-                                        ))}
+                                        {searchdata == '' ?
+                                            <>
+                                                {partydata.map(propobject => (
+                                                    <>
+                                                        <PartyComp propobj={propobject} partytypedata={partytypedat} countrydata={countrydat} statedata={statedat}
+                                                            rowcount={1} />
+                                                    </>
+
+                                                ))}
+                                            </>
+                                            :
+                                            <>
+                                                {partydata.map(propobject => (
+                                                    <>
+                                                        {(propobject.party_name.toLowerCase()).match(searchdata) == searchdata || (propobject.party_type_get.toLowerCase()).match(searchdata) == searchdata 
+                                                        || (propobject.party_contact_name.toLowerCase()).match(searchdata) == searchdata || (propobject.party_contact_no.toLowerCase()).match(searchdata) == searchdata 
+                                                        || (propobject.party_email.toLowerCase()).match(searchdata) == searchdata || (propobject.party_gstin.toLowerCase()).match(searchdata) == searchdata ||
+                                                        (propobject.party_country_get.toLowerCase()).match(searchdata) == searchdata || (propobject.party_state_get.toLowerCase()).match(searchdata) == searchdata ||
+                                                        (propobject.party_address.toLowerCase()).match(searchdata) == searchdata || ((propobject.party_address.toString()).toLowerCase()).match(searchdata) == searchdata ? 
+                                                        <PartyComp propobj={propobject} partytypedata={partytypedat} countrydata={countrydat} statedata={statedat}
+                                                        rowcount={1} /> : null}
+                                                    </>
+                                                ))}
+                                            </>
+                                        }
                                     </TableBody>
                                 </Table>
                             </TableContainer> : <Loader />} </> : <AddParties />}

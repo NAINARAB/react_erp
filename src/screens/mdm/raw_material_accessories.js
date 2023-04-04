@@ -372,7 +372,7 @@ function Rawmaterialsaccessories() {
                             <input type={'search'} className='micardinpt'
                                 placeholder="Search Here...."
                                 onChange={(e) => {
-                                    setsearchdata(e.target.value);
+                                    setsearchdata(e.target.value.toLowerCase());
                                 }} style={{ paddingLeft: '3em' }} />
                             <div className="sIcon">
                                 <SearchIcon sx={{ fontSize: '2em' }} />
@@ -428,9 +428,9 @@ function Rawmaterialsaccessories() {
                                         : 
                                         rmadata.map((row) => (
                                             <>
-                                            {row.rm_name.match(searchdata) == searchdata || row.rm_code.match(searchdata) == searchdata || row.measured_unit_get.match(searchdata) == searchdata
+                                            {(row.rm_name.toLowerCase()).match(searchdata) == searchdata || (row.rm_code.toLowerCase()).match(searchdata) == searchdata || (row.measured_unit_get.toLowerCase()).match(searchdata) == searchdata
                                             || (row.min_stock.toString()).match(searchdata) == searchdata || (row.rm_max_price.toString()).match(searchdata) == searchdata 
-                                            || row.currency_get.match(searchdata) == searchdata ? 
+                                            || (row.currency_get.toLowerCase()).match(searchdata) == searchdata || ((row.preferred_supplier.toString()).toLowerCase()).match(searchdata) == searchdata ? 
                                             <TableRow
                                                 sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                                                 hover={true}
