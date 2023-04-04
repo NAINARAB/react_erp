@@ -9,6 +9,7 @@ import '../common.css';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import Loader from "../../comp/Load/loading";
+import SearchIcon from '@mui/icons-material/Search';
 import axios from "axios";
 
 const Transition = React.forwardRef(function Transition(props, ref) {
@@ -18,6 +19,7 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 
 let BranchesTble = (props) => {
     const { branch } = props;
+    let { searchdata } = props;
     let count = 0;
     const [pk, setpk] = useState();
     const [delproname, setdelproname] = useState('');
@@ -56,7 +58,7 @@ let BranchesTble = (props) => {
         setOpen(false);
     };
 
-    const brnchupdt = axios.create({ 
+    const brnchupdt = axios.create({
         baseURL: `https://erp-test-3wqc9.ondigitalocean.app/api/get?model=branch&pk=${updtpk}`
     });
 
@@ -88,7 +90,7 @@ let BranchesTble = (props) => {
 
     let doPUT = (e) => {
         e.preventDefault();
-        updtCountry(upbname,upcname,upstat,upcntry,uppin,upgst,upadres,);
+        updtCountry(upbname, upcname, upstat, upcntry, uppin, upgst, upadres,);
     }
 
     function doDelete() {
@@ -131,31 +133,71 @@ let BranchesTble = (props) => {
                         </TableHead>
 
                         <TableBody>
-                            {branch.map((brs) => (
-                                <TableRow sx={{ '&:last-child td, &:last-child th': { border: 0 } }} hover={true}>
-                                    <TableCell>{++count}</TableCell>
-                                    <TableCell>{brs.branch_name !== null ? brs.branch_name : "Null"}</TableCell>
-                                    <TableCell>{brs.cityname !== null ? brs.cityname : "Null"}</TableCell>
-                                    <TableCell>{brs.state_get !== null ? brs.state_get : "Null"}</TableCell>
-                                    <TableCell>{brs.country_get !== null ? brs.country_get : "Null"}</TableCell>
-                                    <TableCell>{brs.address !== null ? brs.address : "Null"}</TableCell>
-                                    <TableCell>{brs.pincode !== null ? brs.pincode : "Null"}</TableCell>
-                                    <TableCell>{brs.gst_number !== null ? brs.gst_number : "Null"}</TableCell>
-                                    <TableCell>
-                                        <IconButton aria-label="expand row" size="small"
-                                            onClick={() => {
-                                                setupdtpk(brs.pk); setupbname(brs.branch_name); setupcname(brs.cityname); setupstat(brs.state);
-                                                setupstatget(brs.state_get); setupcntry(brs.country); setupcntryget(brs.country_get); setuppin(brs.pincode);
-                                                setupgst(brs.gst_number); setupadres(brs.address); UhandleClickOpen();
-                                            }}
-                                        ><EditIcon /></IconButton>
-                                        <IconButton aria-label="expand row" size="small"
-                                            onClick={() => { setpk(brs.pk); setdelproname(brs.branch_name); handleClickOpen(); }}
-                                            sx={{ color: 'rgba(255, 0, 0, 0.755)' }}>
-                                            <DeleteIcon /></IconButton>
-                                    </TableCell>{/* || brs.gst_number != "" */}
-                                </TableRow>
-                            ))}
+                            {searchdata == '' ?
+                                <>
+                                    {branch.map((brs) => (
+                                        <TableRow sx={{ '&:last-child td, &:last-child th': { border: 0 } }} hover={true}>
+                                            <TableCell>{++count}</TableCell>
+                                            <TableCell>{brs.branch_name !== null ? brs.branch_name : "Null"}</TableCell>
+                                            <TableCell>{brs.cityname !== null ? brs.cityname : "Null"}</TableCell>
+                                            <TableCell>{brs.state_get !== null ? brs.state_get : "Null"}</TableCell>
+                                            <TableCell>{brs.country_get !== null ? brs.country_get : "Null"}</TableCell>
+                                            <TableCell>{brs.address !== null ? brs.address : "Null"}</TableCell>
+                                            <TableCell>{brs.pincode !== null ? brs.pincode : "Null"}</TableCell>
+                                            <TableCell>{brs.gst_number !== null ? brs.gst_number : "Null"}</TableCell>
+                                            <TableCell>
+                                                <IconButton aria-label="expand row" size="small"
+                                                    onClick={() => {
+                                                        setupdtpk(brs.pk); setupbname(brs.branch_name); setupcname(brs.cityname); setupstat(brs.state);
+                                                        setupstatget(brs.state_get); setupcntry(brs.country); setupcntryget(brs.country_get); setuppin(brs.pincode);
+                                                        setupgst(brs.gst_number); setupadres(brs.address); UhandleClickOpen();
+                                                    }}
+                                                ><EditIcon /></IconButton>
+                                                <IconButton aria-label="expand row" size="small"
+                                                    onClick={() => { setpk(brs.pk); setdelproname(brs.branch_name); handleClickOpen(); }}
+                                                    sx={{ color: 'rgba(255, 0, 0, 0.755)' }}>
+                                                    <DeleteIcon /></IconButton>
+                                            </TableCell>{/* || brs.gst_number != "" */}
+                                        </TableRow>
+                                    ))}
+                                </>
+                                :
+                                <>
+                                    {branch.map((brs) => (
+                                        <>
+                                            {(brs.branch_name.toLowerCase()).match(searchdata) == searchdata || (brs.cityname.toLowerCase()).match(searchdata) == searchdata
+                                                || (brs.state_get.toLowerCase()).match(searchdata) == searchdata || (brs.country_get.toLowerCase()).match(searchdata) == searchdata
+                                                || (brs.address.toLowerCase()).match(searchdata) == searchdata || (brs.pincode.toString()).match(searchdata) == searchdata
+                                                || (brs.gst_number.toLowerCase()).match(searchdata) == searchdata ?
+                                                <TableRow sx={{ '&:last-child td, &:last-child th': { border: 0 } }} hover={true}>
+                                                    <TableCell>{++count}</TableCell>
+                                                    <TableCell>{brs.branch_name !== null ? brs.branch_name : "Null"}</TableCell>
+                                                    <TableCell>{brs.cityname !== null ? brs.cityname : "Null"}</TableCell>
+                                                    <TableCell>{brs.state_get !== null ? brs.state_get : "Null"}</TableCell>
+                                                    <TableCell>{brs.country_get !== null ? brs.country_get : "Null"}</TableCell>
+                                                    <TableCell>{brs.address !== null ? brs.address : "Null"}</TableCell>
+                                                    <TableCell>{brs.pincode !== null ? brs.pincode : "Null"}</TableCell>
+                                                    <TableCell>{brs.gst_number !== null ? brs.gst_number : "Null"}</TableCell>
+                                                    <TableCell>
+                                                        <IconButton aria-label="expand row" size="small"
+                                                            onClick={() => {
+                                                                setupdtpk(brs.pk); setupbname(brs.branch_name); setupcname(brs.cityname); setupstat(brs.state);
+                                                                setupstatget(brs.state_get); setupcntry(brs.country); setupcntryget(brs.country_get); setuppin(brs.pincode);
+                                                                setupgst(brs.gst_number); setupadres(brs.address); UhandleClickOpen();
+                                                            }}
+                                                        ><EditIcon /></IconButton>
+                                                        <IconButton aria-label="expand row" size="small"
+                                                            onClick={() => { setpk(brs.pk); setdelproname(brs.branch_name); handleClickOpen(); }}
+                                                            sx={{ color: 'rgba(255, 0, 0, 0.755)' }}>
+                                                            <DeleteIcon /></IconButton>
+                                                    </TableCell>{/* || brs.gst_number != "" */}
+                                                </TableRow>
+                                                : null
+                                            }
+                                        </>
+                                    ))}
+                                </>
+                            }
                         </TableBody>
                     </Table>
                 </TableContainer> : <Loader />}
@@ -233,17 +275,17 @@ let BranchesTble = (props) => {
 
                             <div className="col-lg-6">
                                 <label className="micardlble" >Pin code</label><br />
-                                <input value={uppin} className="micardinpt" onChange={(e) => { setuppin(e.target.value) }}  />
+                                <input value={uppin} className="micardinpt" onChange={(e) => { setuppin(e.target.value) }} />
                             </div>
 
                             <div className="col-lg-6">
                                 <label className="micardlble" >GST Number</label><br />
-                                <input className="micardinpt" value={upgst} onChange={(e) => { setupgst(e.target.value) }}  />
+                                <input className="micardinpt" value={upgst} onChange={(e) => { setupgst(e.target.value) }} />
                             </div>
 
                             <div className="col-lg-6">
                                 <label className="micardlble" >Address</label><br />
-                                <textarea className="micardinpt" value={upadres} onChange={(e) => { setupadres(e.target.value) }}  />
+                                <textarea className="micardinpt" value={upadres} onChange={(e) => { setupadres(e.target.value) }} />
                             </div>
                         </div>
 
@@ -397,6 +439,8 @@ function Branches() {
                 setbranchdata(data.data)
             })
     }, [])
+
+    const [searchdata, setsearchdata] = useState('');
     return (
         <>
             <div className="row">
@@ -417,7 +461,19 @@ function Branches() {
                             <h6>Manage Users / Branches</h6>
                         </div>
                         <div className="tablepadding">
-                            {dispbranch == false ? <BranchesTble branch={branchdata} countrydat={countrydat} statedat={statedat} /> : <AddBranches />}
+                            {dispbranch == false ?
+                                <div className="search" style={{ marginBottom: 'unset' }}>
+                                    <input type={'search'} className='micardinpt'
+                                        placeholder="Search Here...."
+                                        onChange={(e) => {
+                                            setsearchdata((e.target.value).toLowerCase());
+                                        }} style={{ paddingLeft: '3em' }} />
+                                    <div className="sIcon">
+                                        <SearchIcon sx={{ fontSize: '2em' }} />
+                                    </div>
+                                </div>
+                                : null}
+                            {dispbranch == false ? <BranchesTble branch={branchdata} countrydat={countrydat} statedat={statedat} searchdata={searchdata} /> : <AddBranches />}
                         </div>
                     </div>
                 </div>

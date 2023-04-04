@@ -11,6 +11,7 @@ import '../common.css';
 import { maxWidth } from "@mui/system";
 import Loader from "../../comp/Load/loading";
 import axios from "axios";
+import SearchIcon from '@mui/icons-material/Search';
 
 const Transition = React.forwardRef(function Transition(props, ref) {
     return <Slide direction="up" ref={ref} {...props} />;
@@ -296,6 +297,7 @@ function Devision() {
     }
 
 
+    const [searchdata, setsearchdata] = useState('');
     return (
         <>
             <div className="row" >
@@ -315,6 +317,18 @@ function Devision() {
                         <h6>Manage Users / Devision </h6>
                     </div>
                     <div className="tablepadding">
+                        {dispDevision == false ?
+                            <div className="search" style={{ marginBottom: 'unset' }}>
+                                <input type={'search'} className='micardinpt'
+                                    placeholder="Search Here...."
+                                    onChange={(e) => {
+                                        setsearchdata((e.target.value).toLowerCase());
+                                    }} style={{ paddingLeft: '3em' }} />
+                                <div className="sIcon">
+                                    <SearchIcon sx={{ fontSize: '2em' }} />
+                                </div>
+                            </div>
+                            : null}
                         {dispDevision == false ? <Devisioncomp devision={devisiondata} deptdat={deptdat} /> : <AddDevision />}
                     </div>
                 </div>

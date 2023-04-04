@@ -602,16 +602,18 @@ function Parties() {
                         <h6>Master Data Management / Parties </h6>
                     </div>
                     <div className="tablepadding">
-                        <div className="search" style={{ marginBottom: 'unset' }}>
-                            <input type={'search'} className='micardinpt'
-                                placeholder="Search Here...."
-                                onChange={(e) => {
-                                    setsearchdata((e.target.value).toLowerCase());
-                                }} style={{ paddingLeft: '3em' }} />
-                            <div className="sIcon">
-                                <SearchIcon sx={{ fontSize: '2em' }} />
+                        {dispparties === false ?
+                            <div className="search" style={{ marginBottom: 'unset' }}>
+                                <input type={'search'} className='micardinpt'
+                                    placeholder="Search Here...."
+                                    onChange={(e) => {
+                                        setsearchdata((e.target.value).toLowerCase());
+                                    }} style={{ paddingLeft: '3em' }} />
+                                <div className="sIcon">
+                                    <SearchIcon sx={{ fontSize: '2em' }} />
+                                </div>
                             </div>
-                        </div>
+                            : null}
                         {dispparties === false ? <>
                             {partydata.length !== 0 ? <TableContainer component={Paper} sx={{ maxHeight: 640 }}>
                                 <Table stickyHeader aria-label="collapsible table">
@@ -643,13 +645,13 @@ function Parties() {
                                             <>
                                                 {partydata.map(propobject => (
                                                     <>
-                                                        {(propobject.party_name.toLowerCase()).match(searchdata) == searchdata || (propobject.party_type_get.toLowerCase()).match(searchdata) == searchdata 
-                                                        || (propobject.party_contact_name.toLowerCase()).match(searchdata) == searchdata || (propobject.party_contact_no.toLowerCase()).match(searchdata) == searchdata 
-                                                        || (propobject.party_email.toLowerCase()).match(searchdata) == searchdata || (propobject.party_gstin.toLowerCase()).match(searchdata) == searchdata ||
-                                                        (propobject.party_country_get.toLowerCase()).match(searchdata) == searchdata || (propobject.party_state_get.toLowerCase()).match(searchdata) == searchdata ||
-                                                        (propobject.party_address.toLowerCase()).match(searchdata) == searchdata || ((propobject.party_address.toString()).toLowerCase()).match(searchdata) == searchdata ? 
-                                                        <PartyComp propobj={propobject} partytypedata={partytypedat} countrydata={countrydat} statedata={statedat}
-                                                        rowcount={1} /> : null}
+                                                        {(propobject.party_name.toLowerCase()).match(searchdata) == searchdata || (propobject.party_type_get.toLowerCase()).match(searchdata) == searchdata
+                                                            || (propobject.party_contact_name.toLowerCase()).match(searchdata) == searchdata || propobject.party_contact_no.match(searchdata) == searchdata
+                                                            || (propobject.party_email.toLowerCase()).match(searchdata) == searchdata || (propobject.party_gstin.toLowerCase()).match(searchdata) == searchdata ||
+                                                            (propobject.party_country_get.toLowerCase()).match(searchdata) == searchdata || (propobject.party_state_get.toLowerCase()).match(searchdata) == searchdata ||
+                                                            (propobject.party_address.toLowerCase()).match(searchdata) == searchdata ?
+                                                            <PartyComp propobj={propobject} partytypedata={partytypedat} countrydata={countrydat} statedata={statedat}
+                                                                rowcount={1} /> : null}
                                                     </>
                                                 ))}
                                             </>

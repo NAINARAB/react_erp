@@ -1,14 +1,17 @@
 import React, { useState, useEffect } from "react";
 import Header from "../../comp/header/header";
 import Sidenav from "../../comp/sidenav/sidenav";
-import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Button, Slide,
-    TableContainer, Table, TableBody, TableCell, TableHead, TableRow, Paper, IconButton } from "@mui/material";
+import {
+    Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Button, Slide,
+    TableContainer, Table, TableBody, TableCell, TableHead, TableRow, Paper, IconButton
+} from "@mui/material";
 import '../common.css';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { maxWidth } from "@mui/system";
 import Loader from "../../comp/Load/loading";
 import axios from "axios";
+import SearchIcon from '@mui/icons-material/Search';
 
 const Transition = React.forwardRef(function Transition(props, ref) {
     return <Slide direction="up" ref={ref} {...props} />;
@@ -25,12 +28,13 @@ function Butns() {
 
 let DepartmentComp = (props) => {
     const { deprt } = props;
+    let { searchdata } = props;
     let count = 0;
     const [pk, setpk] = useState();
     const [delproname, setdelproname] = useState('');
     const [open, setOpen] = useState(false);
 
-    {/* Up variables */}
+    {/* Up variables */ }
 
     const [Uopen, setUopen] = useState(false);
     const [updtpk, setupdtpk] = useState();
@@ -119,24 +123,53 @@ let DepartmentComp = (props) => {
                         </TableHead>
 
                         <TableBody>
-                            {deprt.map((dept) => (
-                                <TableRow hover='true'>
-                                    <TableCell>{++count}</TableCell>
-                                    <TableCell>{dept.name}</TableCell>
-                                    <TableCell>{dept.role}</TableCell>
-                                    <TableCell>
-                                    <IconButton aria-label="expand row" size="small" 
-                                    onClick={() => {
-                                        setupdtpk(dept.pk); setupnme(dept.name); setuprol(dept.role);
-                                        UhandleClickOpen();
-                                    }}
-                                    ><EditIcon /></IconButton>
-                                        <IconButton aria-label="expand row" size="small"
-                                            onClick={() => { setpk(dept.pk); setdelproname(dept.name); handleClickOpen(); }}
-                                            sx={{ color: 'rgba(255, 0, 0, 0.755)', marginRight: '1em' }}><DeleteIcon /></IconButton>
-                                    </TableCell>
-                                </TableRow>
-                            ))}
+                            {searchdata == '' ?
+                                <>
+                                    {deprt.map((dept) => (
+                                        <TableRow hover='true'>
+                                            <TableCell>{++count}</TableCell>
+                                            <TableCell>{dept.name}</TableCell>
+                                            <TableCell>{dept.role}</TableCell>
+                                            <TableCell>
+                                                <IconButton aria-label="expand row" size="small"
+                                                    onClick={() => {
+                                                        setupdtpk(dept.pk); setupnme(dept.name); setuprol(dept.role);
+                                                        UhandleClickOpen();
+                                                    }}
+                                                ><EditIcon /></IconButton>
+                                                <IconButton aria-label="expand row" size="small"
+                                                    onClick={() => { setpk(dept.pk); setdelproname(dept.name); handleClickOpen(); }}
+                                                    sx={{ color: 'rgba(255, 0, 0, 0.755)', marginRight: '1em' }}><DeleteIcon /></IconButton>
+                                            </TableCell>
+                                        </TableRow>
+                                    ))}
+                                </>
+                                :
+                                <>
+                                    {deprt.map((dept) => (
+                                        <>
+                                            {(dept.name.toLowerCase()).match(searchdata) == searchdata || (dept.role.toLowerCase()).match(searchdata) == searchdata ?
+                                                <TableRow hover='true'>
+                                                    <TableCell>{++count}</TableCell>
+                                                    <TableCell>{dept.name}</TableCell>
+                                                    <TableCell>{dept.role}</TableCell>
+                                                    <TableCell>
+                                                        <IconButton aria-label="expand row" size="small"
+                                                            onClick={() => {
+                                                                setupdtpk(dept.pk); setupnme(dept.name); setuprol(dept.role);
+                                                                UhandleClickOpen();
+                                                            }}
+                                                        ><EditIcon /></IconButton>
+                                                        <IconButton aria-label="expand row" size="small"
+                                                            onClick={() => { setpk(dept.pk); setdelproname(dept.name); handleClickOpen(); }}
+                                                            sx={{ color: 'rgba(255, 0, 0, 0.755)', marginRight: '1em' }}><DeleteIcon /></IconButton>
+                                                    </TableCell>
+                                                </TableRow>
+                                                : null}
+                                        </>
+                                    ))}
+                                </>
+                            }
                         </TableBody>
                     </Table>
                 </TableContainer> : <Loader />}
@@ -180,17 +213,17 @@ let DepartmentComp = (props) => {
                         <div className="row">
                             <div className="col-lg-6 editscrn">
                                 <label className="micardlble" >Department Name</label><br />
-                                <input className="micardinpt" value={upnme} onChange={(e) => {setupnme(e.target.value)}}  />
+                                <input className="micardinpt" value={upnme} onChange={(e) => { setupnme(e.target.value) }} />
                             </div>
 
                             <div className="col-lg-6 editscrn">
                                 <label className="micardlble" >Role</label><br />
-                                <input className="micardinpt" value={uprol} onChange={(e) => {setuprol(e.target.value)}}  />
+                                <input className="micardinpt" value={uprol} onChange={(e) => { setuprol(e.target.value) }} />
                             </div>
-                            
+
                         </div><br />
-                        <button className="comadbtn" onClick={doPUT} style={{marginBottom:'unset'}}>Update</button>
-                    <button className="cancelbtn" onClick={UhandleClose} >Discord</button>
+                        <button className="comadbtn" onClick={doPUT} style={{ marginBottom: 'unset' }}>Update</button>
+                        <button className="cancelbtn" onClick={UhandleClose} >Discord</button>
                     </DialogContent>
                 </Dialog><br />
             </div>
@@ -267,6 +300,9 @@ function Department() {
             </>
         );
     }
+
+    const [searchdata, setsearchdata] = useState('');
+
     return (
         <>
             <div className="row">
@@ -287,7 +323,19 @@ function Department() {
                             <h6>Manage Users / Departments</h6>
                         </div>
                         <div className="tablepadding">
-                            {dispdept == false ? <DepartmentComp deprt={departmentdata} /> : <AddDepartment />}
+                            {dispdept == false ?
+                                <div className="search" style={{ marginBottom: 'unset' }}>
+                                    <input type={'search'} className='micardinpt'
+                                        placeholder="Search Here...."
+                                        onChange={(e) => {
+                                            setsearchdata((e.target.value).toLowerCase());
+                                        }} style={{ paddingLeft: '3em' }} />
+                                    <div className="sIcon">
+                                        <SearchIcon sx={{ fontSize: '2em' }} />
+                                    </div>
+                                </div>
+                                : null}
+                            {dispdept == false ? <DepartmentComp deprt={departmentdata} searchdata={searchdata} /> : <AddDepartment />}
                         </div>
                     </div>
                 </div>

@@ -9,6 +9,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { maxWidth } from "@mui/system";
 import Loader from "../../comp/Load/loading";
+import SearchIcon from '@mui/icons-material/Search';
 import axios from "axios";
 
 const Transition = React.forwardRef(function Transition(props, ref) {
@@ -18,6 +19,7 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 
 let PartyTypecomp = (props) => {
     const { PartyTypeRows } = props;
+    let { searchdata } = props;
     let count = 0;
     const [pk, setpk] = useState();
     const [delproname, setdelproname] = useState('');
@@ -111,20 +113,48 @@ let PartyTypecomp = (props) => {
                                 </TableRow>
                             </TableHead>
                             <TableBody>
-                                {PartyTypeRows.map((ptr) => (
-                                    <TableRow hover='true'>
-                                        <TableCell >{++count}</TableCell>
-                                        <TableCell>{ptr.party_type}</TableCell>
-                                        <TableCell align="left">
-                                            <IconButton aria-label="expand row" size="small"
-                                                onClick={() => { setupdtpk(ptr.pk); setupdprttyp(ptr.party_type); UhandleClickOpen(); }}
-                                            ><EditIcon /></IconButton>
-                                            <IconButton aria-label="expand row" size="small"
-                                                onClick={() => { setpk(ptr.pk); setdelproname(ptr.party_type); handleClickOpen(); }}
-                                                sx={{ color: 'rgba(255, 0, 0, 0.755)', marginRight: '1em' }}><DeleteIcon /></IconButton>
-                                        </TableCell>
-                                    </TableRow>
-                                ))}
+                                {searchdata == '' ?
+                                    <>
+                                        {PartyTypeRows.map((ptr) => (
+                                            <TableRow hover='true'>
+                                                <TableCell >{++count}</TableCell>
+                                                <TableCell>{ptr.party_type}</TableCell>
+                                                <TableCell align="left">
+                                                    <IconButton aria-label="expand row" size="small"
+                                                        onClick={() => { setupdtpk(ptr.pk); setupdprttyp(ptr.party_type); UhandleClickOpen(); }}
+                                                    ><EditIcon /></IconButton>
+                                                    <IconButton aria-label="expand row" size="small"
+                                                        onClick={() => { setpk(ptr.pk); setdelproname(ptr.party_type); handleClickOpen(); }}
+                                                        sx={{ color: 'rgba(255, 0, 0, 0.755)', marginRight: '1em' }}><DeleteIcon /></IconButton>
+                                                </TableCell>
+                                            </TableRow>
+                                        ))}
+                                    </>
+                                    :
+                                    <>
+                                        {PartyTypeRows.map((ptr) => (
+                                            <>
+                                                {(ptr.party_type.toLowerCase()).match(searchdata) == searchdata ?
+                                                    <>
+                                                        <TableRow hover='true'>
+                                                            <TableCell >{++count}</TableCell>
+                                                            <TableCell>{ptr.party_type}</TableCell>
+                                                            <TableCell align="left">
+                                                                <IconButton aria-label="expand row" size="small"
+                                                                    onClick={() => { setupdtpk(ptr.pk); setupdprttyp(ptr.party_type); UhandleClickOpen(); }}
+                                                                ><EditIcon /></IconButton>
+                                                                <IconButton aria-label="expand row" size="small"
+                                                                    onClick={() => { setpk(ptr.pk); setdelproname(ptr.party_type); handleClickOpen(); }}
+                                                                    sx={{ color: 'rgba(255, 0, 0, 0.755)', marginRight: '1em' }}><DeleteIcon /></IconButton>
+                                                            </TableCell>
+                                                        </TableRow>
+                                                    </>
+                                                    : null
+                                                }
+                                            </>
+                                        ))}
+                                    </>
+                                }
                             </TableBody>
                         </Table>
                     </TableContainer>
@@ -169,7 +199,7 @@ let PartyTypecomp = (props) => {
                             <label className="micardlble" >Party Type</label><br />
                             <input className="micardinpt" value={updprttyp} onChange={(e) => { setupdprttyp(e.target.value) }} required />
                         </div><br />
-                        <button className="comadbtn" onClick={doPUT} style={{marginBottom:'unset'}}>Update</button>
+                        <button className="comadbtn" onClick={doPUT} style={{ marginBottom: 'unset' }}>Update</button>
                         <button className="cancelbtn" onClick={UhandleClose} >Discord</button>
                     </DialogContent>
                 </Dialog>
@@ -223,6 +253,8 @@ function Partytype() {
             e.preventDefault();
             postPT(partyinpt);
         }
+
+
         return (
             <>
                 <form>
@@ -245,6 +277,9 @@ function Partytype() {
         );
     }
 
+
+    const [searchdata, setsearchdata] = useState('');
+
     return (
 
         <>
@@ -266,7 +301,17 @@ function Partytype() {
                             <h6>Master Data Management / Party Type</h6>
                         </div>
                         <div className="tablepadding">
-                            {disppartytypes === false ? <PartyTypecomp PartyTypeRows={partttypedata} /> : <AddPartyType />}
+                            <div className="search" style={{ marginBottom: 'unset' }}>
+                                <input type={'search'} className='micardinpt'
+                                    placeholder="Search Here...."
+                                    onChange={(e) => {
+                                        setsearchdata((e.target.value).toLowerCase());
+                                    }} style={{ paddingLeft: '3em' }} />
+                                <div className="sIcon">
+                                    <SearchIcon sx={{ fontSize: '2em' }} />
+                                </div>
+                            </div>
+                            {disppartytypes === false ? <PartyTypecomp PartyTypeRows={partttypedata} searchdata={searchdata} /> : <AddPartyType />}
                         </div>
                     </div>
                 </div>
