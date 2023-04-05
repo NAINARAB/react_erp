@@ -65,37 +65,17 @@ const Sidenav = () => {
 
 
 
-
                                     <li className="nav-item">
                                         <button className="nav-link sbutton butful" data-bs-toggle="collapse" data-bs-target="#menu_item1">
                                             <i className="bi bi-person-circle itme"></i>&ensp;
                                             Admin&ensp; <i className="bi bi-chevron-right itmeright"></i> </button>
                                         <ul id="menu_item1" className="submenu collapse" style={{ paddingLeft: '0', paddingRight: '0' }} data-bs-parent="#nav_accordion">
 
-
                                             <li>
-                                                <button className="nav-link sbutton butful" data-bs-toggle="collapse" data-bs-target="#menu_item2">
-                                                    <i className="bi bi-ui-checks itme"></i>&ensp;
-                                                    Master Data Management &ensp;<i className="bi bi-chevron-right itmeright"></i> </button>
-                                                <ul id="menu_item2" className="submenu collapse">
-                                                    <li><button className="nav-link sbutton" onClick={() => { navigate('/admin/mdm/product') }}><i className="bi bi-dot"></i>Product</button></li>
-                                                    <li><button className="nav-link sbutton" onClick={() => { navigate('/admin/mdm/rawmaterialsaccessories') }}><i className="bi bi-dot"></i>Raw Material & Accessories</button></li>
-                                                    <li><button className="nav-link sbutton" onClick={() => { navigate('/admin/mdm/billsofmaterials') }}><i className="bi bi-dot"></i>Bills of Materials</button></li>
-                                                    <li><button className="nav-link sbutton" onClick={() => { navigate('/admin/mdm/productionflow') }}><i className="bi bi-dot"></i>Production Flow</button></li>
-                                                    <li><button className="nav-link sbutton" onClick={() => { navigate('/admin/mdm/parties') }}><i className="bi bi-dot"></i>Parties</button></li>
-                                                    <li><button className="nav-link sbutton" onClick={() => { navigate('/admin/mdm/phases') }}><i className="bi bi-dot"></i>Phases</button></li>
-                                                    <li><button className="nav-link sbutton" onClick={() => { navigate('/admin/mdm/partytype') }}><i className="bi bi-dot"></i>Party Type</button></li>
-                                                    <li><button className="nav-link sbutton" onClick={() => { navigate('/admin/mdm/country') }}><i className="bi bi-dot"></i>Country</button></li>
-                                                </ul>
-                                            </li>
-
-
-
-                                            <li>
-                                                <button className="nav-link sbutton butful" data-bs-toggle="collapse" data-bs-target="#menu_item3">
+                                                <button className="nav-link sbutton butful" data-bs-toggle="collapse" data-bs-target="#menu_item10">
                                                     <i className="bi bi-people-fill itme"></i>&ensp;
-                                                    Manage Users &ensp;<i className="bi bi-chevron-right itmeright"></i></button>
-                                                <ul id="menu_item3" className="submenu collapse">
+                                                    User Management &ensp;<i className="bi bi-chevron-right itmeright"></i></button>
+                                                <ul id="menu_item10" className="submenu collapse">
                                                     <li><button className="nav-link sbutton" onClick={() => { navigate('/admin/manageusers/branches') }}><i className="bi bi-dot"></i>Branches</button></li>
                                                     <li><button className="nav-link sbutton" onClick={() => { navigate('/admin/manageusers/department') }}><i className="bi bi-dot"></i>Department</button></li>
                                                     <li><button className="nav-link sbutton" onClick={() => { navigate('/admin/manageusers/devision') }}><i className="bi bi-dot"></i>Devision</button></li>
@@ -104,6 +84,34 @@ const Sidenav = () => {
                                                 </ul>
                                             </li>
 
+
+                                            <li>
+                                                <button className="nav-link sbutton butful" data-bs-toggle="collapse" data-bs-target="#menu_item2">
+                                                    <i className="bi bi-ui-checks itme"></i>&ensp;
+                                                    Master Data Management &ensp;<i className="bi bi-chevron-right itmeright"></i> </button>
+                                                <ul id="menu_item2" className="submenu collapse">
+                                                    <li><button className="nav-link sbutton" onClick={() => { navigate('/admin/mdm/product') }}><i className="bi bi-dot"></i>Product</button></li>
+                                                    <li><button className="nav-link sbutton" onClick={() => { navigate('/admin/mdm/rawmaterialsaccessories') }}><i className="bi bi-dot"></i>Raw Material </button></li>
+                                                    <li><button className="nav-link sbutton" onClick={() => { navigate('/admin/mdm/billsofmaterials') }}><i className="bi bi-dot"></i>Bills of Materials</button></li>
+                                                    <li><button className="nav-link sbutton" onClick={() => { navigate('/admin/mdm/productionflow') }}><i className="bi bi-dot"></i>Production Flow</button></li>
+                                                    <li><button className="nav-link sbutton" onClick={() => { navigate('/admin/mdm/parties') }}><i className="bi bi-dot"></i>Parties</button></li>
+                                                </ul>
+                                            </li>
+
+
+                                            <li>
+                                                <button className="nav-link sbutton butful" data-bs-toggle="collapse" data-bs-target="#menu_item3">
+                                                    <i className="bi bi-gear-fill itme"></i>&ensp;
+                                                    Configuration &ensp;<i className="bi bi-chevron-right itmeright"></i></button>
+                                                <ul id="menu_item3" className="submenu collapse">
+                                                    <li><button className="nav-link sbutton" onClick={() => { navigate('/admin/configuration/partytype') }}><i className="bi bi-dot"></i>Party Type</button></li>
+                                                    <li><button className="nav-link sbutton" onClick={() => { navigate('/admin/configuration/phases') }}><i className="bi bi-dot"></i>Production Phases</button></li>
+                                                    <li><button className="nav-link sbutton" onClick={() => { navigate('/admin/configuration/country') }}><i className="bi bi-dot"></i>Country</button></li>
+                                                    <li><button className="nav-link sbutton" onClick={() => { navigate('/admin/configuration/state') }}><i className="bi bi-dot"></i>State</button></li>
+                                                    <li><button className="nav-link sbutton" onClick={() => { navigate('/admin/configuration/currency') }}><i className="bi bi-dot"></i>Currency</button></li>
+                                                    <li><button className="nav-link sbutton" onClick={() => { navigate('/admin/configuration/measuredunit') }}><i className="bi bi-dot"></i>Measured Units</button></li>
+                                                </ul>
+                                            </li>
 
 
                                         </ul>

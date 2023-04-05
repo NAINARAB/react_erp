@@ -645,11 +645,8 @@ function Parties() {
                                             <>
                                                 {partydata.map(propobject => (
                                                     <>
-                                                        {(propobject.party_name.toLowerCase()).match(searchdata) == searchdata || (propobject.party_type_get.toLowerCase()).match(searchdata) == searchdata
-                                                            || (propobject.party_contact_name.toLowerCase()).match(searchdata) == searchdata || propobject.party_contact_no.match(searchdata) == searchdata
-                                                            || (propobject.party_email.toLowerCase()).match(searchdata) == searchdata || (propobject.party_gstin.toLowerCase()).match(searchdata) == searchdata ||
-                                                            (propobject.party_country_get.toLowerCase()).match(searchdata) == searchdata || (propobject.party_state_get.toLowerCase()).match(searchdata) == searchdata ||
-                                                            (propobject.party_address.toLowerCase()).match(searchdata) == searchdata ?
+                                                        {(propobject.party_name.toLowerCase()).match(searchdata) == searchdata || (propobject.party_address.toLowerCase()).match(searchdata) == searchdata 
+                                                        || (propobject.party_pincode.toString()).match(searchdata) == searchdata || (propobject.party_contact_name.toLowerCase( )).match(searchdata) == searchdata ?
                                                             <PartyComp propobj={propobject} partytypedata={partytypedat} countrydata={countrydat} statedata={statedat}
                                                                 rowcount={1} /> : null}
                                                     </>
