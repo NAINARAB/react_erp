@@ -2,7 +2,7 @@ import React, { useEffect, useState, useMemo } from "react";
 import Header from "../../comp/header/header";
 import Sidenav from "../../comp/sidenav/sidenav";
 import {
-    Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Button, Slide,
+    Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Button, Slide, Alert,
     TableContainer, Table, TableBody, TableCell, TableHead, TableRow, Paper, IconButton, Autocomplete, TextField, Chip
 } from "@mui/material";
 import '../common.css';
@@ -12,6 +12,9 @@ import Loader from "../../comp/Load/loading";
 import axios from "axios";
 import SearchIcon from '@mui/icons-material/Search';
 
+
+const token = sessionStorage.getItem("token");
+
 const trarr = ['up', 'down', 'left', 'right'];
 var item = trarr[Math.floor(Math.random() * trarr.length)];
 
@@ -19,7 +22,11 @@ const Transition = React.forwardRef(function Transition(props, ref) {
     return <Slide direction={item} ref={ref} {...props} />;
 });
 
+
+
 const Product = () => {
+    const [dispalr, setdispalr] = useState(false);
+    const [alrstatus, setalrstatus] = useState(false);
     let [rows, setrows] = useState([]);
     const [dispaddpro, setaddpro] = useState(false);
     const [countrysdat, setcountrydat] = useState([])
@@ -43,6 +50,17 @@ const Product = () => {
     const [prcrcypk, setcrcypk] = useState('');
     const [prmp, setmp] = useState('');
     const [prmparr, setprmparr] = useState([]);
+
+    const Alr = () => {
+        return (
+            <div className="alrt">
+                <Alert severity={alrstatus === true ? "success" : "error"}
+                    onClose={() => { setdispalr(false) }}>{alrstatus === true ? "New Product Added" :
+                        ":) Error! Please Try Again"
+                    }</Alert>
+            </div>
+        );
+    }
 
     const handleClickOpen = () => {
         setOpen(true);
@@ -76,7 +94,12 @@ const Product = () => {
             currency: crny,
             multiple_parts: mp,
             parts: mpar
-        })
+        },
+            {
+                headers: {
+                    'Authorization': `token ${token}`
+                }
+            })
             .then((res) => {
                 console.log("Post After", res)
                 if (res.data.status === 'success') {
@@ -99,14 +122,27 @@ const Product = () => {
     }
 
 
+
     useEffect(() => {
 
-        fetch('https://erp-test-3wqc9.ondigitalocean.app/api/get?model=product')
+        fetch('https://erp-test-3wqc9.ondigitalocean.app/api/get?model=product',
+            {
+                method: 'GET',
+                headers: {
+                    'Authorization': `token ${token}`
+                }
+            })
             .then((res) => { return res.json(); })
             .then((data) => {
                 setrows(data.data)
             })
-        fetch('https://erp-test-3wqc9.ondigitalocean.app/api/get?model=currency')
+        fetch('https://erp-test-3wqc9.ondigitalocean.app/api/get?model=currency',
+            {
+                method: 'GET',
+                headers: {
+                    'Authorization': `token ${token}`
+                }
+            })
             .then((res) => { return res.json(); })
             .then((data) => {
                 setcountrydat(data.data);
@@ -119,6 +155,7 @@ const Product = () => {
 
 
     const Addproduct = () => {
+
         const [productname, setproductname] = useState('');
         const [productcode, setproductcode] = useState('');
         const [producttype, setproductype] = useState('');
@@ -128,6 +165,7 @@ const Product = () => {
         const [minstock, setminstock] = useState(0);
         const [multi, setmulti] = useState(false);
         const [parts, setparts] = useState([]);
+
 
 
         const prdtpost = axios.create({
@@ -145,17 +183,25 @@ const Product = () => {
                 maximum_price: maxprice,
                 minimum_price: minprice,
                 currency: currency,
+            },
+            {
+                headers: {
+                    'Authorization': `token ${token}`
+                }
             })
                 .then((res) => {
                     console.log("after then", res)
                     if (res.data.status === 'success') {
                         console.log(res.data);
+                        setdispalr(true);
+                        setalrstatus(true);
                         // alert("Post Successfully");
                         // console.log("Posted the data")
                     }
                     else {
                         if (res.data.status === 'failure') {
-                            alert('Something Went Wrong Please Try Again...');
+                            setdispalr(true);
+                            setalrstatus(false);
                         }
                     }
 
@@ -172,6 +218,7 @@ const Product = () => {
 
         return (
             <>
+                {dispalr == true ? <Alr /> : null}
                 <form>
                     <div className="micard">
                         <h5 className="micardhdr">Add Product</h5>
@@ -270,8 +317,8 @@ const Product = () => {
                         </div>
 
                     </div><br />
-                    <button className="comadbtn" onClick={doPost}>Add</button>
-                    <button className="cancelbtn" onClick={opnProdt} >Cancel</button>
+                    <button className="comadbtn" type={'submit'} onClick={doPost}>Add</button>
+                    <button className="cancelbtn" onClick={opnProdt} >Back</button>
                 </form>
             </>
         );
@@ -305,6 +352,11 @@ const Product = () => {
         });
 
         deleterowurl.delete('', {
+        },
+        {
+            headers: {
+                'Authorization': `token ${token}`
+            }
         })
             .then((response) => {
                 console.log("after then", response);
@@ -349,20 +401,20 @@ const Product = () => {
                                     </div>
                                 </div>
                                 {rows.length !== 0 ? <TableContainer component={Paper} sx={{ maxHeight: 650 }}>
-                                    <Table stickyHeader aria-label="simple table" sx={{fontFamily:'prosans'}}>
+                                    <Table stickyHeader aria-label="simple table" sx={{ fontFamily: 'prosans' }}>
                                         <TableHead >
                                             <TableRow>
-                                                <TableCell variant="head" sx={{ backgroundColor: 'rgb(15, 11, 42)', color: 'white', fontFamily:'prosans' }} >S.No</TableCell>
-                                                <TableCell variant="head" sx={{ backgroundColor: 'rgb(15, 11, 42)', color: 'white', fontFamily:'prosans' }} >Product Name</TableCell>
-                                                <TableCell variant="head" sx={{ backgroundColor: 'rgb(15, 11, 42)', color: 'white', fontFamily:'prosans' }} >Product Code</TableCell>
-                                                <TableCell variant="head" sx={{ backgroundColor: 'rgb(15, 11, 42)', color: 'white', fontFamily:'prosans' }} >Product Type</TableCell>
-                                                <TableCell variant="head" sx={{ backgroundColor: 'rgb(15, 11, 42)', color: 'white', fontFamily:'prosans' }} >Min Stock</TableCell>
-                                                <TableCell variant="head" sx={{ backgroundColor: 'rgb(15, 11, 42)', color: 'white', fontFamily:'prosans' }} >Min Price</TableCell>
-                                                <TableCell variant="head" sx={{ backgroundColor: 'rgb(15, 11, 42)', color: 'white', fontFamily:'prosans' }} >Max Price</TableCell>
-                                                <TableCell variant="head" sx={{ backgroundColor: 'rgb(15, 11, 42)', color: 'white', fontFamily:'prosans' }} >Currency</TableCell>
-                                                <TableCell variant="head" sx={{ backgroundColor: 'rgb(15, 11, 42)', color: 'white', fontFamily:'prosans' }} >Multiple Parts</TableCell>
-                                                <TableCell variant="head" sx={{ backgroundColor: 'rgb(15, 11, 42)', color: 'white', fontFamily:'prosans' }} >Parts</TableCell>
-                                                <TableCell variant="head" sx={{ backgroundColor: 'rgb(15, 11, 42)', color: 'white', fontFamily:'prosans' }} >Action</TableCell>
+                                                <TableCell variant="head" sx={{ backgroundColor: 'rgb(15, 11, 42)', color: 'white', fontFamily: 'prosans' }} >S.No</TableCell>
+                                                <TableCell variant="head" sx={{ backgroundColor: 'rgb(15, 11, 42)', color: 'white', fontFamily: 'prosans' }} >Product Name</TableCell>
+                                                <TableCell variant="head" sx={{ backgroundColor: 'rgb(15, 11, 42)', color: 'white', fontFamily: 'prosans' }} >Product Code</TableCell>
+                                                <TableCell variant="head" sx={{ backgroundColor: 'rgb(15, 11, 42)', color: 'white', fontFamily: 'prosans' }} >Product Type</TableCell>
+                                                <TableCell variant="head" sx={{ backgroundColor: 'rgb(15, 11, 42)', color: 'white', fontFamily: 'prosans' }} >Min Stock</TableCell>
+                                                <TableCell variant="head" sx={{ backgroundColor: 'rgb(15, 11, 42)', color: 'white', fontFamily: 'prosans' }} >Min Price</TableCell>
+                                                <TableCell variant="head" sx={{ backgroundColor: 'rgb(15, 11, 42)', color: 'white', fontFamily: 'prosans' }} >Max Price</TableCell>
+                                                <TableCell variant="head" sx={{ backgroundColor: 'rgb(15, 11, 42)', color: 'white', fontFamily: 'prosans' }} >Currency</TableCell>
+                                                <TableCell variant="head" sx={{ backgroundColor: 'rgb(15, 11, 42)', color: 'white', fontFamily: 'prosans' }} >Multiple Parts</TableCell>
+                                                <TableCell variant="head" sx={{ backgroundColor: 'rgb(15, 11, 42)', color: 'white', fontFamily: 'prosans' }} >Parts</TableCell>
+                                                <TableCell variant="head" sx={{ backgroundColor: 'rgb(15, 11, 42)', color: 'white', fontFamily: 'prosans' }} >Action</TableCell>
                                             </TableRow>
                                         </TableHead>
                                         <TableBody>
@@ -370,19 +422,19 @@ const Product = () => {
                                                 rows.map((rowobj) => {
                                                     return (
                                                         <>
-                                                            <TableRow sx={{ '&:last-child td, &:last-child th': { border: 0 }, fontFamily:'prosans' }} hover={true}>
-                                                                <TableCell component="th" scope="row" sx={{fontFamily:'prosans'}}>
+                                                            <TableRow sx={{ '&:last-child td, &:last-child th': { border: 0 }, fontFamily: 'prosans' }} hover={true}>
+                                                                <TableCell component="th" scope="row" sx={{ fontFamily: 'prosans' }}>
                                                                     {count++}
                                                                 </TableCell>
-                                                                <TableCell sx={{fontFamily:'prosans'}}>{rowobj.product_name === null ? "Null" : rowobj.product_name}</TableCell>
-                                                                <TableCell sx={{fontFamily:'prosans'}}>{rowobj.product_code === null ? "Null" : rowobj.product_code}</TableCell>
-                                                                <TableCell sx={{fontFamily:'prosans'}}>{rowobj.product_type === null ? "Null" : rowobj.product_type}</TableCell>
-                                                                <TableCell sx={{fontFamily:'prosans'}}>{rowobj.minimum_stock_quantity === null ? "Null" : rowobj.minimum_stock_quantity}</TableCell>
-                                                                <TableCell sx={{fontFamily:'prosans'}}>{rowobj.minimum_price === null ? "Null" : rowobj.minimum_price}</TableCell>
-                                                                <TableCell sx={{fontFamily:'prosans'}}>{rowobj.maximum_price === null ? "Null" : rowobj.maximum_price}</TableCell>
-                                                                <TableCell sx={{fontFamily:'prosans'}}>{rowobj.currency_get === null ? "Null" : rowobj.currency_get}</TableCell>
-                                                                <TableCell sx={{fontFamily:'prosans'}}>{rowobj.multiple_parts == null ? "Null" : rowobj.multiple_parts === true ? "true" : "false"}</TableCell>
-                                                                <TableCell sx={{fontFamily:'prosans'}}>{rowobj.parts !== null ? rowobj.parts.length !== 0 ? rowobj.parts.join(', ') : 'Null' : "Null"}</TableCell>
+                                                                <TableCell sx={{ fontFamily: 'prosans' }}>{rowobj.product_name === null ? "Null" : rowobj.product_name}</TableCell>
+                                                                <TableCell sx={{ fontFamily: 'prosans' }}>{rowobj.product_code === null ? "Null" : rowobj.product_code}</TableCell>
+                                                                <TableCell sx={{ fontFamily: 'prosans' }}>{rowobj.product_type === null ? "Null" : rowobj.product_type}</TableCell>
+                                                                <TableCell sx={{ fontFamily: 'prosans' }}>{rowobj.minimum_stock_quantity === null ? "Null" : rowobj.minimum_stock_quantity}</TableCell>
+                                                                <TableCell sx={{ fontFamily: 'prosans' }}>{rowobj.minimum_price === null ? "Null" : rowobj.minimum_price}</TableCell>
+                                                                <TableCell sx={{ fontFamily: 'prosans' }}>{rowobj.maximum_price === null ? "Null" : rowobj.maximum_price}</TableCell>
+                                                                <TableCell sx={{ fontFamily: 'prosans' }}>{rowobj.currency_get === null ? "Null" : rowobj.currency_get}</TableCell>
+                                                                <TableCell sx={{ fontFamily: 'prosans' }}>{rowobj.multiple_parts == null ? "Null" : rowobj.multiple_parts === true ? "true" : "false"}</TableCell>
+                                                                <TableCell sx={{ fontFamily: 'prosans' }}>{rowobj.parts !== null ? rowobj.parts.length !== 0 ? rowobj.parts.join(', ') : 'Null' : "Null"}</TableCell>
                                                                 <TableCell>
                                                                     <IconButton aria-label="expand" size="small"
                                                                         onClick={() => {
@@ -404,24 +456,24 @@ const Product = () => {
                                                 :
                                                 rows.map((rowobj) => ( //|| rowobj.parts.map(ob => (<>{ob.match(searchdata) == searchdata}</>))  ||  || rowobj.parts.map((ob,ind) => ((ob.toString()).match(searchdata) == searchdata))
                                                     <>
-                                                        {(rowobj.product_name.toLowerCase()).match(searchdata) == searchdata || (rowobj.product_code.toLowerCase()).match(searchdata) == searchdata || (rowobj.product_type.toLowerCase()).match(searchdata) == searchdata 
-                                                         || ((rowobj.multiple_parts.toString()).toLowerCase()).match(searchdata) == searchdata || (rowobj.minimum_stock_quantity.toString()).match(searchdata) == searchdata || (rowobj.maximum_price.toString()).match(searchdata) == searchdata 
-                                                         || rowobj.minimum_price == searchdata || (rowobj.currency_get.toLowerCase()).match(searchdata) == searchdata || 
-                                                         ((rowobj.parts.toString()).toLowerCase()).match(searchdata) == searchdata ?
-                                                         
+                                                        {(rowobj.product_name.toLowerCase()).match(searchdata) == searchdata || (rowobj.product_code.toLowerCase()).match(searchdata) == searchdata || (rowobj.product_type.toLowerCase()).match(searchdata) == searchdata
+                                                            || ((rowobj.multiple_parts.toString()).toLowerCase()).match(searchdata) == searchdata || (rowobj.minimum_stock_quantity.toString()).match(searchdata) == searchdata || (rowobj.maximum_price.toString()).match(searchdata) == searchdata
+                                                            || rowobj.minimum_price == searchdata || (rowobj.currency_get.toLowerCase()).match(searchdata) == searchdata ||
+                                                            ((rowobj.parts.toString()).toLowerCase()).match(searchdata) == searchdata ?
+
                                                             <TableRow sx={{ '&:last-child td, &:last-child th': { border: 0 } }} hover={true}>
-                                                                <TableCell component="th" scope="row" sx={{fontFamily:'prosans'}}>
+                                                                <TableCell component="th" scope="row" sx={{ fontFamily: 'prosans' }}>
                                                                     {count++}
                                                                 </TableCell>
-                                                                <TableCell sx={{fontFamily:'prosans'}}>{rowobj.product_name === null ? "Null" : rowobj.product_name}</TableCell>
-                                                                <TableCell sx={{fontFamily:'prosans'}}>{rowobj.product_code === null ? "Null" : rowobj.product_code}</TableCell>
-                                                                <TableCell sx={{fontFamily:'prosans'}}>{rowobj.product_type === null ? "Null" : rowobj.product_type}</TableCell>
-                                                                <TableCell sx={{fontFamily:'prosans'}}>{rowobj.minimum_stock_quantity === null ? "Null" : rowobj.minimum_stock_quantity}</TableCell>
-                                                                <TableCell sx={{fontFamily:'prosans'}}>{rowobj.minimum_price === null ? "Null" : rowobj.minimum_price}</TableCell>
-                                                                <TableCell sx={{fontFamily:'prosans'}}>{rowobj.maximum_price === null ? "Null" : rowobj.maximum_price}</TableCell>
-                                                                <TableCell sx={{fontFamily:'prosans'}}>{rowobj.currency_get === null ? "Null" : rowobj.currency_get}</TableCell>
-                                                                <TableCell sx={{fontFamily:'prosans'}}>{rowobj.multiple_parts == null ? "Null" : rowobj.multiple_parts === true ? "true" : "false"}</TableCell>
-                                                                <TableCell sx={{fontFamily:'prosans'}}>{rowobj.parts !== null ? rowobj.parts.length !== 0 ? rowobj.parts.join(', ') : 'Null' : "Null"}</TableCell>
+                                                                <TableCell sx={{ fontFamily: 'prosans' }}>{rowobj.product_name === null ? "Null" : rowobj.product_name}</TableCell>
+                                                                <TableCell sx={{ fontFamily: 'prosans' }}>{rowobj.product_code === null ? "Null" : rowobj.product_code}</TableCell>
+                                                                <TableCell sx={{ fontFamily: 'prosans' }}>{rowobj.product_type === null ? "Null" : rowobj.product_type}</TableCell>
+                                                                <TableCell sx={{ fontFamily: 'prosans' }}>{rowobj.minimum_stock_quantity === null ? "Null" : rowobj.minimum_stock_quantity}</TableCell>
+                                                                <TableCell sx={{ fontFamily: 'prosans' }}>{rowobj.minimum_price === null ? "Null" : rowobj.minimum_price}</TableCell>
+                                                                <TableCell sx={{ fontFamily: 'prosans' }}>{rowobj.maximum_price === null ? "Null" : rowobj.maximum_price}</TableCell>
+                                                                <TableCell sx={{ fontFamily: 'prosans' }}>{rowobj.currency_get === null ? "Null" : rowobj.currency_get}</TableCell>
+                                                                <TableCell sx={{ fontFamily: 'prosans' }}>{rowobj.multiple_parts == null ? "Null" : rowobj.multiple_parts === true ? "true" : "false"}</TableCell>
+                                                                <TableCell sx={{ fontFamily: 'prosans' }}>{rowobj.parts !== null ? rowobj.parts.length !== 0 ? rowobj.parts.join(', ') : 'Null' : "Null"}</TableCell>
                                                                 <TableCell>
                                                                     <IconButton aria-label="expand" size="small"
                                                                         onClick={() => {

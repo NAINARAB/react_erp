@@ -14,6 +14,8 @@ import Loader from "../../comp/Load/loading";
 import SearchIcon from '@mui/icons-material/Search';
 import axios from "axios";
 
+const token = sessionStorage.getItem("token");
+
 const Transition = React.forwardRef(function Transition(props, ref) {
     return <Slide direction="up" ref={ref} {...props} />;
 });
@@ -41,26 +43,36 @@ function Rawmaterialsaccessories() {
     // console.log(optsub);
 
     useEffect(() => {
-        fetch('https://erp-test-3wqc9.ondigitalocean.app/api/get?model=currency')
+        fetch('https://erp-test-3wqc9.ondigitalocean.app/api/get?model=currency',
+        {
+            headers: {
+                'Authorization': `token ${token}`
+            }
+        })
             .then((res) => { return res.json(); })
             .then((data) => {
                 setcurncydat(data.data);
             })
-        fetch('https://erp-test-3wqc9.ondigitalocean.app/api/get?model=measuredunits')
+        fetch('https://erp-test-3wqc9.ondigitalocean.app/api/get?model=measuredunits',
+        {
+            headers: {
+                'Authorization': `token ${token}`
+            }
+        })
             .then((res) => { return res.json(); })
             .then((data) => {
                 setmeasuredunit(data.data);
             })
-        fetch('https://erp-test-3wqc9.ondigitalocean.app/api/get?model=parties')
+        fetch('https://erp-test-3wqc9.ondigitalocean.app/api/get?model=parties',
+        {
+            headers: {
+                'Authorization': `token ${token}`
+            }
+        })
             .then((res) => { return res.json(); })
             .then((resdata) => {
                 setpartydat(resdata.data);
             })
-        // fetch('https://erp-test-3wqc9.ondigitalocean.app/api/dropdown/?model=parties')
-        //     .then((res) => { return res.json(); })
-        //     .then((resdata) => {
-        //         console.log(resdata);
-        //     })
     }, [])
 
     {/* Update RMA variables */ }
@@ -107,6 +119,11 @@ function Rawmaterialsaccessories() {
             rm_max_price: rmp,
             currency: crcy,
             preferred_supplier: upsup
+        },
+        {
+            headers: {
+                'Authorization': `token ${token}`
+            }
         })
             .then((res) => {
                 console.log("Post After", res)
@@ -168,6 +185,11 @@ function Rawmaterialsaccessories() {
                 currency: currency,
                 preferred_supplier: psu
 
+            },
+            {
+                headers: {
+                    'Authorization': `token ${token}`
+                }
             })
                 .then((res) => {
                     console.log("after then", res)
@@ -321,7 +343,12 @@ function Rawmaterialsaccessories() {
 
     useEffect(() => {
 
-        fetch('https://erp-test-3wqc9.ondigitalocean.app/api/get?model=rawmaterial')
+        fetch('https://erp-test-3wqc9.ondigitalocean.app/api/get?model=rawmaterial',
+        {
+            headers: {
+                'Authorization': `token ${token}`
+            }
+        })
             .then((res) => { return res.json(); })
             .then((data) => {
                 setrmadata(data.data)
@@ -339,6 +366,11 @@ function Rawmaterialsaccessories() {
         });
 
         deleterowurl.delete('', {
+        },
+        {
+            headers: {
+                'Authorization': `token ${token}`
+            }
         })
             .then((response) => {
                 console.log("after then", response);

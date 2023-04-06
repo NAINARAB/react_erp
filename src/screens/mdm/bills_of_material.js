@@ -13,6 +13,8 @@ import { Dialog, DialogContent, DialogTitle, Slide, DialogActions, DialogContent
 import Loader from '../../comp/Load/loading';
 import axios from 'axios';
 
+const token = sessionStorage.getItem("token");
+
 const Transition = React.forwardRef(function Transition(props, ref) {
     return <Slide direction="left" ref={ref} {...props} />;
 });
@@ -103,7 +105,12 @@ function BomComp(props) {
 
     useEffect(() => {//&filter_by=&{product_code}&filter_value=   &pk=    &pk=${row.pk}
 
-        fetch(`https://erp-test-3wqc9.ondigitalocean.app/api/get?model=billofmaterial&filter_by=product_code&filter_value=${row.pk}`)
+        fetch(`https://erp-test-3wqc9.ondigitalocean.app/api/get?model=billofmaterial&filter_by=product_code&filter_value=${row.pk}`,
+        {
+            headers: {
+                'Authorization': `token ${token}`
+            }
+        })
             .then((res) => { return res.json(); })
             .then((data) => {
                 setbomdata(data.data);
@@ -152,6 +159,11 @@ function BomComp(props) {
             rm_name: rmn,
             rm_type: rmtyp,
             production_phase: prphs
+        },
+        {
+            headers: {
+                'Authorization': `token ${token}`
+            }
         })
             .then((res) => {
                 console.log("after then", res)
@@ -186,6 +198,11 @@ function BomComp(props) {
         });
 
         deleterowurl.delete('', {
+        },
+        {
+            headers: {
+                'Authorization': `token ${token}`
+            }
         })
             .then((response) => {
                 console.log("after then", response);
@@ -460,17 +477,32 @@ function Billsofmaterials() {
     let count = 0;
     useEffect(() => {
 
-        fetch('https://erp-test-3wqc9.ondigitalocean.app/api/get?model=product')
+        fetch('https://erp-test-3wqc9.ondigitalocean.app/api/get?model=product',
+        {
+            headers: {
+                'Authorization': `token ${token}`
+            }
+        })
             .then((res) => { return res.json(); })
             .then((data) => {
                 setproductdata(data.data);
             })
-        fetch('https://erp-test-3wqc9.ondigitalocean.app/api/get?model=rawmaterial')
+        fetch('https://erp-test-3wqc9.ondigitalocean.app/api/get?model=rawmaterial',
+        {
+            headers: {
+                'Authorization': `token ${token}`
+            }
+        })
             .then((res) => { return res.json(); })
             .then((data) => {
                 setrawmatdat(data.data);
             })
-        fetch('https://erp-test-3wqc9.ondigitalocean.app/api/get?model=productionphase')
+        fetch('https://erp-test-3wqc9.ondigitalocean.app/api/get?model=productionphase',
+        {
+            headers: {
+                'Authorization': `token ${token}`
+            }
+        })
             .then((res) => { return res.json(); })
             .then((data) => {
                 setpfdat(data.data)

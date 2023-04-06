@@ -13,6 +13,8 @@ import Loader from "../../comp/Load/loading";
 import axios from "axios";
 import SearchIcon from '@mui/icons-material/Search';
 
+const token = sessionStorage.getItem("token");
+
 const Transition = React.forwardRef(function Transition(props, ref) {
     return <Slide direction="up" ref={ref} {...props} />;
 });
@@ -72,6 +74,11 @@ let Devisioncomp = (props) => {
         cntryupdt.put('', {
             department: dep,
             name: nme
+        },
+        {
+            headers: {
+                'Authorization': `token ${token}`
+            }
         })
             .then((res) => {
                 console.log("Post After", res)
@@ -101,6 +108,11 @@ let Devisioncomp = (props) => {
         });
 
         deleterowurl.delete('', {
+        },
+        {
+            headers: {
+                'Authorization': `token ${token}`
+            }
         })
             .then((response) => {
                 console.log("after then", response);
@@ -216,12 +228,22 @@ function Devision() {
     const [devisiondata, setdevisiondata] = useState([]);
     const [deptdat, setdeptdat] = useState([]);
     useEffect(() => {
-        fetch('https://erp-test-3wqc9.ondigitalocean.app/api/get?model=subdivision')
+        fetch('https://erp-test-3wqc9.ondigitalocean.app/api/get?model=subdivision',
+        {
+            headers: {
+                'Authorization': `token ${token}`
+            }
+        })
             .then((res) => { return res.json(); })
             .then((data) => {
                 setdevisiondata(data.data);
             })
-        fetch('https://erp-test-3wqc9.ondigitalocean.app/api/get?model=department')
+        fetch('https://erp-test-3wqc9.ondigitalocean.app/api/get?model=department',
+        {
+            headers: {
+                'Authorization': `token ${token}`
+            }
+        })
             .then((res) => { return res.json(); })
             .then((data) => {
                 setdeptdat(data.data);
@@ -242,6 +264,11 @@ function Devision() {
             postdev.post('', {
                 department: dep,
                 name: rol
+            },
+            {
+                headers: {
+                    'Authorization': `token ${token}`
+                }
             })
                 .then((res) => {
                     console.log("after then", res)

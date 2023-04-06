@@ -11,6 +11,8 @@ import '../common.css';
 import Loader from "../../comp/Load/loading";
 import axios from "axios";
 
+const token = sessionStorage.getItem("token");
+
 const Transition = React.forwardRef(function Transition(props, ref) {
     return <Slide direction="up" ref={ref} {...props} />;
 });
@@ -90,7 +92,12 @@ let UserComp = (props) => {
     const updtuser = () => {
 
         cntryupdt.put('', 
-            bodydata    
+            bodydata,
+            {
+                headers: {
+                    'Authorization': `token ${token}`
+                }
+            }    
         )
             .then((res) => {
                 console.log("Post After", res)
@@ -120,6 +127,11 @@ let UserComp = (props) => {
         });
 
         deleterowurl.delete('', {
+        },
+        {
+            headers: {
+                'Authorization': `token ${token}`
+            }
         })
             .then((response) => {
                 console.log("after then", response);
@@ -276,17 +288,32 @@ function Users() {
     const [branchdat, setbranchdat] = useState([]);
     const [userroldat, setusrroldat] = useState([]);
     useEffect(() => {
-        fetch('https://erp-test-3wqc9.ondigitalocean.app/api/get?model=branch')
+        fetch('https://erp-test-3wqc9.ondigitalocean.app/api/get?model=branch',
+        {
+            headers: {
+                'Authorization': `token ${token}`
+            }
+        })
             .then((res) => { return res.json(); })
             .then((data) => {
                 setbranchdat(data.data)
             })
-        fetch('https://erp-test-3wqc9.ondigitalocean.app/api/get?model=userrole')
+        fetch('https://erp-test-3wqc9.ondigitalocean.app/api/get?model=userrole',
+        {
+            headers: {
+                'Authorization': `token ${token}`
+            }
+        })
             .then((res) => { return res.json(); })
             .then((data) => {
                 setusrroldat(data.data);
             })
-        fetch('https://erp-test-3wqc9.ondigitalocean.app/api/get?model=user')
+        fetch('https://erp-test-3wqc9.ondigitalocean.app/api/get?model=user',
+        {
+            headers: {
+                'Authorization': `token ${token}`
+            }
+        })
             .then((res) => { return res.json(); })
             .then((data) => {
                 setusersdata(data.data)
@@ -309,7 +336,7 @@ function Users() {
 
         //post url
         const postusrurl = axios.create({
-            baseURL: "https://erp-test-3wqc9.ondigitalocean.app/api/signup   "
+            baseURL: "https://erp-test-3wqc9.ondigitalocean.app/api/signup"
         });
 
         const postnewuser = (eid, name, email, phn, pswrd, rol, brach) => {
@@ -321,6 +348,11 @@ function Users() {
                 password: pswrd,
                 role: rol,
                 branch: brach
+            },
+            {
+                headers: {
+                    'Authorization': `token ${token}`
+                }
             })
                 .then((res) => {
                     console.log("after then", res)

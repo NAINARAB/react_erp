@@ -13,7 +13,7 @@ import { Dialog, DialogContent, DialogTitle, Slide, DialogActions } from '@mui/m
 import Loader from '../../comp/Load/loading';
 import axios from 'axios';
 
-
+const token = sessionStorage.getItem("token");
 
 
 const Transition = React.forwardRef(function Transition(props, ref) {
@@ -66,7 +66,12 @@ function Row(props) {
 
     useEffect(() => {
 
-        fetch(`https://erp-test-3wqc9.ondigitalocean.app/api/get?model=productivity&filter_by=product&filter_value=${row.pk}`)
+        fetch(`https://erp-test-3wqc9.ondigitalocean.app/api/get?model=productivity&filter_by=product&filter_value=${row.pk}`,
+        {
+            headers: {
+                'Authorization': `token ${token}`
+            }
+        })
             .then((res) => { return res.json(); })
             .then((data) => {
                 setpfdatas(data.data);
@@ -85,6 +90,11 @@ function Row(props) {
             phase: phs,
             quantity_perday: qpd,
             scrap_quantity: sq
+        },
+        {
+            headers: {
+                'Authorization': `token ${token}`
+            }
         })
             .then((res) => {
                 console.log("after then", res)
@@ -261,12 +271,22 @@ function Productionflow() {
     const [productionphasearr,setproductionphasearr] = useState([]);
 
     useEffect(() => {
-        fetch('https://erp-test-3wqc9.ondigitalocean.app/api/get?model=product')
+        fetch('https://erp-test-3wqc9.ondigitalocean.app/api/get?model=product',
+        {
+            headers: {
+                'Authorization': `token ${token}`
+            }
+        })
             .then((res) => { return res.json(); })
             .then((data) => {
                 setproductdata(data.data)
             })
-        fetch('https://erp-test-3wqc9.ondigitalocean.app/api/get?model=productionphase')
+        fetch('https://erp-test-3wqc9.ondigitalocean.app/api/get?model=productionphase',
+        {
+            headers: {
+                'Authorization': `token ${token}`
+            }
+        })
             .then((res) => { return res.json(); })
             .then((data) => {
                 setproductionphasearr(data.data);

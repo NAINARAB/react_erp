@@ -12,6 +12,8 @@ import Loader from "../../comp/Load/loading";
 import SearchIcon from '@mui/icons-material/Search';
 import axios from "axios";
 
+const token = sessionStorage.getItem("token");
+
 const Transition = React.forwardRef(function Transition(props, ref) {
     return <Slide direction="up" ref={ref} {...props} />;
 });
@@ -55,6 +57,11 @@ let PartyTypecomp = (props) => {
     const updtPartytype = (prttyp) => {
         prttypupdt.put('', {
             party_type: prttyp
+        },
+        {
+            headers: {
+                'Authorization': `token ${token}`
+            }
         })
             .then((res) => {
                 console.log("Post After", res)
@@ -89,6 +96,11 @@ let PartyTypecomp = (props) => {
         });
 
         deleterowurl.delete('', {
+        },
+        {
+            headers: {
+                'Authorization': `token ${token}`
+            }
         })
             .then((response) => {
                 console.log("after then", response);
@@ -216,7 +228,12 @@ function Partytype() {
     const [partttypedata, setpartytypedata] = useState([]);
 
     useEffect(() => {
-        fetch('https://erp-test-3wqc9.ondigitalocean.app/api/get?model=partytype')
+        fetch('https://erp-test-3wqc9.ondigitalocean.app/api/get?model=partytype',
+        {
+            headers: {
+                'Authorization': `token ${token}`
+            }
+        })
             .then((res) => { return res.json(); })
             .then((data) => {
                 setpartytypedata(data.data)
@@ -234,6 +251,11 @@ function Partytype() {
         const postPT = (prty) => {
             postprtytype.post('', {
                 party_type: prty
+            },
+            {
+                headers: {
+                    'Authorization': `token ${token}`
+                }
             })
                 .then((res) => {
                     if (res.data.status === 'success') {

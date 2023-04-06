@@ -12,6 +12,8 @@ import { maxWidth } from "@mui/system";
 import Loader from "../../comp/Load/loading";
 import axios from "axios";
 
+const token = sessionStorage.getItem("token");
+
 const Transition = React.forwardRef(function Transition(props, ref) {
     return <Slide direction="up" ref={ref} {...props} />;
 });
@@ -60,6 +62,11 @@ let Countrycomp = (props) => {
         cntryupdt.put('', {
             country_code: cod,
             country_name: nme
+        },
+        {
+            headers: {
+                'Authorization': `token ${token}`
+            }
         })
             .then((res) => {
                 console.log("Post After", res)
@@ -90,6 +97,11 @@ let Countrycomp = (props) => {
         });
 
         deleterowurl.delete('', {
+        },
+        {
+            headers: {
+                'Authorization': `token ${token}`
+            }
         })
             .then((response) => {
                 console.log("after then", response);
@@ -254,7 +266,12 @@ function Country() {
 
 
     useEffect(() => {
-        fetch('https://erp-test-3wqc9.ondigitalocean.app/api/get?model=country')
+        fetch('https://erp-test-3wqc9.ondigitalocean.app/api/get?model=country',
+        {
+            headers: {
+                'Authorization': `token ${token}`
+            }
+        })
             .then((res) => { return res.json(); })
             .then((data) => {
                 setcountrydata(data.data);
@@ -272,6 +289,11 @@ function Country() {
             postcountryinpt.post('', {
                 country_name: country,
                 country_code: code
+            },
+            {
+                headers: {
+                    'Authorization': `token ${token}`
+                }
             })
                 .then((res) => {
                     console.log("after then", res)

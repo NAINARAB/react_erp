@@ -8,20 +8,26 @@ import CloseIcon from '@mui/icons-material/Close';
 
 
 const Sidenav = () => {
+    const token = sessionStorage.getItem("token");
     const [opncond, setopencond] = useState(false)
     const navigate = useNavigate();
 
-    // const [crntusrnme, setcrntusrnme] = useState('');
-    // const [usrrol, setusrrol] = useState('');
+    const [crntusrnme, setcrntusrnme] = useState('');
+    const [usrrol, setusrrol] = useState('');
 
-    // useEffect(() => {
-    //     fetch('https://erp-new-production.up.railway.app/api/profile/')
-    //         .then((res) => { return res.json(); })
-    //         .then((data) => {console.log(data.data)
-    //             setcrntusrnme(data.data.name);console.log("name", data.data.name)
-    //             setusrrol(data.data.role_get); console.log("role", data.data.role_get)
-    //         })
-    // }, [])
+    useEffect(() => {
+        fetch('https://erp-test-3wqc9.ondigitalocean.app/api/profile/',
+        {
+            headers: {
+                'Authorization': `token ${token}`
+            }
+        })
+            .then((res) => { return res.json(); })
+            .then((data) => {console.log(data)
+                setcrntusrnme(data.data.name);console.log("name", crntusrnme)
+                setusrrol(data.data.role_get); console.log("role", usrrol)
+            })
+    }, [])
 
     return (
         <div>
@@ -46,8 +52,8 @@ const Sidenav = () => {
                                     <div className='usrinfo' style={{ display: 'flex' }}>
                                         <i className="bi bi-person-circle" ></i>
                                         <div>
-                                            <h5>Nainar AB</h5>
-                                            <p>Admin</p>
+                                            <h5 style={{color:'rgb(64, 38, 236)'}}>{crntusrnme.toUpperCase()}</h5>
+                                            <p style={{color:'rgb(64, 38, 236)'}}>{usrrol}</p>
                                         </div>
 
                                     </div>

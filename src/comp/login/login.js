@@ -3,7 +3,6 @@ import { useNavigate } from "react-router-dom";
 import { useState } from 'react';
 import axios from 'axios';
 import './login.css';
-import jQuery from 'jquery';
 
 // function getCookie(name) {
 //     var cookieValue = null;
@@ -41,12 +40,10 @@ function Login() {
         })
 
             .then((data) => {
-                console.log(data);
                 if (data.data.code = 200) {
-                    // let id = JSON.parse(data.data.data.id)
-                    // console.log("before navigate", id)
-                    // sessionStorage.setItem("id", id)
-                    // console.log(id);
+                     let token = data.data.data.token;
+                     sessionStorage.setItem("token", token)
+                     console.log("Token Davv.."+token);
                     navigate('/admin/mdm/product');
                 }
 

@@ -12,6 +12,9 @@ import Loader from "../../comp/Load/loading";
 import SearchIcon from '@mui/icons-material/Search';
 import axios from "axios";
 
+
+const token = sessionStorage.getItem("token");
+
 const CurrencyTable = (props) => {
     let count = 0;
     const [currencydat, setcurrencydat] = useState([]);
@@ -31,6 +34,11 @@ const CurrencyTable = (props) => {
         });
 
         deleterowurl.delete('', {
+        },
+        {
+            headers: {
+                'Authorization': `token ${token}`
+            }
         })
             .then((response) => {
                 console.log("after then", response);
@@ -51,7 +59,12 @@ const CurrencyTable = (props) => {
     };
 
     useEffect(() => {
-        fetch('https://erp-test-3wqc9.ondigitalocean.app/api/get?model=currency')
+        fetch('https://erp-test-3wqc9.ondigitalocean.app/api/get?model=currency',
+        {
+            headers: {
+                'Authorization': `token ${token}`
+            }
+        })
             .then((res) => { return res.json(); })
             .then((data) => {
                 setcurrencydat(data.data);
@@ -158,6 +171,11 @@ const AddCurrency = () => {
         postcurrency.post('', {
             currency_code: cc,
             currency_name:cn
+        },
+        {
+            headers: {
+                'Authorization': `token ${token}`
+            }
         })
             .then((res) => {
                 console.log("after then", res)

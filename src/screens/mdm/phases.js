@@ -16,6 +16,7 @@ const Transition = React.forwardRef(function Transition(props, ref) {
     return <Slide direction="up" ref={ref} {...props} />;
 });
 
+const token = sessionStorage.getItem("token");
 
 function Butns() {
     return (
@@ -62,6 +63,11 @@ let PhasesRowsComp = (props) => {
     const updtCountry = (ph) => {
         cntryupdt.put('', {
             phase_name: ph
+        },
+        {
+            headers: {
+                'Authorization': `token ${token}`
+            }
         })
             .then((res) => {
                 console.log("Post After", res)
@@ -96,6 +102,11 @@ let PhasesRowsComp = (props) => {
         });
 
         deleterowurl.delete('', {
+        },
+        {
+            headers: {
+                'Authorization': `token ${token}`
+            }
         })
             .then((response) => {
                 console.log("after then", response);
@@ -212,7 +223,12 @@ let PhasesRowsComp = (props) => {
 function Phases() {
     const [phasedata, setphasedata] = useState([])
     useEffect(() => {
-        fetch('https://erp-test-3wqc9.ondigitalocean.app/api/get?model=productionphase')
+        fetch('https://erp-test-3wqc9.ondigitalocean.app/api/get?model=productionphase',
+        {
+            headers: {
+                'Authorization': `token ${token}`
+            }
+        })
             .then((res) => { return res.json(); })
             .then((data) => {
                 setphasedata(data.data)
@@ -238,8 +254,8 @@ function Phases() {
                                     document.getElementById('phasadbtn').style.display = 'none';
                                 }}
                             >Add</button>
-                            <h5>Phases</h5>
-                            <h6>Master Data Management / Phases</h6>
+                            <h5>Production Phases</h5>
+                            <h6>Master Data Management / Production Phases</h6>
                         </div>
 
                         <div className="tablepadding">
@@ -270,6 +286,11 @@ function Phases() {
         const postphasefun = (producphase) => {
             postphase.post('', {
                 phase_name: producphase
+            },
+            {
+                headers: {
+                    'Authorization': `token ${token}`
+                }
             })
                 .then((res) => {
                     console.log("after then", res)

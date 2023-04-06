@@ -12,6 +12,8 @@ import { maxWidth } from "@mui/system";
 import Loader from "../../comp/Load/loading";
 import axios from "axios";
 
+const token = sessionStorage.getItem("token");
+
 const Transition = React.forwardRef(function Transition(props, ref) {
     return <Slide direction="up" ref={ref} {...props} />;
 });
@@ -74,6 +76,11 @@ let UserRoleComp = (props) => {
             role: rol,
             department: dep,
             division: div
+        },
+        {
+            headers: {
+                'Authorization': `token ${token}`
+            }
         })
             .then((res) => {
                 console.log("Post After", res)
@@ -103,6 +110,11 @@ let UserRoleComp = (props) => {
         });
 
         deleterowurl.delete('', {
+        },
+        {
+            headers: {
+                'Authorization': `token ${token}`
+            }
         })
             .then((response) => {
                 console.log("after then", response);
@@ -234,17 +246,32 @@ function Userrole() {
     const [deptdat, setdeptdat] = useState([]);
     const [devisiondata, setdevisiondata] = useState([]);
     useEffect(() => {
-        fetch('https://erp-test-3wqc9.ondigitalocean.app/api/get?model=department')
+        fetch('https://erp-test-3wqc9.ondigitalocean.app/api/get?model=department',
+        {
+            headers: {
+                'Authorization': `token ${token}`
+            }
+        })
             .then((res) => { return res.json(); })
             .then((data) => {
                 setdeptdat(data.data);
             })
-        fetch('https://erp-test-3wqc9.ondigitalocean.app/api/get?model=subdivision')
+        fetch('https://erp-test-3wqc9.ondigitalocean.app/api/get?model=subdivision',
+        {
+            headers: {
+                'Authorization': `token ${token}`
+            }
+        })
             .then((res) => { return res.json(); })
             .then((data) => {
                 setdevisiondata(data.data)
             })
-        fetch('https://erp-test-3wqc9.ondigitalocean.app/api/get?model=userrole')
+        fetch('https://erp-test-3wqc9.ondigitalocean.app/api/get?model=userrole',
+        {
+            headers: {
+                'Authorization': `token ${token}`
+            }
+        })
             .then((res) => { return res.json(); })
             .then((data) => {
                 setuserroledata(data.data);
@@ -266,6 +293,11 @@ function Userrole() {
                 role: rol,
                 department: dep,
                 division: div
+            },
+            {
+                headers: {
+                    'Authorization': `token ${token}`
+                }
             })
                 .then((res) => {
                     console.log("after then", res)

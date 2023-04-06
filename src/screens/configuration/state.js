@@ -12,6 +12,7 @@ import Loader from "../../comp/Load/loading";
 import SearchIcon from '@mui/icons-material/Search';
 import axios from "axios";
 
+const token = sessionStorage.getItem("token");
 
 const StateTable = (props) => {
     let { searchdata } = props;
@@ -23,7 +24,12 @@ const StateTable = (props) => {
     const [deletestate, setdeletestate] = useState('');
     const [open, setOpen] = useState(false);
     useEffect(() => {
-        fetch('https://erp-test-3wqc9.ondigitalocean.app/api/get?model=state')
+        fetch('https://erp-test-3wqc9.ondigitalocean.app/api/get?model=state',
+        {
+            headers: {
+                'Authorization': `token ${token}`
+            }
+        })
             .then((res) => { return res.json(); })
             .then((data) => {
                 setstatedat(data.data)
@@ -49,6 +55,11 @@ const StateTable = (props) => {
         });
 
         deleterowurl.delete('', {
+        },
+        {
+            headers: {
+                'Authorization': `token ${token}`
+            }
         })
             .then((response) => {
                 console.log("after then", response);
@@ -168,6 +179,11 @@ const AddState = (props) => {
         poststate.post('', {
             state_name: sn,
             state_code: sc
+        },
+        {
+            headers: {
+                'Authorization': `token ${token}`
+            }
         })
             .then((res) => {
                 console.log("after then", res)

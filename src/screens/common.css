@@ -151,7 +151,12 @@ select {
     padding: 0em 1em !important;
 }
 
-
+.alrt{
+    position: absolute;
+    top:10%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
 
 .editscrn .micardlble{
     margin-top: 0em;

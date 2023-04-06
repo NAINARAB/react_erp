@@ -13,6 +13,8 @@ import Loader from "../../comp/Load/loading";
 import axios from "axios";
 import SearchIcon from '@mui/icons-material/Search';
 
+const token = sessionStorage.getItem("token");
+
 const Transition = React.forwardRef(function Transition(props, ref) {
     return <Slide direction="up" ref={ref} {...props} />;
 });
@@ -57,6 +59,11 @@ let DepartmentComp = (props) => {
         cntryupdt.put('', {
             name: nme,
             role: rol
+        },
+        {
+            headers: {
+                'Authorization': `token ${token}`
+            }
         })
             .then((res) => {
                 console.log("Post After", res)
@@ -99,6 +106,11 @@ let DepartmentComp = (props) => {
         });
 
         deleterowurl.delete('', {
+        },
+        {
+            headers: {
+                'Authorization': `token ${token}`
+            }
         })
             .then((response) => {
                 console.log("after then", response);
@@ -236,7 +248,12 @@ function Department() {
     const [departmentdata, setdepartmentdata] = useState([]);
 
     useEffect(() => {
-        fetch('https://erp-test-3wqc9.ondigitalocean.app/api/get?model=department')
+        fetch('https://erp-test-3wqc9.ondigitalocean.app/api/get?model=department',
+        {
+            headers: {
+                'Authorization': `token ${token}`
+            }
+        })
             .then((res) => { return res.json(); })
             .then((data) => {
                 setdepartmentdata(data.data)
@@ -254,6 +271,11 @@ function Department() {
             postdept.post('', {
                 name: depart,
                 role: deptrl
+            },
+            {
+                headers: {
+                    'Authorization': `token ${token}`
+                }
             })
                 .then((res) => {
                     console.log("after then", res)

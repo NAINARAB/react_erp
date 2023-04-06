@@ -15,6 +15,7 @@ import Loader from "../../comp/Load/loading";
 import SearchIcon from '@mui/icons-material/Search';
 import axios from "axios";
 
+const token = sessionStorage.getItem("token");
 
 const Transition = React.forwardRef(function Transition(props, ref) {
     return <Slide direction="up" ref={ref} {...props} />;
@@ -86,6 +87,11 @@ let PartyComp = (props) => {
             party_contact_name: prtconnme,
             party_email: prtemil,
             party_gstin: prtgstin
+        },
+        {
+            headers: {
+                'Authorization': `token ${token}`
+            }
         })
             .then((res) => {
                 console.log("Post After", res)
@@ -120,6 +126,11 @@ let PartyComp = (props) => {
         });
 
         deleterowurl.delete('', {
+        },
+        {
+            headers: {
+                'Authorization': `token ${token}`
+            }
         })
             .then((response) => {
                 window.location.reload();
@@ -341,32 +352,62 @@ function Parties() {
 
     useEffect(() => {
 
-        fetch('https://erp-test-3wqc9.ondigitalocean.app/api/get?model=parties')
+        fetch('https://erp-test-3wqc9.ondigitalocean.app/api/get?model=parties',
+        {
+            headers: {
+                'Authorization': `token ${token}`
+            }
+        })
             .then((res) => { return res.json(); })
             .then((resdata) => {
                 setpartydata(resdata.data);
             })
-        fetch('https://erp-test-3wqc9.ondigitalocean.app/api/get?model=partytype')
+        fetch('https://erp-test-3wqc9.ondigitalocean.app/api/get?model=partytype',
+        {
+            headers: {
+                'Authorization': `token ${token}`
+            }
+        })
             .then((res) => { return res.json(); })
             .then((data) => {
                 setpartytypedat(data.data)
             })
-        fetch('https://erp-test-3wqc9.ondigitalocean.app/api/get?model=country')
+        fetch('https://erp-test-3wqc9.ondigitalocean.app/api/get?model=country',
+        {
+            headers: {
+                'Authorization': `token ${token}`
+            }
+        })
             .then((res) => { return res.json(); })
             .then((data) => {
                 setcountrydat(data.data);
             })
-        fetch('https://erp-test-3wqc9.ondigitalocean.app/api/get?model=state')
+        fetch('https://erp-test-3wqc9.ondigitalocean.app/api/get?model=state',
+        {
+            headers: {
+                'Authorization': `token ${token}`
+            }
+        })
             .then((res) => { return res.json(); })
             .then((data) => {
                 setstatedat(data.data);//product
             })
-        fetch('https://erp-test-3wqc9.ondigitalocean.app/api/get?model=product')
+        fetch('https://erp-test-3wqc9.ondigitalocean.app/api/get?model=product',
+        {
+            headers: {
+                'Authorization': `token ${token}`
+            }
+        })
             .then((res) => { return res.json(); })
             .then((data) => {
                 setproductdat(data.data);
             })
-        fetch('https://erp-test-3wqc9.ondigitalocean.app/api/get?model=rawmaterial')
+        fetch('https://erp-test-3wqc9.ondigitalocean.app/api/get?model=rawmaterial',
+        {
+            headers: {
+                'Authorization': `token ${token}`
+            }
+        })
             .then((res) => { return res.json(); })
             .then((data) => {
                 setrawmatdat(data.data);
@@ -413,6 +454,11 @@ function Parties() {
                 party_email: emil,
                 party_gstin: gst,
                 party_products: totpro
+            },
+            {
+                headers: {
+                    'Authorization': `token ${token}`
+                }
             })
                 .then((res) => {
                     console.log("after then", res)
