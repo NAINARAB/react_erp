@@ -2,15 +2,20 @@ import React from "react";
 import Header from "../../comp/header/header";
 import Sidenav from "../../comp/sidenav/sidenav";
 import {
-    Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Button, Slide,
-    TableContainer, Table, TableBody, TableCell, TableHead, TableRow, Paper, IconButton
+    Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Button, Slide, Chip,
+    TableContainer, Table, TableBody, TableCell, TableHead, TableRow, Paper, IconButton, Alert
 } from "@mui/material";
 import '../common.css';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
+import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import { useState, useEffect } from "react";
 import Loader from "../../comp/Load/loading";
+import SearchIcon from '@mui/icons-material/Search';
 import axios from "axios";
+import { Link } from "react-router-dom";
+
+
 
 const Transition = React.forwardRef(function Transition(props, ref) {
     return <Slide direction="up" ref={ref} {...props} />;
@@ -19,7 +24,18 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 
 function Rawmaterialsaccessories() {
 
+    const token = sessionStorage.getItem("token");
+
+    const [dispalr, setdispalr] = useState(false);
+    const [alrstatus, setalrstatus] = useState(false);
+    const [alrmes, setalrmes] = useState('');
+    const [fet, setfet] = useState(false);
+    const success = document.getElementById("suc");
+    const failure = document.getElementById("fail");
+
     const [dispaddrma, setdispaddrma] = useState(false);
+    const [partydat, setpartydat] = useState([]);
+    const [prty, setprty] = useState([]);
     const [rmadata, setrmadata] = useState([]);
     let count = 0;
     const [pk, setpk] = useState();
@@ -27,20 +43,60 @@ function Rawmaterialsaccessories() {
     const [open, setOpen] = useState(false);
 
     const [curncydat, setcurncydat] = useState([]);
-    const [measurdunit, setmeasuredunit] = useState([])
+    const [measurdunit, setmeasuredunit] = useState([]);
 
-        useEffect(() => {
-            fetch('https://erp-test-3wqc9.ondigitalocean.app/api/get?model=currency')
+    const Alr = () => {
+        return (
+            <div className="alrt">
+                <Alert severity={alrstatus === true ? "success" : "error"}
+                    onClose={() => { setdispalr(false) }}>{alrmes}</Alert>
+            </div>
+        );
+    }
+
+
+
+    useEffect(() => {
+        if (token != null) {
+            fetch('https://erp-tiarx.ondigitalocean.app/api/get?model=currency',
+                {
+                    headers: {
+                        'Authorization': `token ${token}`
+                    }
+                })
                 .then((res) => { return res.json(); })
                 .then((data) => {
                     setcurncydat(data.data);
                 })
-            fetch('https://erp-test-3wqc9.ondigitalocean.app/api/get?model=measuredunits')
+            fetch('https://erp-tiarx.ondigitalocean.app/api/get?model=measuredunits',
+                {
+                    headers: {
+                        'Authorization': `token ${token}`
+                    }
+                })
                 .then((res) => { return res.json(); })
                 .then((data) => {
                     setmeasuredunit(data.data);
                 })
-        }, [])
+            fetch('https://erp-tiarx.ondigitalocean.app/api/get?model=parties',
+                {
+                    headers: {
+                        'Authorization': `token ${token}`
+                    }
+                })
+                .then((res) => { return res.json(); })
+                .then((resdata) => {
+                    setpartydat(resdata.data);
+                })
+        }
+    }, [])
+
+    const playsuccess = () => {
+        success.play();
+    }
+    const playfailure = () => {
+        failure.play();
+    }
 
     {/* Update RMA variables */ }
     const [Uopen, setUopen] = useState(false);
@@ -53,7 +109,9 @@ function Rawmaterialsaccessories() {
     const [uprmmaxpr, setuprmmaxpr] = useState();
     const [upcrncy, setupcrncy] = useState();
     const [upcrncyget, setupcrncyget] = useState('');
-    const [uppresup, setpresup] = useState([]);
+    const [uppresubid, setuppresubid] = useState();
+    const [uptotsubid, setuptotsubid] = useState([]);
+    // const [uppresup, setpresup] = useState([]);
 
     const UhandleClickOpen = () => {
         setUopen(true);
@@ -72,28 +130,39 @@ function Rawmaterialsaccessories() {
     };
 
     const rmaupdt = axios.create({
-        baseURL: `https://erp-test-3wqc9.ondigitalocean.app/api/get?model=rawmaterial&pk=${updtpk}`
+        baseURL: `https://erp-tiarx.ondigitalocean.app/api/get?model=rawmaterial&pk=${updtpk}`
     });
-    console.log("Crnt updt PK", updtpk);
 
-    const updtRMA = (rmn, rmc, mu, ms, rmp, crcy) => {
+    const updtRMA = (rmn, rmc, mu, ms, rmp, crcy, upsup) => {
         rmaupdt.put('', {
             rm_name: rmn,
             rm_code: rmc,
             measured_unit: mu,
             min_stock: ms,
             rm_max_price: rmp,
-            currency: crcy
-        })
-            .then((res) => {
-                console.log("Post After", res)
-                if (res.data.status === 'success') {
-                    window.location.reload();
+            currency: crcy,
+            preferred_supplier: upsup
+        },
+            {
+                headers: {
+                    'Authorization': `token ${token}`
                 }
-                else {
-                    if (res.data.status === 'failure') {
-                        alert('Something Went Wrong Please Try Again...');
-                    }
+            })
+            .then((res) => {
+                if (res.data.status === 'success') {
+                    setUopen(false);
+                    setdispalr(true);
+                    setalrstatus(true);
+                    setalrmes("Changes Saved Successfully");
+                    setfet(!fet);
+                    playsuccess();
+                }
+                if (res.data.status === 'failure') {
+                    setUopen(false);
+                    setdispalr(true);
+                    setalrstatus(false);
+                    setalrmes(":( Failed to Save");
+                    playfailure();
                 }
 
             }).catch((err) => {
@@ -101,9 +170,9 @@ function Rawmaterialsaccessories() {
             })
     };
 
-    let doPUT = (e) => {
+    const doPUT = (e) => {
         e.preventDefault();
-        updtRMA(uprmnme,uprmcod,uprmesunt,upminstk,uprmmaxpr,upcrncy);
+        updtRMA(uprmnme, uprmcod, uprmesunt, upminstk, uprmmaxpr, upcrncy, uptotsubid);
     }
 
     function opnAdd() {
@@ -126,15 +195,16 @@ function Rawmaterialsaccessories() {
         const [minstock, setminstock] = useState();
         const [currency, setcurrency] = useState();
         const [rmmaxprice, setrmmaxprice] = useState();
-        
-
+        const [presubid, setpresubid] = useState([]);
+        const [presubpk, setpresubpk] = useState();
+        const [totsubid, settotsubid] = useState([]);
 
 
         const rmapost = axios.create({
-            baseURL: "https://erp-test-3wqc9.ondigitalocean.app/api/get?model=rawmaterial"
+            baseURL: "https://erp-tiarx.ondigitalocean.app/api/get?model=rawmaterial"
         });
 
-        const postrma = (rmcode, rmname, unit, minstock, rmmaxprice, currency,) => {
+        const postrma = (rmcode, rmname, unit, minstock, rmmaxprice, currency, psu) => {
             rmapost.post('', {
                 rm_code: rmcode,
                 rm_name: rmname,
@@ -142,17 +212,27 @@ function Rawmaterialsaccessories() {
                 min_stock: minstock,
                 rm_max_price: rmmaxprice,
                 currency: currency,
-            })
-                .then((res) => {
-                    console.log("after then", res)
-                    if (res.data.status === 'success') {
-                        alert("Post Successfully");
-                        console.log("Posted the data")
+                preferred_supplier: psu
+
+            },
+                {
+                    headers: {
+                        'Authorization': `token ${token}`
                     }
-                    else {
-                        if (res.data.status === 'failure') {
-                            alert('Something Went Wrong Please Try Again...');
-                        }
+                })
+                .then((res) => {
+                    if (res.data.status === 'success') {
+                        setdispalr(true);
+                        setalrstatus(true);
+                        setalrmes("New RawMaterial Added");
+                        setfet(!fet);
+                        playsuccess();
+                    }
+                    if (res.data.status === 'failure') {
+                        setdispalr(true);
+                        setalrstatus(false);
+                        setalrmes(":( Failure Please Try Again..")
+                        playfailure();
                     }
 
                 }).catch((err) => {
@@ -160,17 +240,18 @@ function Rawmaterialsaccessories() {
                 })
         };
 
+
+
         let doPost = (e) => {
             e.preventDefault();
-            postrma(rmcode, rmname, units, minstock, rmmaxprice, currency);
-            window.location.reload();
+            postrma(rmcode, rmname, units, minstock, rmmaxprice, currency, totsubid);
         }
 
 
 
         return (
             <>
-                <form>
+                <form onSubmit={doPost}>
                     <div className="tablepadding">
                         <div className="micard">
                             <h5 className="micardhdr">Raw Material & Accessories</h5>
@@ -188,7 +269,7 @@ function Rawmaterialsaccessories() {
 
                                 <div className="col-lg-4">
                                     <label className="micardlble">Units</label><br />
-                                    <select className="micardinpt" onChange={(e) => setunits(e.target.value)}>
+                                    <select className="micardinpt" onChange={(e) => setunits(e.target.value)} required>
                                         <option defaultValue={true} value={''} required>Select Type</option>
                                         {measurdunit.map(unitobj => (
                                             <>
@@ -200,13 +281,13 @@ function Rawmaterialsaccessories() {
 
                                 <div className="col-lg-4">
                                     <label className="micardlble">Min Stock</label><br />
-                                    <input type='number' className="micardinpt" onChange={(e) => setminstock(e.target.value)} required />
+                                    <input type='number' min={0} className="micardinpt" onChange={(e) => setminstock(e.target.value)} required />
                                 </div>
 
                                 <div className="col-lg-4">
                                     <label className="micardlble">Currency</label><br />
-                                    <select className="micardinpt" onChange={(e) => setcurrency(e.target.value)} >
-                                        <option defaultValue={true} value={''} required>Select Currency</option>
+                                    <select className="micardinpt" onChange={(e) => setcurrency(e.target.value)} required>
+                                        <option defaultValue={true} value={null} required>Select Currency</option>
                                         {curncydat.map(crncyobj => (
                                             <>
                                                 <option value={crncyobj.pk}>{crncyobj.currency_name}</option>
@@ -217,16 +298,71 @@ function Rawmaterialsaccessories() {
 
                                 <div className="col-lg-4">
                                     <label className="micardlble">RM Max Price</label><br />
-                                    <input className="micardgrpinpt" value={currency} disabled='true' />
-                                    <input type='number' onChange={(e) => setrmmaxprice(e.target.value)} className="micardgrpinpt1" />
+                                    <input className="micardgrpinpt" value={currency} disabled={true} />
+                                    <input type='number' min={0} onChange={(e) => setrmmaxprice(e.target.value)} className="micardgrpinpt1" required />
                                 </div>
 
                                 <div className="col-lg-4">
-                                    {/* for Alignment */}
+                                    <label className="micardlble">Prefered Suppliers</label><br />
+                                    <select className="micardinpt" onChange={(e) => { setpresubid(e.target.value) }}>
+                                        <option selected={true} disabled={true} value={''} defaultValue={true}>Choose Supplier</option>
+                                        {partydat.map(prtob => (
+                                            <option>{prtob.party_name}</option>
+                                        ))}
+                                    </select>
+                                    <button className="comadbtn" style={{ float: 'unset', marginTop: '1em', marginBottom: 'unset' }}
+                                        onClick={(e) => {
+                                            e.preventDefault();
+                                            settotsubid(obj => [...obj, presubid]);
+                                        }}
+                                    >Add <ArrowForwardIcon sx={{ fontSize: '1em' }} />
+                                    </button>
                                 </div>
+
+                                <div className="col-lg-4" style={{ padding: '1em' }}>
+                                    <label className="micardlble">Suppliers</label>
+                                    <div style={{ border: '1px solid #d9d7d7', minHeight: '10em', borderRadius: '6px', padding: '10px' }}>
+                                        {totsubid.map((arob, index) => {
+                                            return (
+                                                <>
+                                                    <Chip label={arob} sx={{ margin: '2px' }} onDelete={
+                                                        () => { settotsubid([]) }
+                                                    } />
+                                                </>
+                                            );
+                                        })}
+                                    </div>
+                                </div>
+
+                                {/* <div className="col-lg-4">
+                                    <label className="micardlble">RM Max Price</label><br />
+                                    <Autocomplete
+                                        multiple
+                                        id="tags-filled"
+                                        options={Object.entries(optsub).map(([prtkey, prtval]) => (prtval.partyname))}
+                                        freeSolo
+                                        onChange={(item, index) => {
+                                            setpresubid(index);
+                                        }}
+                                        renderTags={(value, getTagProps) =>
+                                            value.map((option, index) => (
+                                                <Chip variant="outlined" label={option} onDelete={() => { presubid.pop(presubid[index]) }} {...getTagProps({ index })} />
+                                            ))
+                                        }
+                                        renderInput={(params) => (
+                                            <TextField
+                                                sx={{ backgroundColor: 'transparent' }}
+                                                {...params}
+                                                variant="filled"
+                                                label="Suppliers"
+                                                id="tagval"
+                                            />
+                                        )}
+                                    /><button>TEST</button>
+                                </div> */}
                             </div>
                         </div><br />
-                        <button className="comadbtn" onClick={doPost}>Add</button>
+                        <button className="comadbtn" type={'submit'}>Add</button>
                         <button className="cancelbtn" onClick={opnRMA} >Back</button>
                     </div>
                 </form>
@@ -236,13 +372,19 @@ function Rawmaterialsaccessories() {
 
 
     useEffect(() => {
-
-        fetch('https://erp-test-3wqc9.ondigitalocean.app/api/get?model=rawmaterial')
-            .then((res) => { return res.json(); })
-            .then((data) => {
-                setrmadata(data.data)
-            })
-    }, [])
+        if (token != null) {
+            fetch('https://erp-tiarx.ondigitalocean.app/api/get?model=rawmaterial',
+                {
+                    headers: {
+                        'Authorization': `token ${token}`
+                    }
+                })
+                .then((res) => { return res.json(); })
+                .then((data) => {
+                    setrmadata(data.data)
+                })
+        }
+    }, [fet])
 
 
     function doDelete() {
@@ -251,181 +393,286 @@ function Rawmaterialsaccessories() {
     const deleteRowRM = (pkobj) => {
         let currentpk = pkobj;
         const deleterowurl = axios.create({
-            baseURL: `https://erp-test-3wqc9.ondigitalocean.app/api/get?model=rawmaterial&pk=${currentpk}`
+            baseURL: `https://erp-tiarx.ondigitalocean.app/api/get?model=rawmaterial&pk=${currentpk}`
         });
 
-        deleterowurl.delete('', {
-        })
+        deleterowurl.delete('',
+            {
+                headers: {
+                    'Authorization': `token ${token}`
+                }
+            })
             .then((response) => {
-                console.log("after then", response);
-                window.location.reload();
+                setOpen(false);
+                setdispalr(true);
+                setalrstatus(true);
+                setalrmes('One Row Deleted!');
+                setfet(!fet);
+                playsuccess();
             })
             .catch((err) => {
                 console.log(err);
             })
     }
 
+    const [searchdata, setsearchdata] = useState('');
 
     return (
-
-        <div>
-            <div className="row">
-                <div className="col-lg-12">
-                    <Header />
-                </div>
-                <div className="col-lg-2">
-                    <Sidenav />
-                </div>
-                <div className="col-lg-10">
-                    <div className="comhed">
-                        <button className="comadbtn" onClick={opnAdd} id='adbtn'>Add</button>
-                        <h5>Raw Material & Accessories</h5>
-                        <h6>Master Data Management / Raw Material & Accessories</h6>
+        <>
+            <audio id="suc">
+                <source src="https://drive.google.com/uc?export=download&id=1V_Caw86copGxXg6c9cn2xg2mxQOvEc83" type="audio/mp3" />
+            </audio>
+            <audio id="fail">
+                <source src="https://drive.google.com/uc?export=download&id=1j41aa4YxNua9mihX-qb9p5X_hm2ZPDpJ" type="audio/mp3" />
+            </audio>
+            {dispalr == true ? <Alr /> : null}
+            <div>
+                <div className="row">
+                    <div className="col-lg-12">
+                        <Header />
                     </div>
-                    <div className="tablepadding" id="rma">
-                        {rmadata.length != 0 ?
-                            <TableContainer component={Paper} sx={{ maxHeight: 650 }}>
-                                <Table stickyHeader sx={{ minWidth: 650 }} >
-                                    <TableHead >
-                                        <TableRow sx={{ backgroundColor: 'rgb(15, 11, 42)' }}>
-                                            <TableCell variant="head" sx={{ fontWeight: 'bold',backgroundColor: 'rgb(15, 11, 42)', color: 'white' }}>S.No</TableCell>
-                                            <TableCell variant="head" sx={{ fontWeight: 'bold',backgroundColor: 'rgb(15, 11, 42)', color: 'white' }}>RM code</TableCell>
-                                            <TableCell variant="head" sx={{ fontWeight: 'bold',backgroundColor: 'rgb(15, 11, 42)', color: 'white' }}>RM Name</TableCell>
-                                            <TableCell variant="head" sx={{ fontWeight: 'bold',backgroundColor: 'rgb(15, 11, 42)', color: 'white' }}>Measured Unit</TableCell>
-                                            <TableCell variant="head" sx={{ fontWeight: 'bold',backgroundColor: 'rgb(15, 11, 42)', color: 'white' }}>Min Stock</TableCell>
-                                            <TableCell variant="head" sx={{ fontWeight: 'bold',backgroundColor: 'rgb(15, 11, 42)', color: 'white' }}>RM Max Price</TableCell>
-                                            <TableCell variant="head" sx={{ fontWeight: 'bold',backgroundColor: 'rgb(15, 11, 42)', color: 'white' }}>Currency</TableCell>
-                                            <TableCell variant="head" sx={{ fontWeight: 'bold',backgroundColor: 'rgb(15, 11, 42)', color: 'white' }}>Prefered Supplier</TableCell>
-                                            <TableCell variant="head" sx={{ fontWeight: 'bold',backgroundColor: 'rgb(15, 11, 42)', color: 'white' }}>Action</TableCell>
-                                        </TableRow>
-                                    </TableHead>
-                                    <TableBody>
-                                        {rmadata.map((row) => (
-                                            <TableRow
-                                                sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                                                hover={true}
-                                            >
-                                                <TableCell component="th" scope="row">
-                                                    {++count}
-                                                </TableCell>
-                                                <TableCell>{row.rm_code !== null ? row.rm_code : 'Null'}</TableCell>
-                                                <TableCell>{row.rm_name !== null ? row.rm_name : 'Null'}</TableCell>
-                                                <TableCell>{row.measured_unit_get !== null ? row.measured_unit_get : 'Null'}</TableCell>
-                                                <TableCell>{row.min_stock !== null ? row.min_stock : 'Null'}</TableCell>
-                                                <TableCell>{row.rm_max_price !== null ? row.rm_max_price : 'Null'}</TableCell>
-                                                <TableCell>{row.currency_get !== null ? row.currency_get : 'Null'}</TableCell>
-                                                <TableCell>{row.preferred_supplier !== null ? row.preferred_supplier.length !== 0 ? row.preferred_supplier.join(', ') : 'Null' : 'Null'}</TableCell>
-                                                <TableCell>
-                                                    <IconButton aria-label="expand row" size="small" onClick={() => {
-                                                        setupdtpk(row.pk); setuprmnme(row.rm_name); setuprmcod(row.rm_code); setuprmeunt(row.measured_unit);
-                                                        setuprmesuntget(row.measured_unit_get); setupminstk(row.min_stock); setuprmmaxpr(row.rm_max_price);
-                                                        setupcrncy(row.currency); setupcrncyget(row.currency_get); UhandleClickOpen();
-                                                    }}>
-                                                        <EditIcon /></IconButton>
+                    <div className="col-lg-2">
+                        <Sidenav currentmodule={'Admin'} currentbutton={'Master Data Management'} currentpage={'Raw Material'} />
+                    </div>
+                    <div className="col-lg-10">
+                        <div className="comhed">
+                            <button className="comadbtn" onClick={opnAdd} id='adbtn'>Add</button>
+                            <h5>Raw Material & Accessories</h5>
+                            <h6>Admin / Master Data Management / Raw Material & Accessories</h6>
+                        </div>
+                        <div className="tablepadding" id="rma">
+                            {token == null || token == '' ?
+                                <h2>Please Login..&emsp; <Link to={'/'}>Login Page</Link></h2>
+                                :
+                                <>
+                                    <div className="search" style={{ marginBottom: 'unset' }}>
+                                        <input type={'search'} className='micardinpt'
+                                            placeholder="Search Here...."
+                                            onChange={(e) => {
+                                                setsearchdata(e.target.value.toLowerCase());
+                                            }} style={{ paddingLeft: '3em' }} />
+                                        <div className="sIcon">
+                                            <SearchIcon sx={{ fontSize: '2em' }} />
+                                        </div>
+                                    </div>
+                                    {rmadata.length != 0 ?
+                                        <TableContainer component={Paper} sx={{ maxHeight: 650 }}>
+                                            <Table stickyHeader sx={{ minWidth: 650 }} >
+                                                <TableHead >
+                                                    <TableRow sx={{ backgroundColor: 'rgb(15, 11, 42)' }}>
+                                                        <TableCell variant="head" sx={{ fontWeight: 'bold', backgroundColor: 'rgb(15, 11, 42)', color: 'white' }}>S.No</TableCell>
+                                                        <TableCell variant="head" sx={{ fontWeight: 'bold', backgroundColor: 'rgb(15, 11, 42)', color: 'white' }}>RM code</TableCell>
+                                                        <TableCell variant="head" sx={{ fontWeight: 'bold', backgroundColor: 'rgb(15, 11, 42)', color: 'white' }}>RM Name</TableCell>
+                                                        <TableCell variant="head" sx={{ fontWeight: 'bold', backgroundColor: 'rgb(15, 11, 42)', color: 'white' }}>Measured Unit</TableCell>
+                                                        <TableCell variant="head" sx={{ fontWeight: 'bold', backgroundColor: 'rgb(15, 11, 42)', color: 'white' }}>Min Stock</TableCell>
+                                                        <TableCell variant="head" sx={{ fontWeight: 'bold', backgroundColor: 'rgb(15, 11, 42)', color: 'white' }}>RM Max Price</TableCell>
+                                                        <TableCell variant="head" sx={{ fontWeight: 'bold', backgroundColor: 'rgb(15, 11, 42)', color: 'white' }}>Currency</TableCell>
+                                                        <TableCell variant="head" sx={{ fontWeight: 'bold', backgroundColor: 'rgb(15, 11, 42)', color: 'white' }}>Prefered Supplier</TableCell>
+                                                        <TableCell variant="head" sx={{ fontWeight: 'bold', backgroundColor: 'rgb(15, 11, 42)', color: 'white' }}>Action</TableCell>
+                                                    </TableRow>
+                                                </TableHead>
+                                                <TableBody>
+                                                    {searchdata == '' ?
+                                                        rmadata.map((row) => (
+                                                            <TableRow
+                                                                sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                                                                hover={true}
+                                                            >
+                                                                <TableCell component="th" scope="row">
+                                                                    {++count}
+                                                                </TableCell>
+                                                                <TableCell>{row.rm_code !== null ? row.rm_code : 'Null'}</TableCell>
+                                                                <TableCell>{row.rm_name !== null ? row.rm_name : 'Null'}</TableCell>
+                                                                <TableCell>{row.measured_unit_get !== null ? row.measured_unit_get : 'Null'}</TableCell>
+                                                                <TableCell>{row.min_stock !== null ? row.min_stock : 'Null'}</TableCell>
+                                                                <TableCell>{row.rm_max_price !== null ? row.rm_max_price : 'Null'}</TableCell>
+                                                                <TableCell>{row.currency_get !== null ? row.currency_get : 'Null'}</TableCell>
+                                                                <TableCell>{row.preferred_supplier !== null ? row.preferred_supplier.length !== 0 ? row.preferred_supplier.join(', ') : 'Null' : 'Null'}</TableCell>
+                                                                <TableCell>
+                                                                    <IconButton aria-label="expand row" size="small" onClick={() => {
+                                                                        setupdtpk(row.pk); setuprmnme(row.rm_name); setuprmcod(row.rm_code); setuprmeunt(row.measured_unit);
+                                                                        setuprmesuntget(row.measured_unit_get); setupminstk(row.min_stock); setuprmmaxpr(row.rm_max_price);
+                                                                        setupcrncy(row.currency); setupcrncyget(row.currency_get); setuptotsubid(row.preferred_supplier); UhandleClickOpen();
+                                                                    }}>
+                                                                        <EditIcon /></IconButton>
 
-                                                    <IconButton aria-label="expand row" size="small" onClick={() => {
-                                                        setpk(row.pk); setdelproname(row.rm_name); handleClickOpen();
-                                                    }}
-                                                        sx={{ color: 'rgba(255, 0, 0, 0.755)' }}><DeleteIcon /></IconButton></TableCell>
-                                            </TableRow>
+                                                                    <IconButton aria-label="expand row" size="small" onClick={() => {
+                                                                        setpk(row.pk); setdelproname(row.rm_name); handleClickOpen();
+                                                                    }}
+                                                                        sx={{ color: 'rgba(255, 0, 0, 0.755)' }}><DeleteIcon /></IconButton></TableCell>
+                                                            </TableRow>
+                                                        ))
+                                                        :
+                                                        rmadata.map((row) => (
+                                                            <>
+                                                                {(row.rm_name.toLowerCase()).match(searchdata) == searchdata || (row.rm_code.toLowerCase()).match(searchdata) == searchdata || (row.measured_unit_get.toLowerCase()).match(searchdata) == searchdata
+                                                                    || (row.min_stock.toString()).match(searchdata) == searchdata || (row.rm_max_price.toString()).match(searchdata) == searchdata
+                                                                    || (row.currency_get.toLowerCase()).match(searchdata) == searchdata || ((row.preferred_supplier.toString()).toLowerCase()).match(searchdata) == searchdata ?
+                                                                    <TableRow
+                                                                        sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                                                                        hover={true}
+                                                                    >
+                                                                        <TableCell component="th" scope="row">
+                                                                            {++count}
+                                                                        </TableCell>
+                                                                        <TableCell>{row.rm_code !== null ? row.rm_code : 'Null'}</TableCell>
+                                                                        <TableCell>{row.rm_name !== null ? row.rm_name : 'Null'}</TableCell>
+                                                                        <TableCell>{row.measured_unit_get !== null ? row.measured_unit_get : 'Null'}</TableCell>
+                                                                        <TableCell>{row.min_stock !== null ? row.min_stock : 'Null'}</TableCell>
+                                                                        <TableCell>{row.rm_max_price !== null ? row.rm_max_price : 'Null'}</TableCell>
+                                                                        <TableCell>{row.currency_get !== null ? row.currency_get : 'Null'}</TableCell>
+                                                                        <TableCell>{row.preferred_supplier !== null ? row.preferred_supplier.length !== 0 ? row.preferred_supplier.join(', ') : 'Null' : 'Null'}</TableCell>
+                                                                        <TableCell>
+                                                                            <IconButton aria-label="expand row" size="small" onClick={() => {
+                                                                                setupdtpk(row.pk); setuprmnme(row.rm_name); setuprmcod(row.rm_code); setuprmeunt(row.measured_unit);
+                                                                                setuprmesuntget(row.measured_unit_get); setupminstk(row.min_stock); setuprmmaxpr(row.rm_max_price);
+                                                                                setupcrncy(row.currency); setupcrncyget(row.currency_get); setuptotsubid(row.preferred_supplier); UhandleClickOpen();
+                                                                            }}>
+                                                                                <EditIcon /></IconButton>
+
+                                                                            <IconButton aria-label="expand row" size="small" onClick={() => {
+                                                                                setpk(row.pk); setdelproname(row.rm_name); handleClickOpen();
+                                                                            }}
+                                                                                sx={{ color: 'rgba(255, 0, 0, 0.755)' }}><DeleteIcon /></IconButton></TableCell>
+                                                                    </TableRow> : null}
+                                                            </>
+                                                        ))
+                                                    }
+                                                </TableBody>
+                                            </Table>
+                                        </TableContainer> : <Loader />}
+                                </>}
+                        </div>
+                        {dispaddrma === true && token != null ? <AddRMA /> : null}
+                    </div>
+                </div>
+                <div>
+                    <Dialog
+                        open={open}
+                        onClose={handleClose}
+                        aria-labelledby="alert-dialog-title"
+                        aria-describedby="alert-dialog-description"
+                    >
+                        <DialogTitle id="alert-dialog-title">
+                            {"Do You Want To Delete ? "}
+                        </DialogTitle>
+                        <DialogContent>
+                            <DialogContentText id="alert-dialog-description">
+                                <b style={{ color: 'black' }}>{delproname}</b>
+                            </DialogContentText>
+                        </DialogContent>
+                        <DialogActions>
+                            <Button onClick={handleClose}>Cancel</Button>
+                            <Button onClick={doDelete} autoFocus sx={{ color: 'red' }}>
+                                Delete
+                            </Button>
+                        </DialogActions>
+                    </Dialog>
+                </div>
+                <div>
+                    <Dialog
+                        open={Uopen}
+                        onClose={UhandleClose}
+                        TransitionComponent={Transition}
+                    >
+                        <div className="comhed">
+                            <h5>Update Raw Materials</h5>
+                        </div>
+                        <DialogTitle id="alert-dialog-title">
+                            {"Row Details :  "}
+                        </DialogTitle>
+
+                        <DialogContent>
+
+                            <div className="row">
+                                <div className="col-lg-6 editscrn">
+                                    <label className="micardlble" >RM Name</label><br />
+                                    <input className="micardinpt" value={uprmnme} onChange={(e) => { setuprmnme(e.target.value) }} required />
+                                </div>
+
+                                <div className="col-lg-6 editscrn">
+                                    <label className="micardlble" >RM Code</label><br />
+                                    <input className="micardinpt" value={uprmcod} onChange={(e) => { setuprmcod(e.target.value) }} required />
+                                </div>
+
+                                <div className="col-lg-6">
+                                    <label className="micardlble">Measured Unit</label><br />
+                                    <select className="micardinpt" onChange={(e) => setuprmeunt(e.target.value)}>
+                                        <option defaultValue={true} value={uprmesunt} required>{uprmesuntget}</option>
+                                        {measurdunit.map(unitobj => (
+                                            <>
+                                                <option value={unitobj.pk}>{unitobj.measured_unit_name}</option>
+                                            </>
                                         ))}
-                                    </TableBody>
-                                </Table>
-                            </TableContainer> : <Loader />}
-                    </div>
-                    {dispaddrma === true ? <AddRMA /> : null}
+                                    </select>
+                                </div>
+
+                                <div className="col-lg-6">
+                                    <label className="micardlble">Min Stock</label><br />
+                                    <input type='number' className="micardinpt" value={upminstk} onChange={(e) => setupminstk(e.target.value)} required />
+                                </div>
+
+                                <div className="col-lg-6">
+                                    <label className="micardlble">Currency</label><br />
+                                    <select className="micardinpt" onChange={(e) => setupcrncy(e.target.value)} >
+                                        <option defaultValue={true} value={upcrncy} required>{upcrncyget}</option>
+                                        {curncydat.map(crncyobj => (
+                                            <>
+                                                <option value={crncyobj.pk}>{crncyobj.currency_name}</option>
+                                            </>
+                                        ))}
+                                    </select>
+                                </div>
+
+                                <div className="col-lg-6">
+                                    <label className="micardlble">RM Max Price</label><br />
+                                    <input type='number' value={uprmmaxpr} onChange={(e) => setuprmmaxpr(e.target.value)} className="micardinpt" />
+                                </div>
+
+                                <div className="col-lg-4">
+                                    <label className="micardlble">Prefered Suppliers</label><br />
+                                    <select className="micardinpt" onChange={(e) => { setuppresubid(e.target.value) }}>
+                                        <option selected={true} disabled={true} value={''} defaultValue={true}>Choose Supplier</option>
+                                        {partydat.map(prtob => (
+                                            <option>{prtob.party_name}</option>
+                                        ))}
+                                    </select>
+                                    <button className="comadbtn" style={{ float: 'unset', marginTop: '1em', marginBottom: 'unset' }}
+                                        onClick={(e) => {
+                                            e.preventDefault();
+                                            setuptotsubid(obj => [...obj, uppresubid]);
+                                        }}
+                                    >Add <ArrowForwardIcon sx={{ fontSize: '1em' }} />
+                                    </button>
+                                </div>
+
+                                <div className="col-lg-4" style={{ padding: '1em' }}>
+                                    <label className="micardlble">Suppliers</label>
+                                    <div style={{ border: '1px solid #d9d7d7', minHeight: '10em', borderRadius: '6px', padding: '10px' }}>
+                                        {uptotsubid.map((arob, index) => {
+                                            return (
+                                                <>
+                                                    <Chip label={arob} sx={{ margin: '2px' }} onDelete={
+                                                        () => { setuptotsubid([]) }
+                                                    } />
+                                                </>
+                                            );
+                                        })}
+                                    </div>
+                                </div>
+
+
+                            </div>
+                        </DialogContent>
+                        <DialogActions>
+                            <button className="cancelbtn" onClick={UhandleClose}  >Discord</button>
+                            <button className="comadbtn" type="submit" onClick={doPUT} style={{ marginBottom: 'unset' }}>Update</button>
+                        </DialogActions>
+
+                    </Dialog>
                 </div>
             </div>
-            <div>
-                <Dialog
-                    open={open}
-                    onClose={handleClose}
-                    aria-labelledby="alert-dialog-title"
-                    aria-describedby="alert-dialog-description"
-                >
-                    <DialogTitle id="alert-dialog-title">
-                        {"Do You Want To Delete ? "}
-                    </DialogTitle>
-                    <DialogContent>
-                        <DialogContentText id="alert-dialog-description">
-                            <b style={{ color: 'black' }}>{delproname}</b>
-                        </DialogContentText>
-                    </DialogContent>
-                    <DialogActions>
-                        <Button onClick={handleClose}>Cancel</Button>
-                        <Button onClick={doDelete} autoFocus sx={{ color: 'red' }}>
-                            Delete
-                        </Button>
-                    </DialogActions>
-                </Dialog>
-            </div>
-            <div>
-                <Dialog
-                    open={Uopen}
-                    onClose={UhandleClose}
-                    TransitionComponent={Transition}
-                >
-                    <div className="comhed">
-                        <h5>Update Raw Materials</h5>
-                    </div>
-                    <DialogTitle id="alert-dialog-title">
-                        {"Row Details :  "}
-                    </DialogTitle>
-                    <DialogContent>
-
-                        <div className="row">
-                            <div className="col-lg-6 editscrn">
-                                <label className="micardlble" >RM Name</label><br />
-                                <input className="micardinpt" value={uprmnme} onChange={(e) => { setuprmnme(e.target.value) }} required />
-                            </div>
-
-                            <div className="col-lg-6 editscrn">
-                                <label className="micardlble" >RM Code</label><br />
-                                <input className="micardinpt" value={uprmcod} onChange={(e) => { setuprmcod(e.target.value) }} required />
-                            </div>
-
-                            <div className="col-lg-6">
-                                <label className="micardlble">Measured Unit</label><br />
-                                <select className="micardinpt" onChange={(e) => setuprmeunt(e.target.value)}>
-                                    <option defaultValue={true} value={uprmesunt} required>{uprmesuntget}</option>
-                                    {measurdunit.map(unitobj => (
-                                        <>
-                                            <option value={unitobj.pk}>{unitobj.measured_unit_name}</option>
-                                        </>
-                                    ))}
-                                </select>
-                            </div>
-
-                            <div className="col-lg-6">
-                                <label className="micardlble">Min Stock</label><br />
-                                <input type='number' className="micardinpt" value={upminstk} onChange={(e) => setupminstk(e.target.value)} required />
-                            </div>
-
-                            <div className="col-lg-6">
-                                <label className="micardlble">Currency</label><br />
-                                <select className="micardinpt" onChange={(e) => setupcrncy(e.target.value)} >
-                                    <option defaultValue={true} value={upcrncy} required>{upcrncyget}</option>
-                                    {curncydat.map(crncyobj => (
-                                        <>
-                                            <option value={crncyobj.pk}>{crncyobj.currency_name}</option>
-                                        </>
-                                    ))}
-                                </select>
-                            </div>
-
-                            <div className="col-lg-6">
-                                <label className="micardlble">RM Max Price</label><br />
-                                <input type='number' value={uprmmaxpr} onChange={(e) => setuprmmaxpr(e.target.value)} className="micardinpt" />
-                            </div>
-
-
-                        </div><br />
-                        <button className="comadbtn" onClick={doPUT} style={{ marginBottom: 'unset' }}>Update</button>
-                        <button className="cancelbtn" onClick={UhandleClose} >Discord</button>
-                    </DialogContent>
-                </Dialog><br />
-            </div>
-        </div>
+        </>
     );
 }
 

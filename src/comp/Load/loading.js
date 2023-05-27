@@ -3,17 +3,19 @@ import './loading.css';
 let Loader = () => {
     return (
         <>
-            <section class="wrapper fulscrn">
-                <div class="spinner">
-                    <i></i>
-                    <i></i>
-                    <i></i>
-                    <i></i>
-                    <i></i>
-                    <i></i>
-                    <i></i>
-                </div>
-            </section>
+            <div className="cntr">
+                <section class="wrapper fulscrn">
+                    <div class="spinner">
+                        <i></i>
+                        <i></i>
+                        <i></i>
+                        <i></i>
+                        <i></i>
+                        <i></i>
+                        <i></i>
+                    </div>
+                </section>
+            </div>
         </>
     );
 }

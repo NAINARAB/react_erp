@@ -17,11 +17,10 @@ import Department from './screens/manage_user/department';
 import Devision from './screens/manage_user/division';
 import Users from './screens/manage_user/user';
 import Userrole from './screens/manage_user/user_role';
-
-
-
-
-
+import State from './screens/configuration/state';
+import Currency from './screens/configuration/currency';
+import Measuredunit from './screens/configuration/measuredunit';
+import Home from './screens/mdm/home';
 
 
 
@@ -34,21 +33,23 @@ function App() {
       <BrowserRouter>
         <Routes>
           <Route exact path="/" element={<Login />} />
-          <Route path="/header" element={<Header />} />
-          <Route path="/sidenav" element={<Sidenav />} />
+          <Route path='/home' element={<Home />} />
           <Route path="/admin/mdm/product" element={<Product />} />
           <Route path="/admin/mdm/rawmaterialsaccessories" element={<Rawmaterialsaccessories />} />
           <Route path="/admin/mdm/billsofmaterials" element={<Billsofmaterials />} />
           <Route path="/admin/mdm/productionflow" element={<Productionflow />} />
           <Route path="/admin/mdm/parties" element={<Parties />} />
-          <Route path="/admin/mdm/phases" element={<Phases />} />
-          <Route path="/admin/mdm/partytype" element={<Partytype />} />
-          <Route path="/admin/mdm/country" element={<Country />} />
+          <Route path="/admin/configuration/phases" element={<Phases />} />
+          <Route path="/admin/configuration/partytype" element={<Partytype />} />
+          <Route path="/admin/configuration/country" element={<Country />} />
           <Route path='/admin/manageusers/branches' element={<Branches />} />
           <Route path='/admin/manageusers/department' element={<Department />} />
           <Route path='/admin/manageusers/devision' element={<Devision />} />
           <Route path='/admin/manageusers/users' element={<Users />} />
           <Route path='/admin/manageusers/userrole' element={<Userrole />} />
+          <Route path='/admin/configuration/state' element={<State />} />
+          <Route path='/admin/configuration/currency' element={<Currency />} />
+          <Route path='/admin/configuration/measuredunit' element={<Measuredunit />} />
         </Routes>
       </BrowserRouter>
     </div>

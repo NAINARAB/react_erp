@@ -3,24 +3,6 @@ import { useNavigate } from "react-router-dom";
 import { useState } from 'react';
 import axios from 'axios';
 import './login.css';
-import jQuery from 'jquery'; 
-
-// function getCookie(name) {
-//     var cookieValue = null;
-//     if (document.cookie && document.cookie !== '') {
-//         var cookies = document.cookie.split(';');
-//         for (var i = 0; i < cookies.length; i++) {
-            
-//             var cookie = jQuery.trim(cookies[i]);
-//             if (cookie.substring(0, name.length + 1) === (name + '=')) {
-//                 cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-//                 break;
-//             }
-//         }
-//     }
-//     return cookieValue;
-// }
-// var csrftoken = getCookie('csrftoken');
 
 function Login() {
     const navigate = useNavigate();
@@ -30,31 +12,25 @@ function Login() {
     // const headers= { "Content-Type": "application/json", "X-CSRFToken" : csrftoken}
 
     const client1 = axios.create({
-        baseURL: "https://erp-test-3wqc9.ondigitalocean.app/api/login/"
+        baseURL: "https://erp-tiarx.ondigitalocean.app/api/login/"
     });
 
 
     const getLogin = (employee_id, password) => {
-        client1.post('',{
+        client1.post('', {
             employee_id: employee_id,
             password: password,
         })
-            .then((res) => {
-                console.log("after then", res)
-                if (res.data.code = 200) {
-                    let id = JSON.parse(res.data.data.id)
-                    console.log("before navigate", id)
-                    sessionStorage.setItem("id", id)
-                    console.log(id);
-                    navigate('/admin/mdm/product');
-                }
 
-                else {
-                    if (res.data.status === 'failure') {
-                        alert('Invalid User Id Or Password');
-                    }
+            .then((data) => {
+                if (data.data.code = 200) {
+                    sessionStorage.setItem("token", data.data.data.token);
+                    navigate('/home');
                 }
-
+                // if (data.data.code === 'failure') {
+                //     alert('Invalid User Id Or Password');
+                //     console.log('failure data', res)
+                // }
             }).catch((err) => {
                 console.log(err);
             })
@@ -77,12 +53,12 @@ function Login() {
                             <div style={{ fontSize: '23px' }}><h2 className='hedundr'>Sig</h2>n In</div>
 
                             <br /><br />
-                            <form>
-                            Employee ID
+                            <form onSubmit={dologin}>
+                                Employee ID
                                 <input type='text' className='loginpt' onChange={(e) => { setEmployeeid(e.target.value) }} required autoFocus='ture' />
                                 Password
                                 <input type='password' className='loginpt' onChange={(e) => { setpassword(e.target.value) }} required /><br />
-                                <button className='logsbmt' type='submit' onClick={dologin}>Sign In</button>
+                                <button className='logsbmt' type='submit'>Sign In</button>
                                 <button className='logfrgt'>Forget Password?</button>
                             </form><br />
                             <p className='para'>By Signing in you agree to the Terms of Service and Privacy Policy</p>

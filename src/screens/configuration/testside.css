@@ -7,20 +7,17 @@
     font-size: 13px;
     padding: 0.5em;
 }
-.smain i{
-    font-size: 15px;
-}
 .smain:hover{
     background-color: #f2f2f2;
     color: blue;
 }
 .linkbut{
-    padding: 0.2em 0 0.2em 1em;
+    padding-left: 1em;
     width:100%;
     background-color: transparent;
     border: none;
     text-align: left;
-    font-size: 15px;
+    font-size: 13px;
 }
 .linkbut:hover{
     color:blue;
@@ -31,17 +28,6 @@
 }
 .blue{
     color:blue;
-}
-.devlop{
-    position: fixed;
-    bottom: 0;
-    left: 50%;
-    transform: translate(-50%,0);
-    font-size: 12px;
-    text-align: center;
-}
-i{
-    color:blue !important;
 }
 
 
@@ -56,21 +42,6 @@ i{
     padding: 0.7em;
     background-color: #f8f6f6;
 }
-.usrinfo i{
-    font-size: 30px;
-    display: inline;
-    margin-right: 0.5em;
-    color: #000 !important;
-}
-.usrinfo h5{
-    margin: 0px;
-    font-size:20px;
-    color:rgb(15, 11, 42) !important;
-}
-.usrinfo p{
-    margin: 0px;
-    font-size: 14px;
-}
 
 @media only screen and (max-width: 991px) {
     .menuhide{
@@ -79,13 +50,16 @@ i{
     .hideside{
         display: none;
     }
-    .smain, .linkbut{
+    .butful{
         font-size: 1rem !important;
+    }
+    .sbutton{
+        font-size: unset;
     }
   }
 
   @media only screen and (min-width: 1500px){
-    .smain, .linkbut{
+    .butful, .sbutton{
         font-size: 1rem !important;
     }
   }
