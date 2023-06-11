@@ -14,7 +14,7 @@ const Home = () => {
 
     useEffect(() => {
         if (token != null) {
-            fetch('https://erp-tiarx.ondigitalocean.app/api/profile/',
+            fetch('https://erp-test-3wqc9.ondigitalocean.app/api/profile/',
                 {
                     headers: {
                         'Authorization': `token ${token}`

@@ -58,7 +58,7 @@ function Rawmaterialsaccessories() {
 
     useEffect(() => {
         if (token != null) {
-            fetch('https://erp-tiarx.ondigitalocean.app/api/get?model=currency',
+            fetch('https://erp-test-3wqc9.ondigitalocean.app/api/master-data-management?model=currency',
                 {
                     headers: {
                         'Authorization': `token ${token}`
@@ -68,7 +68,7 @@ function Rawmaterialsaccessories() {
                 .then((data) => {
                     setcurncydat(data.data);
                 })
-            fetch('https://erp-tiarx.ondigitalocean.app/api/get?model=measuredunits',
+            fetch('https://erp-test-3wqc9.ondigitalocean.app/api/master-data-management?model=measuredunits',
                 {
                     headers: {
                         'Authorization': `token ${token}`
@@ -78,7 +78,7 @@ function Rawmaterialsaccessories() {
                 .then((data) => {
                     setmeasuredunit(data.data);
                 })
-            fetch('https://erp-tiarx.ondigitalocean.app/api/get?model=parties',
+            fetch('https://erp-test-3wqc9.ondigitalocean.app/api/master-data-management?model=parties',
                 {
                     headers: {
                         'Authorization': `token ${token}`
@@ -130,7 +130,7 @@ function Rawmaterialsaccessories() {
     };
 
     const rmaupdt = axios.create({
-        baseURL: `https://erp-tiarx.ondigitalocean.app/api/get?model=rawmaterial&pk=${updtpk}`
+        baseURL: `https://erp-test-3wqc9.ondigitalocean.app/api/master-data-management?model=rawmaterial&pk=${updtpk}`
     });
 
     const updtRMA = (rmn, rmc, mu, ms, rmp, crcy, upsup) => {
@@ -201,7 +201,7 @@ function Rawmaterialsaccessories() {
 
 
         const rmapost = axios.create({
-            baseURL: "https://erp-tiarx.ondigitalocean.app/api/get?model=rawmaterial"
+            baseURL: "https://erp-test-3wqc9.ondigitalocean.app/api/master-data-management?model=rawmaterial"
         });
 
         const postrma = (rmcode, rmname, unit, minstock, rmmaxprice, currency, psu) => {
@@ -373,7 +373,7 @@ function Rawmaterialsaccessories() {
 
     useEffect(() => {
         if (token != null) {
-            fetch('https://erp-tiarx.ondigitalocean.app/api/get?model=rawmaterial',
+            fetch('https://erp-test-3wqc9.ondigitalocean.app/api/master-data-management?model=rawmaterial',
                 {
                     headers: {
                         'Authorization': `token ${token}`
@@ -393,7 +393,7 @@ function Rawmaterialsaccessories() {
     const deleteRowRM = (pkobj) => {
         let currentpk = pkobj;
         const deleterowurl = axios.create({
-            baseURL: `https://erp-tiarx.ondigitalocean.app/api/get?model=rawmaterial&pk=${currentpk}`
+            baseURL: `https://erp-test-3wqc9.ondigitalocean.app/api/master-data-management?model=rawmaterial&pk=${currentpk}`
         });
 
         deleterowurl.delete('',

@@ -35,7 +35,7 @@ const Country = () => {
 
     useEffect(() => {
         if(token != null){
-            fetch('https://erp-tiarx.ondigitalocean.app/api/get?model=country',
+            fetch('https://erp-test-3wqc9.ondigitalocean.app/api/master-data-management?model=country',
             {
                 headers: {
                     'Authorization': `token ${token}`
@@ -100,7 +100,7 @@ const Country = () => {
         }
 
         const cntryupdt = axios.create({ //country
-            baseURL: `https://erp-tiarx.ondigitalocean.app/api/get?model=country&pk=${updtpk}`
+            baseURL: `https://erp-test-3wqc9.ondigitalocean.app/api/master-data-management?model=country&pk=${updtpk}`
         });
 
         const updtCountry = (cod, nme) => {
@@ -143,7 +143,7 @@ const Country = () => {
         const deleteRow = (pkobj) => {
             let currentpk = pkobj;
             const deleterowurl = axios.create({ //phase
-                baseURL: `https://erp-tiarx.ondigitalocean.app/api/get?model=country&pk=${currentpk}`
+                baseURL: `https://erp-test-3wqc9.ondigitalocean.app/api/master-data-management?model=country&pk=${currentpk}`
             });
 
             deleterowurl.delete('',
@@ -319,7 +319,7 @@ const Country = () => {
         const [countryinpt, setcountryinpt] = useState('');
         const [countrycode, setcountrycode] = useState('');
         const postcountryinpt = axios.create({
-            baseURL: "https://erp-tiarx.ondigitalocean.app/api/get?model=country"
+            baseURL: "https://erp-test-3wqc9.ondigitalocean.app/api/master-data-management?model=country"
         });
 
         const postcountry = (country, code) => {

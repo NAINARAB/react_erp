@@ -42,7 +42,7 @@ function Parties() {
     useEffect(() => {
 
         if (token != null) {
-            fetch('https://erp-tiarx.ondigitalocean.app/api/get?model=partytype',
+            fetch('https://erp-test-3wqc9.ondigitalocean.app/api/master-data-management?model=partytype',
                 {
                     headers: {
                         'Authorization': `token ${token}`
@@ -52,7 +52,7 @@ function Parties() {
                 .then((data) => {
                     setpartytypedat(data.data)
                 })
-            fetch('https://erp-tiarx.ondigitalocean.app/api/get?model=country',
+            fetch('https://erp-test-3wqc9.ondigitalocean.app/api/master-data-management?model=country',
                 {
                     headers: {
                         'Authorization': `token ${token}`
@@ -62,7 +62,7 @@ function Parties() {
                 .then((data) => {
                     setcountrydat(data.data);
                 })
-            fetch('https://erp-tiarx.ondigitalocean.app/api/get?model=state',
+            fetch('https://erp-test-3wqc9.ondigitalocean.app/api/master-data-management?model=state',
                 {
                     headers: {
                         'Authorization': `token ${token}`
@@ -72,7 +72,7 @@ function Parties() {
                 .then((data) => {
                     setstatedat(data.data);//product
                 })
-            fetch('https://erp-tiarx.ondigitalocean.app/api/get?model=product',
+            fetch('https://erp-test-3wqc9.ondigitalocean.app/api/master-data-management?model=product',
                 {
                     headers: {
                         'Authorization': `token ${token}`
@@ -82,7 +82,7 @@ function Parties() {
                 .then((data) => {
                     setproductdat(data.data);
                 })
-            fetch('https://erp-tiarx.ondigitalocean.app/api/get?model=rawmaterial',
+            fetch('https://erp-test-3wqc9.ondigitalocean.app/api/master-data-management?model=rawmaterial',
                 {
                     headers: {
                         'Authorization': `token ${token}`
@@ -97,7 +97,7 @@ function Parties() {
     }, [])
     useEffect(() => {
         if (token != null) {
-            fetch('https://erp-tiarx.ondigitalocean.app/api/get?model=parties',
+            fetch('https://erp-test-3wqc9.ondigitalocean.app/api/master-data-management?model=parties',
                 {
                     headers: {
                         'Authorization': `token ${token}`
@@ -175,7 +175,7 @@ function Parties() {
         };
 
         const cntryupdt = axios.create({ //party
-            baseURL: `https://erp-tiarx.ondigitalocean.app/api/get?model=parties&pk=${updtpk}`
+            baseURL: `https://erp-test-3wqc9.ondigitalocean.app/api/master-data-management?model=parties&pk=${updtpk}`
         });
 
 
@@ -232,7 +232,7 @@ function Parties() {
             console.log(pkobj)
             let currentpk = pkobj;
             const deleterowurl = axios.create({
-                baseURL: `https://erp-tiarx.ondigitalocean.app/api/get?model=parties&pk=${currentpk}`
+                baseURL: `https://erp-test-3wqc9.ondigitalocean.app/api/master-data-management?model=parties&pk=${currentpk}`
             });
 
             deleterowurl.delete('',
@@ -254,14 +254,6 @@ function Parties() {
                 })
         }
 
-        {/* Object.entries(propobj.party_products).map(([prtprokey, prtprovalue]) => {
-                        return (
-                            <li>
-                                {prtprovalue.product}
-                            </li>
-                        );
-
-                    }) */}
 
         return (
             <>
@@ -276,15 +268,8 @@ function Parties() {
                         <TableCell align="center">{propobj.party_contact_name == null ? "Null" : propobj.party_contact_name}</TableCell>
                         <TableCell align="center">{propobj.party_email == null ? "Null" : propobj.party_email}</TableCell>
                         <TableCell align="center">{propobj.party_gstin == null ? "Null" : propobj.party_gstin}</TableCell>
-                        <TableCell >{propobj.party_products != null ? Object.entries(propobj.party_products).map(([prtprokey, prtprovalue]) => {
-                            return (
-                                <>
-                                    {prtprovalue.product}
-                                </>
-                            );
-
-                        }) : "Null"}</TableCell>
-                        <TableCell align="right">
+                        <TableCell >{propobj.party_pincode == null ? "Null" : propobj.party_pincode}</TableCell>
+                        <TableCell align="right" sx={{ padding: 0 }}>
                             <IconButton aria-label="expand row" size="small"
                                 onClick={() => {
                                     setupdtpk(propobj.pk); setupprtnme(propobj.party_name); setupprttyp(propobj.party_type); setupprttypget(propobj.party_type_get); setupupprtpin(propobj.party_pincode);
@@ -314,21 +299,30 @@ function Parties() {
                             <Collapse in={open} timeout="auto" unmountOnExit>
                                 <Box sx={{ margin: 3 }}>
                                     <TableContainer>
-                                        <Table size="small" sx={{ width: '50%', background: 'transparant' }}>
+                                        <Table size="small" sx={{ background: 'transparant' }}>
                                             <TableHead>
                                                 <TableRow>
                                                     <TableCell align="center" sx={{ padding: '1em', fontWeight: 'bold', fontSize: '0.9rem', borderBottom: '0px solid transparent' }}>Country</TableCell>
                                                     <TableCell align="center" sx={{ padding: '1em', fontWeight: 'bold', fontSize: '0.9rem', borderBottom: '0px solid transparent' }}>State</TableCell>
                                                     <TableCell align="center" sx={{ padding: '1em', fontWeight: 'bold', fontSize: '0.9rem', borderBottom: '0px solid transparent' }}>Address</TableCell>
-                                                    <TableCell align="center" sx={{ padding: '1em', fontWeight: 'bold', fontSize: '0.9rem', borderBottom: '0px solid transparent' }}>Pin Code</TableCell>
+                                                    <TableCell sx={{ padding: '1em', fontWeight: 'bold', fontSize: '0.9rem', borderBottom: '0px solid transparent' }}>Products</TableCell>
                                                 </TableRow>
                                             </TableHead>
                                             <TableBody>
                                                 <TableRow>
-                                                    <TableCell align="center" sx={{ borderBottom: '0px solid transparent' }}>{propobj.party_country_get == null ? "Null" : propobj.party_country_get}</TableCell>
-                                                    <TableCell align="center" sx={{ borderBottom: '0px solid transparent' }}>{propobj.party_state_get == null ? "Null" : propobj.party_state_get}</TableCell>
-                                                    <TableCell align="center" sx={{ borderBottom: '0px solid transparent' }}>{propobj.party_address == null ? "Null" : propobj.party_address}</TableCell>
-                                                    <TableCell align="center" sx={{ borderBottom: '0px solid transparent' }}>{propobj.party_pincode == null ? "Null" : propobj.party_pincode}</TableCell>
+                                                    <TableCell align="center" sx={{ borderBottom: '0px solid transparent', maxWidth: 70 }}>{propobj.party_country_get == null ? "Null" : propobj.party_country_get}</TableCell>
+                                                    <TableCell align="center" sx={{ borderBottom: '0px solid transparent', maxWidth: 70 }}>{propobj.party_state_get == null ? "Null" : propobj.party_state_get}</TableCell>
+                                                    <TableCell align="center" sx={{ borderBottom: '0px solid transparent',maxWidth: 200 }}>{propobj.party_address == null ? "Null" : propobj.party_address}</TableCell>
+                                                    <TableCell sx={{ borderBottom: '0px solid transparent' }}>
+                                                        {propobj.party_products != null ? Object.entries(propobj.party_products).map(([prtprokey, prtprovalue]) => {
+                                                            return (
+                                                                <li>
+                                                                    {prtprovalue.product + ' - ' + prtprovalue.unit_price}
+                                                                </li>
+                                                            );
+
+                                                        }) : "Null"}
+                                                    </TableCell>
                                                 </TableRow>
                                             </TableBody>
                                         </Table>
@@ -482,7 +476,7 @@ function Parties() {
 
 
         const partypost = axios.create({
-            baseURL: "https://erp-tiarx.ondigitalocean.app/api/get?model=parties"
+            baseURL: "https://erp-test-3wqc9.ondigitalocean.app/api/master-data-management?model=parties"
         });
 
         const postParties = (nme, cntry, type, state, adres, pin, cntno, cntnme, emil, gst, totpro) => {
@@ -730,7 +724,7 @@ function Parties() {
                                                     <TableCell sx={{ backgroundColor: 'rgb(15, 11, 42)', fontWeight: 'bold', color: 'white' }} align="center">Contact Name</TableCell>
                                                     <TableCell sx={{ backgroundColor: 'rgb(15, 11, 42)', fontWeight: 'bold', color: 'white' }} align="center">Email</TableCell>
                                                     <TableCell sx={{ backgroundColor: 'rgb(15, 11, 42)', fontWeight: 'bold', color: 'white' }} align="center">GSTIN</TableCell>
-                                                    <TableCell sx={{ backgroundColor: 'rgb(15, 11, 42)', fontWeight: 'bold', color: 'white' }}  >Products</TableCell>
+                                                    <TableCell sx={{ backgroundColor: 'rgb(15, 11, 42)', fontWeight: 'bold', color: 'white' }}  >Pincode</TableCell>
                                                     <TableCell sx={{ backgroundColor: 'rgb(15, 11, 42)', fontWeight: 'bold', color: 'white' }} align="center">Action</TableCell>
                                                 </TableRow>
                                             </TableHead>

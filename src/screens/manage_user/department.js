@@ -31,7 +31,7 @@ function Department() {
 
     useEffect(() => {
         if(token != null){
-            fetch('https://erp-tiarx.ondigitalocean.app/api/get?model=department',
+            fetch('https://erp-test-3wqc9.ondigitalocean.app/api/master-data-management?model=department',
             {
                 headers: {
                     'Authorization': `token ${token}`
@@ -87,7 +87,7 @@ function Department() {
         };
 
         const cntryupdt = axios.create({ //department
-            baseURL: `https://erp-tiarx.ondigitalocean.app/api/get?model=department&pk=${updtpk}`
+            baseURL: `https://erp-test-3wqc9.ondigitalocean.app/api/master-data-management?model=department&pk=${updtpk}`
         });
 
         const updtCountry = (nme, rol) => {
@@ -143,7 +143,7 @@ function Department() {
         const deleteRow = (pkobj) => {
             let currentpk = pkobj;
             const deleterowurl = axios.create({ //department
-                baseURL: `https://erp-tiarx.ondigitalocean.app/api/get?model=department&pk=${currentpk}`
+                baseURL: `https://erp-test-3wqc9.ondigitalocean.app/api/master-data-management?model=department&pk=${currentpk}`
             });
 
             deleterowurl.delete('',
@@ -293,7 +293,7 @@ function Department() {
         const [deptname, setdeptname] = useState('');
         const [deptrole, setdeptrole] = useState('');
         const postdept = axios.create({
-            baseURL: "https://erp-tiarx.ondigitalocean.app/api/get?model=department"
+            baseURL: "https://erp-test-3wqc9.ondigitalocean.app/api/master-data-management?model=department"
         });
 
         const postdeptfun = (depart, deptrl) => {

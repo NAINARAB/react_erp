@@ -71,7 +71,7 @@ function Productionflow() {
 
     useEffect(() => {
         if (token != null) {
-            fetch('https://erp-tiarx.ondigitalocean.app/api/get?model=product',
+            fetch('https://erp-test-3wqc9.ondigitalocean.app/api/master-data-management?model=product',
                 {
                     headers: {
                         'Authorization': `token ${token}`
@@ -81,7 +81,7 @@ function Productionflow() {
                 .then((data) => {
                     setproductdata(data.data)
                 })
-            fetch('https://erp-tiarx.ondigitalocean.app/api/get?model=productionphase',
+            fetch('https://erp-test-3wqc9.ondigitalocean.app/api/master-data-management?model=productionphase',
                 {
                     headers: {
                         'Authorization': `token ${token}`
@@ -117,7 +117,7 @@ function Productionflow() {
 
         useEffect(() => {
             if (token != null) {
-                fetch(`https://erp-tiarx.ondigitalocean.app/api/get?model=productivity&filter_by=product&filter_value=${row.pk}`,
+                fetch(`https://erp-test-3wqc9.ondigitalocean.app/api/master-data-management?model=productivity&filter_by=product&filter_value=${row.pk}`,
                     {
                         headers: {
                             'Authorization': `token ${token}`
@@ -131,7 +131,7 @@ function Productionflow() {
         }, [fet])
 
         const postPF = axios.create({
-            baseURL: "https://erp-tiarx.ondigitalocean.app/api/get?model=productivity"
+            baseURL: "https://erp-test-3wqc9.ondigitalocean.app/api/master-data-management?model=productivity"
         });
 
         const postproductivity = (ppk, pnme, phs, qpd, sq) => {
@@ -156,7 +156,7 @@ function Productionflow() {
                         setfet(!fet);
                         playsuccess();
                         const pfpost = axios.create({
-                            baseURL: "https://erp-tiarx.ondigitalocean.app/api/pf"
+                            baseURL: "https://erp-test-3wqc9.ondigitalocean.app/api/production-flow"
                         });
                         const pf = () => {
                             pfpost.post('', {
@@ -243,7 +243,7 @@ function Productionflow() {
                                                             <TableCell align='center' sx={{ backgroundColor: 'rgb(15, 11, 42)', color: 'white' }}>Production Phase</TableCell>
                                                             <TableCell align='center' sx={{ backgroundColor: 'rgb(15, 11, 42)', color: 'white' }}>Productivity Per Day</TableCell>
                                                             <TableCell align='center' sx={{ backgroundColor: 'rgb(15, 11, 42)', color: 'white' }}>Scrap</TableCell>
-                                                            <TableCell align='center' sx={{ backgroundColor: 'rgb(15, 11, 42)', color: 'white' }}>Action</TableCell>
+                                                            {/* <TableCell align='center' sx={{ backgroundColor: 'rgb(15, 11, 42)', color: 'white' }}>Action</TableCell> */}
                                                         </TableRow>
                                                     </TableHead>
 
@@ -254,7 +254,7 @@ function Productionflow() {
                                                                 <TableCell align='center'>{PF.phase_get !== null ? PF.phase_get : "Null"}</TableCell>
                                                                 <TableCell align='center'>{PF.quantity_perday !== null ? PF.quantity_perday : "Null"}</TableCell>
                                                                 <TableCell align='center'>{PF.scrap_quantity !== null ? PF.scrap_quantity : "Null"}</TableCell>
-                                                                <TableCell align='center'>NOT Allowed!</TableCell>
+                                                                {/* <TableCell align='center'>NOT Allowed!</TableCell> */}
                                                             </TableRow>
                                                         ))}
                                                     </TableBody>

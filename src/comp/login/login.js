@@ -6,13 +6,13 @@ import './login.css';
 
 function Login() {
     const navigate = useNavigate();
-    const [employee_id, setEmployeeid] = useState('');
-    const [password, setpassword] = useState('');
+    const [employee_id, setEmployeeid] = useState(150);
+    const [password, setpassword] = useState(123);
 
     // const headers= { "Content-Type": "application/json", "X-CSRFToken" : csrftoken}
 
     const client1 = axios.create({
-        baseURL: "https://erp-tiarx.ondigitalocean.app/api/login/"
+        baseURL: "https://erp-test-3wqc9.ondigitalocean.app/api/login/"
     });
 
 
@@ -51,13 +51,27 @@ function Login() {
                         <p style={{ textAlign: 'center' }}>Sign in to your account to continue</p>
                         <div className='logform'><br />
                             <div style={{ fontSize: '23px' }}><h2 className='hedundr'>Sig</h2>n In</div>
-
-                            <br /><br />
+                            
+                            <p className='para' style={{padding: '1em 0', textAlign:'center'}}>( id : 1 password : 123 || id : 150 password : 123 )</p>
+                            
                             <form onSubmit={dologin}>
                                 Employee ID
-                                <input type='text' className='loginpt' onChange={(e) => { setEmployeeid(e.target.value) }} required autoFocus='ture' />
+                                <input 
+                                    type='text' 
+                                    className='loginpt' 
+                                    onChange={(e) => { setEmployeeid(e.target.value) }} 
+                                    required 
+                                    autoFocus='ture'
+                                    defaultValue={employee_id}
+                                 />
                                 Password
-                                <input type='password' className='loginpt' onChange={(e) => { setpassword(e.target.value) }} required /><br />
+                                <input 
+                                    type='password' 
+                                    className='loginpt' 
+                                    onChange={(e) => { setpassword(e.target.value) }} 
+                                    required 
+                                    defaultValue={password}
+                                /><br />
                                 <button className='logsbmt' type='submit'>Sign In</button>
                                 <button className='logfrgt'>Forget Password?</button>
                             </form><br />

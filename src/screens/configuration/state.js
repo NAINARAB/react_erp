@@ -30,7 +30,7 @@ const State = () => {
 
     useEffect(() => {
         if(token != null){
-            fetch('https://erp-tiarx.ondigitalocean.app/api/get?model=state',
+            fetch('https://erp-test-3wqc9.ondigitalocean.app/api/master-data-management?model=state',
             {
                 headers: {
                     'Authorization': `token ${token}`
@@ -88,7 +88,7 @@ const State = () => {
         const deleteRow = (pkobj) => {
             let currentpk = pkobj;
             const deleterowurl = axios.create({ //phase
-                baseURL: `https://erp-tiarx.ondigitalocean.app/api/get?model=state&pk=${currentpk}`
+                baseURL: `https://erp-test-3wqc9.ondigitalocean.app/api/master-data-management?model=state&pk=${currentpk}`
             });
 
             deleterowurl.delete('',
@@ -214,7 +214,7 @@ const State = () => {
         const [statename, setstatename] = useState('');
         const [statecode, setstatecode] = useState();
         const poststate = axios.create({
-            baseURL: "https://erp-tiarx.ondigitalocean.app/api/get?model=state"
+            baseURL: "https://erp-test-3wqc9.ondigitalocean.app/api/master-data-management?model=state"
         });
 
         const poststatefun = (sn, sc) => {
@@ -269,7 +269,7 @@ const State = () => {
                         </div>
                     </div><br />
                     <button className="comadbtn" type="submit">Add</button>
-                    <button className="cancelbtn" onClick={() => { window.location.reload() }} >Back</button>
+                    <button className="cancelbtn" onClick={() => { setdispState(!dispState); }} >Back</button>
                 </form>
             </>
         );

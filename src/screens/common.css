@@ -139,10 +139,6 @@ select {
     padding: 0.5em 1em;
 }
 
-.TableCell{
-    padding: 1em; font-weight: bold; font-size: 0.9rem; border-bottom: 0px solid transparent;
-}
-
 .col-lg-4{
     padding: 1em !important;
 }

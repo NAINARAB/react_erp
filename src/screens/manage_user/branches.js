@@ -37,7 +37,7 @@ const Branches = () => {
 
     useEffect(() => {
         if(token != null){
-            fetch('https://erp-tiarx.ondigitalocean.app/api/get?model=country',
+            fetch('https://erp-test-3wqc9.ondigitalocean.app/api/master-data-management?model=country',
             {
                 headers: {
                     'Authorization': `token ${token}`
@@ -47,7 +47,7 @@ const Branches = () => {
             .then((data) => {
                 setcountrydat(data.data);
             })
-        fetch('https://erp-tiarx.ondigitalocean.app/api/get?model=state',
+        fetch('https://erp-test-3wqc9.ondigitalocean.app/api/master-data-management?model=state',
             {
                 headers: {
                     'Authorization': `token ${token}`
@@ -57,7 +57,7 @@ const Branches = () => {
             .then((data) => {
                 setstatedat(data.data);
             })
-        fetch('https://erp-tiarx.ondigitalocean.app/api/get?model=branch',
+        fetch('https://erp-test-3wqc9.ondigitalocean.app/api/master-data-management?model=branch',
             {
                 headers: {
                     'Authorization': `token ${token}`
@@ -131,7 +131,7 @@ const Branches = () => {
         };
 
         const brnchupdt = axios.create({
-            baseURL: `https://erp-tiarx.ondigitalocean.app/api/get?model=branch&pk=${updtpk}`
+            baseURL: `https://erp-test-3wqc9.ondigitalocean.app/api/master-data-management?model=branch&pk=${updtpk}`
         });
 
         const updtCountry = (bnme, cnme, stat, cntry, pin, gst, add) => {
@@ -183,7 +183,7 @@ const Branches = () => {
         const deleteRow = (pkobj) => {
             let currentpk = pkobj;
             const deleterowurl = axios.create({ //phase
-                baseURL: `https://erp-tiarx.ondigitalocean.app/api/get?model=branch&pk=${currentpk}`
+                baseURL: `https://erp-test-3wqc9.ondigitalocean.app/api/master-data-management?model=branch&pk=${currentpk}`
             });
 
             deleterowurl.delete('',
@@ -196,7 +196,7 @@ const Branches = () => {
                     setOpen(false);
                     setdispalr(true);
                     setalrstatus(true);
-                    setalrmes('One Row Deleted!, Please Reload');
+                    setalrmes('One Row Deleted!');
                     setfet(!fet);
                     playsuccess();
                 })
@@ -406,7 +406,7 @@ const Branches = () => {
 
 
         const postbranchurl = axios.create({
-            baseURL: "https://erp-tiarx.ondigitalocean.app/api/get?model=branch"
+            baseURL: "https://erp-test-3wqc9.ondigitalocean.app/api/master-data-management?model=branch"
         });
 
         const postbranchfun = (branchname, cityname, state, country, pincode, gstnumbert, address) => {
@@ -416,7 +416,7 @@ const Branches = () => {
                 state: state,
                 country: country,
                 pincode: pincode,
-                GST_Number: gstnumbert,
+                gst_number: gstnumbert,
                 address: address,
             },
                 {

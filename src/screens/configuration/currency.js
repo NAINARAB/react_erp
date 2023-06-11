@@ -26,7 +26,7 @@ const Currency = () => {
 
     useEffect(() => {
         if(token != null){
-            fetch('https://erp-tiarx.ondigitalocean.app/api/get?model=currency',
+            fetch('https://erp-test-3wqc9.ondigitalocean.app/api/master-data-management?model=currency',
             {
                 headers: {
                     'Authorization': `token ${token}`
@@ -70,7 +70,7 @@ const Currency = () => {
         const deleteRow = (pkobj) => {
             let currentpk = pkobj;
             const deleterowurl = axios.create({ //phase
-                baseURL: `https://erp-tiarx.ondigitalocean.app/api/get?model=currency&pk=${currentpk}`
+                baseURL: `https://erp-test-3wqc9.ondigitalocean.app/api/master-data-management?model=currency&pk=${currentpk}`
             });
 
             deleterowurl.delete('',
@@ -196,7 +196,7 @@ const Currency = () => {
         const [csymbol, setcsymbol] = useState('');
 
         const postcurrency = axios.create({
-            baseURL: "https://erp-tiarx.ondigitalocean.app/api/get?model=currency"
+            baseURL: "https://erp-test-3wqc9.ondigitalocean.app/api/master-data-management?model=currency"
         });
 
         const poststatefun = (cc, cn) => {
@@ -278,7 +278,7 @@ const Currency = () => {
                     <div>
                         <div className="comhed">
                             {disp === true ? <button className="comadbtn" onClick={() => { setdisp(!disp) }}>Add</button> :
-                                <button className="comadbtn" onClick={() => { setdisp(!disp) }}>Cancel</button>}
+                                <button className="comadbtn" onClick={() => { setdisp(!disp) }}>Back</button>}
                             <h5>Currency</h5>
                             <h6>Admin / Configuration / Currency</h6>
                         </div>

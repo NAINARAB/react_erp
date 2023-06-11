@@ -34,7 +34,7 @@ const Users = () => {
 
     useEffect(() => {
         if (token != null) {
-            fetch('https://erp-tiarx.ondigitalocean.app/api/get?model=branch',
+            fetch('https://erp-test-3wqc9.ondigitalocean.app/api/master-data-management?model=branch',
                 {
                     headers: {
                         'Authorization': `token ${token}`
@@ -44,7 +44,7 @@ const Users = () => {
                 .then((data) => {
                     setbranchdat(data.data)
                 })
-            fetch('https://erp-tiarx.ondigitalocean.app/api/get?model=userrole',
+            fetch('https://erp-test-3wqc9.ondigitalocean.app/api/master-data-management?model=userrole',
                 {
                     headers: {
                         'Authorization': `token ${token}`
@@ -54,7 +54,7 @@ const Users = () => {
                 .then((data) => {
                     setusrroldat(data.data);
                 })
-            fetch('https://erp-tiarx.ondigitalocean.app/api/get?model=user',
+            fetch('https://erp-test-3wqc9.ondigitalocean.app/api/master-data-management?model=user',
                 {
                     headers: {
                         'Authorization': `token ${token}`
@@ -151,7 +151,7 @@ const Users = () => {
         }
 
         const cntryupdt = axios.create({ //
-            baseURL: `https://erp-tiarx.ondigitalocean.app/api/signup?pk=${updtpk}`
+            baseURL: `https://erp-test-3wqc9.ondigitalocean.app/api/signup?pk=${updtpk}`
         });
 
         const updtuser = () => {
@@ -195,7 +195,7 @@ const Users = () => {
         const deleteRow = (pkobj) => {
             let currentpk = pkobj;
             const deleterowurl = axios.create({ //user
-                baseURL: `https://erp-tiarx.ondigitalocean.app/api/get?model=user&pk=${currentpk}`
+                baseURL: `https://erp-test-3wqc9.ondigitalocean.app/api/master-data-management?model=user&pk=${currentpk}`
             });
 
             deleterowurl.delete('',
@@ -370,7 +370,7 @@ const Users = () => {
 
         //post url
         const postusrurl = axios.create({
-            baseURL: "https://erp-tiarx.ondigitalocean.app/api/signup"
+            baseURL: "https://erp-test-3wqc9.ondigitalocean.app/api/signup"
         });
 
         const postnewuser = (eid, name, email, phn, pswrd, rol, brach) => {

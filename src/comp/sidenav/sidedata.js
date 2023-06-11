@@ -137,6 +137,12 @@ const data = [
                         'lname': 'Currency',
                         'link': '/admin/configuration/currency'
                     },
+                    {
+                        'liid': 6,
+                        'sid': 3,
+                        'lname': 'Measured Unit',
+                        'link': '/admin/configuration/measuredunit'
+                    },
                 ]
             }
         ]

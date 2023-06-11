@@ -31,7 +31,7 @@ function Phases() {
 
     useEffect(() => {
         if(token != null){
-            fetch('https://erp-tiarx.ondigitalocean.app/api/get?model=productionphase',
+            fetch('https://erp-test-3wqc9.ondigitalocean.app/api/master-data-management?model=productionphase',
             {
                 headers: {
                     'Authorization': `token ${token}`
@@ -89,7 +89,7 @@ function Phases() {
         };
 
         const cntryupdt = axios.create({ //phases
-            baseURL: `https://erp-tiarx.ondigitalocean.app/api/get?model=productionphase&pk=${updtpk}`
+            baseURL: `https://erp-test-3wqc9.ondigitalocean.app/api/master-data-management?model=productionphase&pk=${updtpk}`
         });
 
         const updtCountry = (ph) => {
@@ -135,7 +135,7 @@ function Phases() {
         const deleteRow = (pkobj) => {
             let currentpk = pkobj;
             const deleterowurl = axios.create({ //phase
-                baseURL: `https://erp-tiarx.ondigitalocean.app/api/get?model=productionphase&pk=${currentpk}`
+                baseURL: `https://erp-test-3wqc9.ondigitalocean.app/api/master-data-management?model=productionphase&pk=${currentpk}`
             });
 
             deleterowurl.delete('',
@@ -266,7 +266,7 @@ function Phases() {
     const AddPhases = () => {
         const [phase, setphase] = useState('');
         const postphase = axios.create({
-            baseURL: "https://erp-tiarx.ondigitalocean.app/api/get?model=productionphase"
+            baseURL: "https://erp-test-3wqc9.ondigitalocean.app/api/master-data-management?model=productionphase"
         });
 
         const postphasefun = (producphase) => {

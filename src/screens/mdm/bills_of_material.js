@@ -53,7 +53,7 @@ const Billsofmaterials = () => {
 
     useEffect(() => {
         if (token != null) {
-            fetch('https://erp-tiarx.ondigitalocean.app/api/get?model=product',
+            fetch('https://erp-test-3wqc9.ondigitalocean.app/api/master-data-management?model=product',
                 {
                     headers: {
                         'Authorization': `token ${token}`
@@ -63,7 +63,7 @@ const Billsofmaterials = () => {
                 .then((data) => {
                     setproductdata(data.data);
                 })
-            fetch('https://erp-tiarx.ondigitalocean.app/api/get?model=rawmaterial',
+            fetch('https://erp-test-3wqc9.ondigitalocean.app/api/master-data-management?model=rawmaterial',
                 {
                     headers: {
                         'Authorization': `token ${token}`
@@ -73,7 +73,7 @@ const Billsofmaterials = () => {
                 .then((data) => {
                     setrawmatdat(data.data);
                 })
-            fetch('https://erp-tiarx.ondigitalocean.app/api/get?model=productionphase',
+            fetch('https://erp-test-3wqc9.ondigitalocean.app/api/master-data-management?model=productionphase',
                 {
                     headers: {
                         'Authorization': `token ${token}`
@@ -88,7 +88,7 @@ const Billsofmaterials = () => {
 
     useEffect(() => {
         if (token != null) {
-            fetch(`https://erp-tiarx.ondigitalocean.app/api/get?model=billofmaterial`,
+            fetch(`https://erp-test-3wqc9.ondigitalocean.app/api/master-data-management?model=billofmaterial`,
                 {
                     headers: {
                         'Authorization': `token ${token}`
@@ -188,7 +188,7 @@ const Billsofmaterials = () => {
             setsfmcode(probs.id);
             prodat.map(element => {
                 if (element['product_code'] == probs.id && element['product_name'] == probs.text) {
-                    rm_type = 'semi_finished_goods'
+                    rm_type = 'semi-finished-goods'
                     return
                 }
             })
@@ -210,7 +210,7 @@ const Billsofmaterials = () => {
         {/* Posting DATA */ }
 
         const postbominpt = axios.create({
-            baseURL: "https://erp-tiarx.ondigitalocean.app/api/get?model=billofmaterial"
+            baseURL: "https://erp-test-3wqc9.ondigitalocean.app/api/master-data-management?model=billofmaterial"
         });
 
         const postbom = (prc, pnme, rmc, rmq, rmn, rmtyp, prphs) => {
@@ -261,7 +261,7 @@ const Billsofmaterials = () => {
         const deleteRow = (pkobj) => {
             let currentpk = pkobj;
             const deleterowurl = axios.create({ //phase
-                baseURL: `https://erp-tiarx.ondigitalocean.app/api/get?model=billofmaterial&pk=${currentpk}`
+                baseURL: `https://erp-test-3wqc9.ondigitalocean.app/api/master-data-management?model=billofmaterial&pk=${currentpk}`
             });
 
             deleterowurl.delete('',

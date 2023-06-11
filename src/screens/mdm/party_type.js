@@ -38,7 +38,7 @@ const Partytype = () => {
 
     useEffect(() => {
         if(token != null){
-            fetch('https://erp-tiarx.ondigitalocean.app/api/get?model=partytype',
+            fetch('https://erp-test-3wqc9.ondigitalocean.app/api/master-data-management?model=partytype',
             {
                 headers: {
                     'Authorization': `token ${token}`
@@ -100,7 +100,7 @@ const Partytype = () => {
         };
 
         const prttypupdt = axios.create({ //partytype
-            baseURL: `https://erp-tiarx.ondigitalocean.app/api/get?model=partytype&pk=${updtpk}`
+            baseURL: `https://erp-test-3wqc9.ondigitalocean.app/api/master-data-management?model=partytype&pk=${updtpk}`
         });
 
         const updtPartytype = (prttyp) => {
@@ -146,7 +146,7 @@ const Partytype = () => {
         const deleteRow = (pkobj) => {
             let currentpk = pkobj;
             const deleterowurl = axios.create({ //phase
-                baseURL: `https://erp-tiarx.ondigitalocean.app/api/get?model=partytype&pk=${currentpk}`
+                baseURL: `https://erp-test-3wqc9.ondigitalocean.app/api/master-data-management?model=partytype&pk=${currentpk}`
             });
 
             deleterowurl.delete('',
@@ -283,7 +283,7 @@ const Partytype = () => {
     const AddPartyType = () => {
         const [partyinpt, setpartyinpt] = useState('');
         const postprtytype = axios.create({
-            baseURL: "https://erp-tiarx.ondigitalocean.app/api/get?model=partytype"
+            baseURL: "https://erp-test-3wqc9.ondigitalocean.app/api/master-data-management?model=partytype"
         });
 
         const postPT = (prty) => {

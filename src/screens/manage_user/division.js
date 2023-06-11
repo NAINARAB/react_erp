@@ -38,7 +38,7 @@ const Devision = () => {
     const [deptdat, setdeptdat] = useState([]);
     useEffect(() => {
         if(token != null){
-            fetch('https://erp-tiarx.ondigitalocean.app/api/get?model=subdivision',
+            fetch('https://erp-test-3wqc9.ondigitalocean.app/api/master-data-management?model=subdivision',
             {
                 headers: {
                     'Authorization': `token ${token}`
@@ -48,7 +48,7 @@ const Devision = () => {
             .then((data) => {
                 setdevisiondata(data.data);
             })
-        fetch('https://erp-tiarx.ondigitalocean.app/api/get?model=department',
+        fetch('https://erp-test-3wqc9.ondigitalocean.app/api/master-data-management?model=department',
             {
                 headers: {
                     'Authorization': `token ${token}`
@@ -116,7 +116,7 @@ const Devision = () => {
         }
 
         const cntryupdt = axios.create({ //subdevision
-            baseURL: `https://erp-tiarx.ondigitalocean.app/api/get?model=subdivision&pk=${updtpk}`
+            baseURL: `https://erp-test-3wqc9.ondigitalocean.app/api/master-data-management?model=subdivision&pk=${updtpk}`
         });
         console.log("Crnt updt PK", updtpk);
 
@@ -159,7 +159,7 @@ const Devision = () => {
         const deleteRow = (pkobj) => {
             let currentpk = pkobj;
             const deleterowurl = axios.create({ //subdevision
-                baseURL: `https://erp-tiarx.ondigitalocean.app/api/get?model=subdivision&pk=${currentpk}`
+                baseURL: `https://erp-test-3wqc9.ondigitalocean.app/api/master-data-management?model=subdivision&pk=${currentpk}`
             });
 
             deleterowurl.delete('',
@@ -315,7 +315,7 @@ const Devision = () => {
 
 
         const postdev = axios.create({
-            baseURL: "https://erp-tiarx.ondigitalocean.app/api/get?model=subdivision"
+            baseURL: "https://erp-test-3wqc9.ondigitalocean.app/api/master-data-management?model=subdivision"
         });
 
         const postdevfun = (dep, rol) => {

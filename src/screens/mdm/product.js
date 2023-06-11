@@ -3,7 +3,8 @@ import Header from "../../comp/header/header";
 import Sidenav from "../../comp/sidenav/sidenav";
 import {
     Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Button, Slide, Alert,
-    TableContainer, Table, TableBody, TableCell, TableHead, TableRow, Paper, IconButton, Autocomplete, TextField, Chip
+    TableContainer, Table, TableBody, TableCell, TableHead, TableRow, Paper, IconButton, Autocomplete, TextField, Chip,
+    Collapse
 } from "@mui/material";
 import '../common.css';
 import EditIcon from '@mui/icons-material/Edit';
@@ -26,6 +27,7 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 
 
 const Product = () => {
+    
     const [dispalr, setdispalr] = useState(false);
     const [alrstatus, setalrstatus] = useState(false);
     const [alrmes, setalrmes] = useState('');
@@ -44,6 +46,7 @@ const Product = () => {
     const [Uopen, setUopen] = useState(false);
 
     const token = sessionStorage.getItem("token");
+    
 
     {/* For update Product variables */ }
 
@@ -94,7 +97,7 @@ const Product = () => {
     };
 
     const prdupdt = axios.create({ //
-        baseURL: `https://erp-tiarx.ondigitalocean.app/api/get?model=product&pk=${updtpk}`
+        baseURL: `https://erp-test-3wqc9.ondigitalocean.app/api/master-data-management?model=product&pk=${updtpk}`
     });
 
 
@@ -146,7 +149,7 @@ const Product = () => {
 
     useEffect(() => {
         if(token != null){
-            fetch('https://erp-tiarx.ondigitalocean.app/api/get?model=product',
+            fetch('https://erp-test-3wqc9.ondigitalocean.app/api/master-data-management?model=product',
             {
                 method: 'GET',
                 headers: {
@@ -157,7 +160,7 @@ const Product = () => {
             .then((data) => {
                 setrows(data.data)
             })
-        fetch('https://erp-tiarx.ondigitalocean.app/api/get?model=currency',
+        fetch('https://erp-test-3wqc9.ondigitalocean.app/api/master-data-management?model=currency',
             {
                 method: 'GET',
                 headers: {
@@ -190,7 +193,7 @@ const Product = () => {
 
 
         const prdtpost = axios.create({
-            baseURL: "https://erp-tiarx.ondigitalocean.app/api/get?model=product"
+            baseURL: "https://erp-test-3wqc9.ondigitalocean.app/api/master-data-management?model=product"
         });
 
         const postProduct = (productcode, productname, producttype, mult, prt, msq, currency, minprice, maxprice) => {
@@ -363,7 +366,7 @@ const Product = () => {
     const deleteRow = (pkobj) => {
         let currentpk = pkobj;
         const deleterowurl = axios.create({
-            baseURL: `https://erp-tiarx.ondigitalocean.app/api/get?model=product&pk=${currentpk}`
+            baseURL: `https://erp-test-3wqc9.ondigitalocean.app/api/master-data-management?model=product&pk=${currentpk}`
         });
 
         deleterowurl.delete('',
@@ -438,6 +441,7 @@ const Product = () => {
                                                         <TableCell variant="head" sx={{ backgroundColor: 'rgb(15, 11, 42)', color: 'white', fontFamily: 'prosans' }} >Max Price</TableCell>
                                                         <TableCell variant="head" sx={{ backgroundColor: 'rgb(15, 11, 42)', color: 'white', fontFamily: 'prosans' }} >Currency</TableCell>
                                                         <TableCell variant="head" sx={{ backgroundColor: 'rgb(15, 11, 42)', color: 'white', fontFamily: 'prosans' }} >Multiple Parts</TableCell>
+                                                        {/* <TableCell variant="head" sx={{ backgroundColor: 'rgb(15, 11, 42)', color: 'white', fontFamily: 'prosans' }} >Parts</TableCell> */}
                                                         <TableCell variant="head" sx={{ backgroundColor: 'rgb(15, 11, 42)', color: 'white', fontFamily: 'prosans' }} >Action</TableCell>
                                                     </TableRow>
                                                 </TableHead>
@@ -446,7 +450,7 @@ const Product = () => {
                                                         rows.map((rowobj) => {
                                                             return (
                                                                 <>
-                                                                    <TableRow sx={{ '&:last-child td, &:last-child th': { border: 0 }, fontFamily: 'prosans' }} hover={true}>
+                                                                    <TableRow sx={{ '&:last-child td, &:last-child th': { border: 0 }, fontFamily: 'prosans'}} hover={true}>
                                                                         <TableCell component="th" scope="row" sx={{ fontFamily: 'prosans' }}>
                                                                             {count++}
                                                                         </TableCell>
@@ -459,9 +463,11 @@ const Product = () => {
                                                                         <TableCell sx={{ fontFamily: 'prosans' }}>{rowobj.currency_get === null ? "Null" : rowobj.currency_get}</TableCell>
                                                                         <TableCell sx={{ fontFamily: 'prosans' }}>{rowobj.multiple_parts == null ? "Null" : rowobj.multiple_parts === true ? "true" : "false"}</TableCell>
                                                                         {/* <TableCell sx={{ fontFamily: 'prosans' }}>{rowobj.parts !== null ? rowobj.parts.length !== 0 ?
-                                                                            rowobj.parts.toString()
+                                                                            rowobj.parts.map((item,index) => (
+                                                                                <>{index == 0 ? <li>{item}</li> : null}</>
+                                                                            ))
                                                                             : 'Null' : "Null"}</TableCell> */}
-                                                                        <TableCell>
+                                                                        <TableCell >
                                                                             <IconButton aria-label="expand" size="small"
                                                                                 onClick={() => {
                                                                                     setco(rowobj.product_code); setnme(rowobj.product_name); settyp(rowobj.product_type);
@@ -557,7 +563,7 @@ const Product = () => {
                 </Dialog>
             </div>
             <div>
-                <form onSubmit={doPUT}>
+                <form>
                     <Dialog
                         open={Uopen}
                         onClose={UhandleClose}
@@ -655,7 +661,7 @@ const Product = () => {
                         </DialogContent>
                         <DialogActions>
                             <button className="cancelbtn" onClick={UhandleClose} >Discord</button>
-                            <button className="comadbtn" type="submit" style={{ marginBottom: 'unset' }}>Update</button>
+                            <button className="comadbtn" style={{ marginBottom: 'unset' }} onClick={doPUT}>Update</button>
                         </DialogActions>
                     </Dialog>
                 </form>

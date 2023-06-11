@@ -32,22 +32,22 @@ const DispMainButton = (props) => {
             </button>
             <Collapse in={open} timeout="auto" unmountOnExit>
                 {data.map(obj => (
-                    
+
                     <>
                         {obj.subbutton.map(obj1 => (
-                            
+
                             <>{id == obj1.id && obj1.name != 'null' ?
                                 <SubMainButton
                                     icon={obj1.icon}
                                     name={obj1.name}
                                     sid={obj1.sid}
-                                    id={id} 
+                                    id={id}
                                     crntbut={crntbut == obj1.name ? true : false}
                                     crntpg={crntpg} />
                                 : null
                             }
                             </>
-                            
+
                         ))}
                     </>
                 ))}
@@ -83,7 +83,14 @@ const SubMainButton = (props) => {
                                     <>
                                         {obj1.libut.map(obj2 => (
                                             <>
-                                                {sid == obj2.sid ? <button className={crntpg == obj2.lname ? "linkbut blue" : "linkbut"} onClick={() => { navigate(obj2.link) }}><li>{obj2.lname}</li></button> : null}
+                                                {sid == obj2.sid ?
+                                                    <button className={crntpg == obj2.lname ? "linkbut blue" : "linkbut"}
+                                                        onClick={() => { navigate(obj2.link) }}>
+                                                        <li style={{fontFamily:'prosans'}}>{obj2.lname}</li>
+                                                    </button>
+                                                    :
+                                                    null
+                                                }
                                             </>
                                         ))}
                                     </>
@@ -112,7 +119,7 @@ const Sidenav = (props) => {
 
     useEffect(() => {
         if (token != null) {
-            fetch('https://erp-tiarx.ondigitalocean.app/api/profile/',
+            fetch('https://erp-test-3wqc9.ondigitalocean.app/api/profile/',
                 {
                     headers: {
                         'Authorization': `token ${token}`
